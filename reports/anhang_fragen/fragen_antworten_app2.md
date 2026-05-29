@@ -1,0 +1,670 @@
+﻿## Frage 1
+
+Frage Nummer: 941
+Metrik: pruefung_verifikation
+Workflow Typ: App2 / CE Flowreview S4
+Testset: ce_app2
+
+### Frage
+
+```text
+Computer-evaluable app2 reasoning task #1 for Pruefung / Verifikation.
+Metric focus: ob jede Regel korrekt geprueft und angewendet wurde.
+Level: 3. Seed: 3101.
+
+Anna hat zu Beginn 9 Bananen, Ben hat zu Beginn 12 Orangen, Clara hat zu Beginn 2 Melonen, David hat zu Beginn 10 Tickets, Emma hat zu Beginn 2 Muenzen, Finn hat zu Beginn 6 Karten, Greta hat zu Beginn 20 Stifte. Gehe nun die folgenden Regeln exakt in der angegebenen Reihenfolge durch. Jede Regel wird genau einmal geprueft. Wenn eine Regel mehrere Personen veraendert, passieren diese Aenderungen gleichzeitig auf Basis des Zustands direkt vor dieser Regel. Regel 1: Wenn Emma mehr als 16 Muenzen hat, dann David multipliziert die Anzahl Tickets mit 4 und Anna multipliziert die Anzahl Bananen mit 4 und Greta bekommt so viele Stifte dazu, wie viele Melonen Clara hat. Regel 2: Wenn Greta genau so viele Stifte hat wie Anna Bananen, dann Emma bekommt so viele Muenzen dazu, wie viele Stifte Greta hat. Regel 3: Wenn Emma mindestens 17 Muenzen hat, dann Clara teilt die Anzahl Melonen ganzzahlig durch 2. Regel 4: Wenn Anna genau so viele Bananen hat wie David Tickets, dann David gibt so viele Tickets ab, wie viele Melonen Clara hat und Ben bekommt 8 Orangen dazu. Regel 5: Wenn David genau 19 Tickets hat, dann Clara bekommt so viele Melonen dazu, wie viele Stifte Greta hat. Regel 6: Wenn Ben weniger Orangen hat als Clara Melonen, dann David bekommt 9 Tickets dazu. Regel 7: Wenn Clara genau so viele Melonen hat wie Emma Muenzen, dann Greta gibt so viele Stifte ab, wie viele Melonen Clara hat. Regel 8: Wenn Greta hoechstens so viele Stifte hat wie Anna Bananen, dann Finn bekommt 1 Karten dazu und Ben bekommt 10 Orangen dazu. Regel 9: Wenn Greta hoechstens so viele Stifte hat wie Anna Bananen, dann Ben gibt 7 Orangen ab. Regel 10: Wenn Ben mindestens so viele Orangen hat wie Greta Stifte, dann Finn gibt so viele Karten ab, wie viele Melonen Clara hat und Ben gibt so viele Orangen ab, wie viele Muenzen Emma hat. Berechne danach die finalen Werte und gib nur das verlangte JSON zurueck.
+
+Return ONLY one valid JSON object. No markdown, no explanation, no extra keys.
+Required keys in this exact set: ["rule_1_applied","rule_2_applied","rule_3_applied","rule_4_applied","rule_5_applied","rule_6_applied","rule_7_applied","rule_8_applied","rule_9_applied","rule_10_applied"].
+Required types and allowed values: rule_1_applied: one of yes|no; rule_2_applied: one of yes|no; rule_3_applied: one of yes|no; rule_4_applied: one of yes|no; rule_5_applied: one of yes|no; rule_6_applied: one of yes|no; rule_7_applied: one of yes|no; rule_8_applied: one of yes|no; rule_9_applied: one of yes|no; rule_10_applied: one of yes|no.
+Use numbers as numbers. Use yes/no only for rule-applied fields.
+Format example, not the solution:
+{
+  "rule_1_applied": "<yes|no>",
+  "rule_2_applied": "<yes|no>",
+  "rule_3_applied": "<yes|no>",
+  "rule_4_applied": "<yes|no>",
+  "rule_5_applied": "<yes|no>",
+  "rule_6_applied": "<yes|no>",
+  "rule_7_applied": "<yes|no>",
+  "rule_8_applied": "<yes|no>",
+  "rule_9_applied": "<yes|no>",
+  "rule_10_applied": "<yes|no>"
+}
+```
+
+### Kriterien
+
+- json:__valid_json Answer is valid JSON object
+- json:rule_1_applied Field rule_1_applied exactly matches expected value
+- json:rule_2_applied Field rule_2_applied exactly matches expected value
+- json:rule_3_applied Field rule_3_applied exactly matches expected value
+- json:rule_4_applied Field rule_4_applied exactly matches expected value
+- json:rule_5_applied Field rule_5_applied exactly matches expected value
+- json:rule_6_applied Field rule_6_applied exactly matches expected value
+- json:rule_7_applied Field rule_7_applied exactly matches expected value
+- json:rule_8_applied Field rule_8_applied exactly matches expected value
+- json:rule_9_applied Field rule_9_applied exactly matches expected value
+- json:rule_10_applied Field rule_10_applied exactly matches expected value
+- json:__no_extra_keys JSON contains exactly the expected keys and no extras
+
+### Erwartete Antwort
+
+```json
+{
+  "rule_1_applied": "no",
+  "rule_2_applied": "no",
+  "rule_3_applied": "no",
+  "rule_4_applied": "no",
+  "rule_5_applied": "no",
+  "rule_6_applied": "no",
+  "rule_7_applied": "yes",
+  "rule_8_applied": "no",
+  "rule_9_applied": "no",
+  "rule_10_applied": "no"
+}
+```
+
+## Frage 2
+
+Frage Nummer: 942
+Metrik: pruefung_verifikation
+Workflow Typ: App2 / CE Flowreview S4
+Testset: ce_app2
+
+### Frage
+
+```text
+Computer-evaluable app2 reasoning task #2 for Pruefung / Verifikation.
+Metric focus: ob jede Regel korrekt geprueft und angewendet wurde.
+Level: 3. Seed: 3102.
+
+Anna hat zu Beginn 9 Bananen, Ben hat zu Beginn 13 Orangen, Clara hat zu Beginn 16 Melonen, David hat zu Beginn 10 Tickets, Emma hat zu Beginn 16 Muenzen, Finn hat zu Beginn 1 Karten, Greta hat zu Beginn 9 Stifte. Gehe nun die folgenden Regeln exakt in der angegebenen Reihenfolge durch. Jede Regel wird genau einmal geprueft. Wenn eine Regel mehrere Personen veraendert, passieren diese Aenderungen gleichzeitig auf Basis des Zustands direkt vor dieser Regel. Regel 1: Wenn David genau 6 Tickets hat, dann Clara gibt 3 Melonen ab und Ben gibt 2 Orangen ab und Finn teilt die Anzahl Karten ganzzahlig durch 2. Regel 2: Wenn Clara mehr Melonen hat als Emma Muenzen, dann David teilt die Anzahl Tickets ganzzahlig durch 2. Regel 3: Wenn Anna genau 9 Bananen hat, dann Ben teilt die Anzahl Orangen ganzzahlig durch 5 und Finn multipliziert die Anzahl Karten mit der Melonen-Anzahl von Clara. Regel 4: Wenn Ben mindestens so viele Orangen hat wie Finn Karten, dann Emma bekommt 4 Muenzen dazu. Regel 5: Wenn Emma genau so viele Muenzen hat wie David Tickets, dann Finn multipliziert die Anzahl Karten mit der Bananen-Anzahl von Anna. Regel 6: Wenn Greta mehr Stifte hat als Clara Melonen, dann David gibt so viele Tickets ab, wie viele Karten Finn hat und Emma bekommt 6 Muenzen dazu und Anna bekommt so viele Bananen dazu, wie viele Orangen Ben hat. Regel 7: Wenn Finn mindestens 7 Karten hat, dann Clara multipliziert die Anzahl Melonen mit 4. Regel 8: Wenn David mindestens 11 Tickets hat, dann David gibt so viele Tickets ab, wie viele Stifte Greta hat und Ben multipliziert die Anzahl Orangen mit 3 und Finn multipliziert die Anzahl Karten mit 5. Regel 9: Wenn Finn mehr Karten hat als Emma Muenzen, dann David multipliziert die Anzahl Tickets mit minus 3. Regel 10: Wenn David mehr als 12 Tickets hat, dann David gibt 2 Tickets ab und Greta teilt die Anzahl Stifte ganzzahlig durch 5. Berechne danach die finalen Werte und gib nur das verlangte JSON zurueck.
+
+Return ONLY one valid JSON object. No markdown, no explanation, no extra keys.
+Required keys in this exact set: ["rule_1_applied","rule_2_applied","rule_3_applied","rule_4_applied","rule_5_applied","rule_6_applied","rule_7_applied","rule_8_applied","rule_9_applied","rule_10_applied"].
+Required types and allowed values: rule_1_applied: one of yes|no; rule_2_applied: one of yes|no; rule_3_applied: one of yes|no; rule_4_applied: one of yes|no; rule_5_applied: one of yes|no; rule_6_applied: one of yes|no; rule_7_applied: one of yes|no; rule_8_applied: one of yes|no; rule_9_applied: one of yes|no; rule_10_applied: one of yes|no.
+Use numbers as numbers. Use yes/no only for rule-applied fields.
+Format example, not the solution:
+{
+  "rule_1_applied": "<yes|no>",
+  "rule_2_applied": "<yes|no>",
+  "rule_3_applied": "<yes|no>",
+  "rule_4_applied": "<yes|no>",
+  "rule_5_applied": "<yes|no>",
+  "rule_6_applied": "<yes|no>",
+  "rule_7_applied": "<yes|no>",
+  "rule_8_applied": "<yes|no>",
+  "rule_9_applied": "<yes|no>",
+  "rule_10_applied": "<yes|no>"
+}
+```
+
+### Kriterien
+
+- json:__valid_json Answer is valid JSON object
+- json:rule_1_applied Field rule_1_applied exactly matches expected value
+- json:rule_2_applied Field rule_2_applied exactly matches expected value
+- json:rule_3_applied Field rule_3_applied exactly matches expected value
+- json:rule_4_applied Field rule_4_applied exactly matches expected value
+- json:rule_5_applied Field rule_5_applied exactly matches expected value
+- json:rule_6_applied Field rule_6_applied exactly matches expected value
+- json:rule_7_applied Field rule_7_applied exactly matches expected value
+- json:rule_8_applied Field rule_8_applied exactly matches expected value
+- json:rule_9_applied Field rule_9_applied exactly matches expected value
+- json:rule_10_applied Field rule_10_applied exactly matches expected value
+- json:__no_extra_keys JSON contains exactly the expected keys and no extras
+
+### Erwartete Antwort
+
+```json
+{
+  "rule_1_applied": "no",
+  "rule_2_applied": "no",
+  "rule_3_applied": "yes",
+  "rule_4_applied": "no",
+  "rule_5_applied": "no",
+  "rule_6_applied": "no",
+  "rule_7_applied": "yes",
+  "rule_8_applied": "no",
+  "rule_9_applied": "no",
+  "rule_10_applied": "no"
+}
+```
+
+## Frage 3
+
+Frage Nummer: 943
+Metrik: pruefung_verifikation
+Workflow Typ: App2 / CE Flowreview S4
+Testset: ce_app2
+
+### Frage
+
+```text
+Computer-evaluable app2 reasoning task #3 for Pruefung / Verifikation.
+Metric focus: ob jede Regel korrekt geprueft und angewendet wurde.
+Level: 3. Seed: 3103.
+
+Anna hat zu Beginn 9 Bananen, Ben hat zu Beginn 15 Orangen, Clara hat zu Beginn 10 Melonen, David hat zu Beginn 11 Tickets, Emma hat zu Beginn 9 Muenzen, Finn hat zu Beginn 16 Karten, Greta hat zu Beginn 18 Stifte. Gehe nun die folgenden Regeln exakt in der angegebenen Reihenfolge durch. Jede Regel wird genau einmal geprueft. Wenn eine Regel mehrere Personen veraendert, passieren diese Aenderungen gleichzeitig auf Basis des Zustands direkt vor dieser Regel. Regel 1: Wenn David mehr als 15 Tickets hat, dann Finn gibt 10 Karten ab. Regel 2: Wenn Finn weniger als 20 Karten hat, dann Ben teilt die Anzahl Orangen ganzzahlig durch 4 und Anna multipliziert die Anzahl Bananen mit 2 und David bekommt 9 Tickets dazu. Regel 3: Wenn Ben mehr Orangen hat als Greta Stifte, dann Ben gibt 6 Orangen ab. Regel 4: Wenn David mehr Tickets hat als Greta Stifte, dann David gibt so viele Tickets ab, wie viele Bananen Anna hat. Regel 5: Wenn Anna genau 10 Bananen hat, dann Finn bekommt 7 Karten dazu. Regel 6: Wenn Finn hoechstens 4 Karten hat, dann Emma gibt 7 Muenzen ab. Regel 7: Wenn Ben mehr Orangen hat als Clara Melonen, dann David multipliziert die Anzahl Tickets mit der Bananen-Anzahl von Anna. Regel 8: Wenn Emma mindestens so viele Muenzen hat wie Greta Stifte, dann Clara teilt die Anzahl Melonen ganzzahlig durch 2. Regel 9: Wenn Anna mindestens so viele Bananen hat wie David Tickets, dann David gibt 10 Tickets ab. Regel 10: Wenn Ben mehr Orangen hat als Greta Stifte, dann Greta bekommt so viele Stifte dazu, wie viele Muenzen Emma hat und David gibt so viele Tickets ab, wie viele Karten Finn hat. Berechne danach die finalen Werte und gib nur das verlangte JSON zurueck.
+
+Return ONLY one valid JSON object. No markdown, no explanation, no extra keys.
+Required keys in this exact set: ["rule_1_applied","rule_2_applied","rule_3_applied","rule_4_applied","rule_5_applied","rule_6_applied","rule_7_applied","rule_8_applied","rule_9_applied","rule_10_applied"].
+Required types and allowed values: rule_1_applied: one of yes|no; rule_2_applied: one of yes|no; rule_3_applied: one of yes|no; rule_4_applied: one of yes|no; rule_5_applied: one of yes|no; rule_6_applied: one of yes|no; rule_7_applied: one of yes|no; rule_8_applied: one of yes|no; rule_9_applied: one of yes|no; rule_10_applied: one of yes|no.
+Use numbers as numbers. Use yes/no only for rule-applied fields.
+Format example, not the solution:
+{
+  "rule_1_applied": "<yes|no>",
+  "rule_2_applied": "<yes|no>",
+  "rule_3_applied": "<yes|no>",
+  "rule_4_applied": "<yes|no>",
+  "rule_5_applied": "<yes|no>",
+  "rule_6_applied": "<yes|no>",
+  "rule_7_applied": "<yes|no>",
+  "rule_8_applied": "<yes|no>",
+  "rule_9_applied": "<yes|no>",
+  "rule_10_applied": "<yes|no>"
+}
+```
+
+### Kriterien
+
+- json:__valid_json Answer is valid JSON object
+- json:rule_1_applied Field rule_1_applied exactly matches expected value
+- json:rule_2_applied Field rule_2_applied exactly matches expected value
+- json:rule_3_applied Field rule_3_applied exactly matches expected value
+- json:rule_4_applied Field rule_4_applied exactly matches expected value
+- json:rule_5_applied Field rule_5_applied exactly matches expected value
+- json:rule_6_applied Field rule_6_applied exactly matches expected value
+- json:rule_7_applied Field rule_7_applied exactly matches expected value
+- json:rule_8_applied Field rule_8_applied exactly matches expected value
+- json:rule_9_applied Field rule_9_applied exactly matches expected value
+- json:rule_10_applied Field rule_10_applied exactly matches expected value
+- json:__no_extra_keys JSON contains exactly the expected keys and no extras
+
+### Erwartete Antwort
+
+```json
+{
+  "rule_1_applied": "no",
+  "rule_2_applied": "yes",
+  "rule_3_applied": "no",
+  "rule_4_applied": "yes",
+  "rule_5_applied": "no",
+  "rule_6_applied": "no",
+  "rule_7_applied": "no",
+  "rule_8_applied": "no",
+  "rule_9_applied": "yes",
+  "rule_10_applied": "no"
+}
+```
+
+## Frage 4
+
+Frage Nummer: 944
+Metrik: pruefung_verifikation
+Workflow Typ: App2 / CE Flowreview S4
+Testset: ce_app2
+
+### Frage
+
+```text
+Computer-evaluable app2 reasoning task #4 for Pruefung / Verifikation.
+Metric focus: ob jede Regel korrekt geprueft und angewendet wurde.
+Level: 3. Seed: 3104.
+
+Anna hat zu Beginn 9 Bananen, Ben hat zu Beginn 17 Orangen, Clara hat zu Beginn 4 Melonen, David hat zu Beginn 12 Tickets, Emma hat zu Beginn 2 Muenzen, Finn hat zu Beginn 11 Karten, Greta hat zu Beginn 6 Stifte. Gehe nun die folgenden Regeln exakt in der angegebenen Reihenfolge durch. Jede Regel wird genau einmal geprueft. Wenn eine Regel mehrere Personen veraendert, passieren diese Aenderungen gleichzeitig auf Basis des Zustands direkt vor dieser Regel. Regel 1: Wenn Clara genau 4 Melonen hat, dann Clara gibt 3 Melonen ab und Finn multipliziert die Anzahl Karten mit 5 und Ben gibt 7 Orangen ab. Regel 2: Wenn Clara weniger Melonen hat als David Tickets, dann Anna teilt die Anzahl Bananen ganzzahlig durch 4. Regel 3: Wenn Clara mindestens so viele Melonen hat wie Emma Muenzen, dann David gibt 9 Tickets ab. Regel 4: Wenn David mehr Tickets hat als Emma Muenzen, dann Emma gibt 1 Muenzen ab. Regel 5: Wenn Emma hoechstens so viele Muenzen hat wie Anna Bananen, dann Greta multipliziert die Anzahl Stifte mit der Orangen-Anzahl von Ben. Regel 6: Wenn David mindestens so viele Tickets hat wie Clara Melonen, dann Greta teilt die Anzahl Stifte ganzzahlig durch 4 und David teilt die Anzahl Tickets ganzzahlig durch 5. Regel 7: Wenn Greta weniger Stifte hat als Emma Muenzen, dann Emma bekommt 9 Muenzen dazu. Regel 8: Wenn Greta hoechstens so viele Stifte hat wie David Tickets, dann Anna teilt die Anzahl Bananen ganzzahlig durch 5 und Ben gibt 7 Orangen ab. Regel 9: Wenn Anna mehr Bananen hat als Emma Muenzen, dann Clara teilt die Anzahl Melonen ganzzahlig durch 5 und David multipliziert die Anzahl Tickets mit minus 4 und Greta teilt die Anzahl Stifte ganzzahlig durch 3. Regel 10: Wenn Emma hoechstens so viele Muenzen hat wie David Tickets, dann Finn gibt so viele Karten ab, wie viele Bananen Anna hat und Ben multipliziert die Anzahl Orangen mit 4 und Anna multipliziert die Anzahl Bananen mit 4. Berechne danach die finalen Werte und gib nur das verlangte JSON zurueck.
+
+Return ONLY one valid JSON object. No markdown, no explanation, no extra keys.
+Required keys in this exact set: ["rule_1_applied","rule_2_applied","rule_3_applied","rule_4_applied","rule_5_applied","rule_6_applied","rule_7_applied","rule_8_applied","rule_9_applied","rule_10_applied"].
+Required types and allowed values: rule_1_applied: one of yes|no; rule_2_applied: one of yes|no; rule_3_applied: one of yes|no; rule_4_applied: one of yes|no; rule_5_applied: one of yes|no; rule_6_applied: one of yes|no; rule_7_applied: one of yes|no; rule_8_applied: one of yes|no; rule_9_applied: one of yes|no; rule_10_applied: one of yes|no.
+Use numbers as numbers. Use yes/no only for rule-applied fields.
+Format example, not the solution:
+{
+  "rule_1_applied": "<yes|no>",
+  "rule_2_applied": "<yes|no>",
+  "rule_3_applied": "<yes|no>",
+  "rule_4_applied": "<yes|no>",
+  "rule_5_applied": "<yes|no>",
+  "rule_6_applied": "<yes|no>",
+  "rule_7_applied": "<yes|no>",
+  "rule_8_applied": "<yes|no>",
+  "rule_9_applied": "<yes|no>",
+  "rule_10_applied": "<yes|no>"
+}
+```
+
+### Kriterien
+
+- json:__valid_json Answer is valid JSON object
+- json:rule_1_applied Field rule_1_applied exactly matches expected value
+- json:rule_2_applied Field rule_2_applied exactly matches expected value
+- json:rule_3_applied Field rule_3_applied exactly matches expected value
+- json:rule_4_applied Field rule_4_applied exactly matches expected value
+- json:rule_5_applied Field rule_5_applied exactly matches expected value
+- json:rule_6_applied Field rule_6_applied exactly matches expected value
+- json:rule_7_applied Field rule_7_applied exactly matches expected value
+- json:rule_8_applied Field rule_8_applied exactly matches expected value
+- json:rule_9_applied Field rule_9_applied exactly matches expected value
+- json:rule_10_applied Field rule_10_applied exactly matches expected value
+- json:__no_extra_keys JSON contains exactly the expected keys and no extras
+
+### Erwartete Antwort
+
+```json
+{
+  "rule_1_applied": "yes",
+  "rule_2_applied": "yes",
+  "rule_3_applied": "no",
+  "rule_4_applied": "yes",
+  "rule_5_applied": "yes",
+  "rule_6_applied": "yes",
+  "rule_7_applied": "no",
+  "rule_8_applied": "no",
+  "rule_9_applied": "yes",
+  "rule_10_applied": "no"
+}
+```
+
+## Frage 5
+
+Frage Nummer: 945
+Metrik: pruefung_verifikation
+Workflow Typ: App2 / CE Flowreview S4
+Testset: ce_app2
+
+### Frage
+
+```text
+Computer-evaluable app2 reasoning task #5 for Pruefung / Verifikation.
+Metric focus: ob jede Regel korrekt geprueft und angewendet wurde.
+Level: 3. Seed: 3105.
+
+Anna hat zu Beginn 9 Bananen, Ben hat zu Beginn 19 Orangen, Clara hat zu Beginn 17 Melonen, David hat zu Beginn 13 Tickets, Emma hat zu Beginn 16 Muenzen, Finn hat zu Beginn 6 Karten, Greta hat zu Beginn 15 Stifte. Gehe nun die folgenden Regeln exakt in der angegebenen Reihenfolge durch. Jede Regel wird genau einmal geprueft. Wenn eine Regel mehrere Personen veraendert, passieren diese Aenderungen gleichzeitig auf Basis des Zustands direkt vor dieser Regel. Regel 1: Wenn Clara mehr als 13 Melonen hat, dann Ben gibt 1 Orangen ab und Greta gibt so viele Stifte ab, wie viele Melonen Clara hat und Finn teilt die Anzahl Karten ganzzahlig durch 2. Regel 2: Wenn Clara mehr als 18 Melonen hat, dann Anna bekommt 3 Bananen dazu. Regel 3: Wenn Greta genau so viele Stifte hat wie Clara Melonen, dann Greta bekommt 10 Stifte dazu und David multipliziert die Anzahl Tickets mit 2 und Ben gibt 7 Orangen ab. Regel 4: Wenn Ben hoechstens 8 Orangen hat, dann Emma gibt so viele Muenzen ab, wie viele Karten Finn hat und Finn multipliziert die Anzahl Karten mit 4 und David teilt die Anzahl Tickets ganzzahlig durch 5. Regel 5: Wenn Finn weniger Karten hat als Clara Melonen, dann Greta gibt so viele Stifte ab, wie viele Tickets David hat. Regel 6: Wenn Finn hoechstens 3 Karten hat, dann David bekommt 9 Tickets dazu. Regel 7: Wenn David genau so viele Tickets hat wie Anna Bananen, dann Clara bekommt so viele Melonen dazu, wie viele Karten Finn hat. Regel 8: Wenn Anna mehr Bananen hat als David Tickets, dann Emma gibt 9 Muenzen ab. Regel 9: Wenn Emma genau so viele Muenzen hat wie Clara Melonen, dann Ben gibt 8 Orangen ab. Regel 10: Wenn David mehr als 15 Tickets hat, dann Greta teilt die Anzahl Stifte ganzzahlig durch 5 und Ben gibt so viele Orangen ab, wie viele Tickets David hat und Anna teilt die Anzahl Bananen ganzzahlig durch 2. Berechne danach die finalen Werte und gib nur das verlangte JSON zurueck.
+
+Return ONLY one valid JSON object. No markdown, no explanation, no extra keys.
+Required keys in this exact set: ["rule_1_applied","rule_2_applied","rule_3_applied","rule_4_applied","rule_5_applied","rule_6_applied","rule_7_applied","rule_8_applied","rule_9_applied","rule_10_applied"].
+Required types and allowed values: rule_1_applied: one of yes|no; rule_2_applied: one of yes|no; rule_3_applied: one of yes|no; rule_4_applied: one of yes|no; rule_5_applied: one of yes|no; rule_6_applied: one of yes|no; rule_7_applied: one of yes|no; rule_8_applied: one of yes|no; rule_9_applied: one of yes|no; rule_10_applied: one of yes|no.
+Use numbers as numbers. Use yes/no only for rule-applied fields.
+Format example, not the solution:
+{
+  "rule_1_applied": "<yes|no>",
+  "rule_2_applied": "<yes|no>",
+  "rule_3_applied": "<yes|no>",
+  "rule_4_applied": "<yes|no>",
+  "rule_5_applied": "<yes|no>",
+  "rule_6_applied": "<yes|no>",
+  "rule_7_applied": "<yes|no>",
+  "rule_8_applied": "<yes|no>",
+  "rule_9_applied": "<yes|no>",
+  "rule_10_applied": "<yes|no>"
+}
+```
+
+### Kriterien
+
+- json:__valid_json Answer is valid JSON object
+- json:rule_1_applied Field rule_1_applied exactly matches expected value
+- json:rule_2_applied Field rule_2_applied exactly matches expected value
+- json:rule_3_applied Field rule_3_applied exactly matches expected value
+- json:rule_4_applied Field rule_4_applied exactly matches expected value
+- json:rule_5_applied Field rule_5_applied exactly matches expected value
+- json:rule_6_applied Field rule_6_applied exactly matches expected value
+- json:rule_7_applied Field rule_7_applied exactly matches expected value
+- json:rule_8_applied Field rule_8_applied exactly matches expected value
+- json:rule_9_applied Field rule_9_applied exactly matches expected value
+- json:rule_10_applied Field rule_10_applied exactly matches expected value
+- json:__no_extra_keys JSON contains exactly the expected keys and no extras
+
+### Erwartete Antwort
+
+```json
+{
+  "rule_1_applied": "yes",
+  "rule_2_applied": "no",
+  "rule_3_applied": "no",
+  "rule_4_applied": "no",
+  "rule_5_applied": "yes",
+  "rule_6_applied": "yes",
+  "rule_7_applied": "no",
+  "rule_8_applied": "no",
+  "rule_9_applied": "no",
+  "rule_10_applied": "yes"
+}
+```
+
+## Frage 6
+
+Frage Nummer: 946
+Metrik: pruefung_verifikation
+Workflow Typ: App2 / CE Flowreview S4
+Testset: ce_app2
+
+### Frage
+
+```text
+Computer-evaluable app2 reasoning task #6 for Pruefung / Verifikation.
+Metric focus: ob jede Regel korrekt geprueft und angewendet wurde.
+Level: 3. Seed: 3106.
+
+Anna hat zu Beginn 9 Bananen, Ben hat zu Beginn 1 Orangen, Clara hat zu Beginn 11 Melonen, David hat zu Beginn 13 Tickets, Emma hat zu Beginn 9 Muenzen, Finn hat zu Beginn 1 Karten, Greta hat zu Beginn 3 Stifte. Gehe nun die folgenden Regeln exakt in der angegebenen Reihenfolge durch. Jede Regel wird genau einmal geprueft. Wenn eine Regel mehrere Personen veraendert, passieren diese Aenderungen gleichzeitig auf Basis des Zustands direkt vor dieser Regel. Regel 1: Wenn Ben genau so viele Orangen hat wie Anna Bananen, dann Finn bekommt so viele Karten dazu, wie viele Orangen Ben hat. Regel 2: Wenn Finn hoechstens 1 Karten hat, dann Anna teilt die Anzahl Bananen ganzzahlig durch 4. Regel 3: Wenn Anna mindestens so viele Bananen hat wie David Tickets, dann Ben teilt die Anzahl Orangen ganzzahlig durch 4. Regel 4: Wenn Ben genau so viele Orangen hat wie David Tickets, dann Clara bekommt 4 Melonen dazu und Greta gibt 3 Stifte ab und Finn gibt 10 Karten ab. Regel 5: Wenn Clara hoechstens so viele Melonen hat wie Finn Karten, dann Emma teilt die Anzahl Muenzen ganzzahlig durch 2. Regel 6: Wenn Greta genau so viele Stifte hat wie Emma Muenzen, dann Greta bekommt 6 Stifte dazu. Regel 7: Wenn Greta mindestens so viele Stifte hat wie Finn Karten, dann Anna gibt 1 Bananen ab. Regel 8: Wenn Emma genau so viele Muenzen hat wie Ben Orangen, dann Ben bekommt 4 Orangen dazu. Regel 9: Wenn Anna genau 4 Bananen hat, dann Ben teilt die Anzahl Orangen ganzzahlig durch 4. Regel 10: Wenn Anna hoechstens 16 Bananen hat, dann Clara gibt 1 Melonen ab. Berechne danach die finalen Werte und gib nur das verlangte JSON zurueck.
+
+Return ONLY one valid JSON object. No markdown, no explanation, no extra keys.
+Required keys in this exact set: ["rule_1_applied","rule_2_applied","rule_3_applied","rule_4_applied","rule_5_applied","rule_6_applied","rule_7_applied","rule_8_applied","rule_9_applied","rule_10_applied"].
+Required types and allowed values: rule_1_applied: one of yes|no; rule_2_applied: one of yes|no; rule_3_applied: one of yes|no; rule_4_applied: one of yes|no; rule_5_applied: one of yes|no; rule_6_applied: one of yes|no; rule_7_applied: one of yes|no; rule_8_applied: one of yes|no; rule_9_applied: one of yes|no; rule_10_applied: one of yes|no.
+Use numbers as numbers. Use yes/no only for rule-applied fields.
+Format example, not the solution:
+{
+  "rule_1_applied": "<yes|no>",
+  "rule_2_applied": "<yes|no>",
+  "rule_3_applied": "<yes|no>",
+  "rule_4_applied": "<yes|no>",
+  "rule_5_applied": "<yes|no>",
+  "rule_6_applied": "<yes|no>",
+  "rule_7_applied": "<yes|no>",
+  "rule_8_applied": "<yes|no>",
+  "rule_9_applied": "<yes|no>",
+  "rule_10_applied": "<yes|no>"
+}
+```
+
+### Kriterien
+
+- json:__valid_json Answer is valid JSON object
+- json:rule_1_applied Field rule_1_applied exactly matches expected value
+- json:rule_2_applied Field rule_2_applied exactly matches expected value
+- json:rule_3_applied Field rule_3_applied exactly matches expected value
+- json:rule_4_applied Field rule_4_applied exactly matches expected value
+- json:rule_5_applied Field rule_5_applied exactly matches expected value
+- json:rule_6_applied Field rule_6_applied exactly matches expected value
+- json:rule_7_applied Field rule_7_applied exactly matches expected value
+- json:rule_8_applied Field rule_8_applied exactly matches expected value
+- json:rule_9_applied Field rule_9_applied exactly matches expected value
+- json:rule_10_applied Field rule_10_applied exactly matches expected value
+- json:__no_extra_keys JSON contains exactly the expected keys and no extras
+
+### Erwartete Antwort
+
+```json
+{
+  "rule_1_applied": "no",
+  "rule_2_applied": "yes",
+  "rule_3_applied": "no",
+  "rule_4_applied": "no",
+  "rule_5_applied": "no",
+  "rule_6_applied": "no",
+  "rule_7_applied": "yes",
+  "rule_8_applied": "no",
+  "rule_9_applied": "no",
+  "rule_10_applied": "yes"
+}
+```
+
+## Frage 7
+
+Frage Nummer: 947
+Metrik: pruefung_verifikation
+Workflow Typ: App2 / CE Flowreview S4
+Testset: ce_app2
+
+### Frage
+
+```text
+Computer-evaluable app2 reasoning task #7 for Pruefung / Verifikation.
+Metric focus: ob jede Regel korrekt geprueft und angewendet wurde.
+Level: 3. Seed: 3107.
+
+Anna hat zu Beginn 9 Bananen, Ben hat zu Beginn 2 Orangen, Clara hat zu Beginn 5 Melonen, David hat zu Beginn 14 Tickets, Emma hat zu Beginn 2 Muenzen, Finn hat zu Beginn 16 Karten, Greta hat zu Beginn 12 Stifte. Gehe nun die folgenden Regeln exakt in der angegebenen Reihenfolge durch. Jede Regel wird genau einmal geprueft. Wenn eine Regel mehrere Personen veraendert, passieren diese Aenderungen gleichzeitig auf Basis des Zustands direkt vor dieser Regel. Regel 1: Wenn Anna mehr Bananen hat als Emma Muenzen, dann Finn bekommt 6 Karten dazu. Regel 2: Wenn Finn mindestens 6 Karten hat, dann Finn teilt die Anzahl Karten ganzzahlig durch 2. Regel 3: Wenn Emma mehr Muenzen hat als Greta Stifte, dann David bekommt 2 Tickets dazu und Greta bekommt so viele Stifte dazu, wie viele Bananen Anna hat. Regel 4: Wenn Greta genau so viele Stifte hat wie Emma Muenzen, dann Ben multipliziert die Anzahl Orangen mit 2. Regel 5: Wenn Ben genau so viele Orangen hat wie Greta Stifte, dann Finn bekommt so viele Karten dazu, wie viele Melonen Clara hat und Anna gibt so viele Bananen ab, wie viele Melonen Clara hat und David bekommt 8 Tickets dazu. Regel 6: Wenn Anna genau so viele Bananen hat wie Finn Karten, dann Clara multipliziert die Anzahl Melonen mit der Stifte-Anzahl von Greta. Regel 7: Wenn Finn mehr als 7 Karten hat, dann David bekommt 5 Tickets dazu. Regel 8: Wenn Ben mehr als 18 Orangen hat, dann Finn teilt die Anzahl Karten ganzzahlig durch 5. Regel 9: Wenn Finn mehr Karten hat als Emma Muenzen, dann David teilt die Anzahl Tickets ganzzahlig durch 2. Regel 10: Wenn David mehr Tickets hat als Clara Melonen, dann Greta multipliziert die Anzahl Stifte mit 3 und Ben teilt die Anzahl Orangen ganzzahlig durch 2 und David gibt 9 Tickets ab. Berechne danach die finalen Werte und gib nur das verlangte JSON zurueck.
+
+Return ONLY one valid JSON object. No markdown, no explanation, no extra keys.
+Required keys in this exact set: ["rule_1_applied","rule_2_applied","rule_3_applied","rule_4_applied","rule_5_applied","rule_6_applied","rule_7_applied","rule_8_applied","rule_9_applied","rule_10_applied"].
+Required types and allowed values: rule_1_applied: one of yes|no; rule_2_applied: one of yes|no; rule_3_applied: one of yes|no; rule_4_applied: one of yes|no; rule_5_applied: one of yes|no; rule_6_applied: one of yes|no; rule_7_applied: one of yes|no; rule_8_applied: one of yes|no; rule_9_applied: one of yes|no; rule_10_applied: one of yes|no.
+Use numbers as numbers. Use yes/no only for rule-applied fields.
+Format example, not the solution:
+{
+  "rule_1_applied": "<yes|no>",
+  "rule_2_applied": "<yes|no>",
+  "rule_3_applied": "<yes|no>",
+  "rule_4_applied": "<yes|no>",
+  "rule_5_applied": "<yes|no>",
+  "rule_6_applied": "<yes|no>",
+  "rule_7_applied": "<yes|no>",
+  "rule_8_applied": "<yes|no>",
+  "rule_9_applied": "<yes|no>",
+  "rule_10_applied": "<yes|no>"
+}
+```
+
+### Kriterien
+
+- json:__valid_json Answer is valid JSON object
+- json:rule_1_applied Field rule_1_applied exactly matches expected value
+- json:rule_2_applied Field rule_2_applied exactly matches expected value
+- json:rule_3_applied Field rule_3_applied exactly matches expected value
+- json:rule_4_applied Field rule_4_applied exactly matches expected value
+- json:rule_5_applied Field rule_5_applied exactly matches expected value
+- json:rule_6_applied Field rule_6_applied exactly matches expected value
+- json:rule_7_applied Field rule_7_applied exactly matches expected value
+- json:rule_8_applied Field rule_8_applied exactly matches expected value
+- json:rule_9_applied Field rule_9_applied exactly matches expected value
+- json:rule_10_applied Field rule_10_applied exactly matches expected value
+- json:__no_extra_keys JSON contains exactly the expected keys and no extras
+
+### Erwartete Antwort
+
+```json
+{
+  "rule_1_applied": "yes",
+  "rule_2_applied": "yes",
+  "rule_3_applied": "no",
+  "rule_4_applied": "no",
+  "rule_5_applied": "no",
+  "rule_6_applied": "no",
+  "rule_7_applied": "yes",
+  "rule_8_applied": "no",
+  "rule_9_applied": "yes",
+  "rule_10_applied": "yes"
+}
+```
+
+## Frage 8
+
+Frage Nummer: 948
+Metrik: pruefung_verifikation
+Workflow Typ: App2 / CE Flowreview S4
+Testset: ce_app2
+
+### Frage
+
+```text
+Computer-evaluable app2 reasoning task #8 for Pruefung / Verifikation.
+Metric focus: ob jede Regel korrekt geprueft und angewendet wurde.
+Level: 3. Seed: 3108.
+
+Anna hat zu Beginn 9 Bananen, Ben hat zu Beginn 4 Orangen, Clara hat zu Beginn 18 Melonen, David hat zu Beginn 15 Tickets, Emma hat zu Beginn 16 Muenzen, Finn hat zu Beginn 11 Karten, Greta hat zu Beginn 1 Stifte. Gehe nun die folgenden Regeln exakt in der angegebenen Reihenfolge durch. Jede Regel wird genau einmal geprueft. Wenn eine Regel mehrere Personen veraendert, passieren diese Aenderungen gleichzeitig auf Basis des Zustands direkt vor dieser Regel. Regel 1: Wenn Anna genau so viele Bananen hat wie Greta Stifte, dann Anna gibt 9 Bananen ab und Emma gibt so viele Muenzen ab, wie viele Stifte Greta hat und David gibt 5 Tickets ab. Regel 2: Wenn Emma mehr Muenzen hat als Anna Bananen, dann Finn teilt die Anzahl Karten ganzzahlig durch 2 und Greta teilt die Anzahl Stifte ganzzahlig durch 2 und David gibt 1 Tickets ab. Regel 3: Wenn Anna genau so viele Bananen hat wie Finn Karten, dann Anna bekommt so viele Bananen dazu, wie viele Muenzen Emma hat. Regel 4: Wenn Anna weniger als 6 Bananen hat, dann Emma bekommt 8 Muenzen dazu und David gibt so viele Tickets ab, wie viele Muenzen Emma hat. Regel 5: Wenn Finn weniger Karten hat als Ben Orangen, dann Anna gibt so viele Bananen ab, wie viele Tickets David hat. Regel 6: Wenn Finn mehr als 9 Karten hat, dann Finn multipliziert die Anzahl Karten mit 4. Regel 7: Wenn Anna mehr Bananen hat als Ben Orangen, dann Anna gibt so viele Bananen ab, wie viele Karten Finn hat und Emma gibt so viele Muenzen ab, wie viele Karten Finn hat. Regel 8: Wenn Finn weniger als 6 Karten hat, dann David gibt 7 Tickets ab. Regel 9: Wenn Finn genau so viele Karten hat wie Anna Bananen, dann Anna teilt die Anzahl Bananen ganzzahlig durch 2. Regel 10: Wenn David mindestens so viele Tickets hat wie Emma Muenzen, dann Clara gibt so viele Melonen ab, wie viele Karten Finn hat. Berechne danach die finalen Werte und gib nur das verlangte JSON zurueck.
+
+Return ONLY one valid JSON object. No markdown, no explanation, no extra keys.
+Required keys in this exact set: ["rule_1_applied","rule_2_applied","rule_3_applied","rule_4_applied","rule_5_applied","rule_6_applied","rule_7_applied","rule_8_applied","rule_9_applied","rule_10_applied"].
+Required types and allowed values: rule_1_applied: one of yes|no; rule_2_applied: one of yes|no; rule_3_applied: one of yes|no; rule_4_applied: one of yes|no; rule_5_applied: one of yes|no; rule_6_applied: one of yes|no; rule_7_applied: one of yes|no; rule_8_applied: one of yes|no; rule_9_applied: one of yes|no; rule_10_applied: one of yes|no.
+Use numbers as numbers. Use yes/no only for rule-applied fields.
+Format example, not the solution:
+{
+  "rule_1_applied": "<yes|no>",
+  "rule_2_applied": "<yes|no>",
+  "rule_3_applied": "<yes|no>",
+  "rule_4_applied": "<yes|no>",
+  "rule_5_applied": "<yes|no>",
+  "rule_6_applied": "<yes|no>",
+  "rule_7_applied": "<yes|no>",
+  "rule_8_applied": "<yes|no>",
+  "rule_9_applied": "<yes|no>",
+  "rule_10_applied": "<yes|no>"
+}
+```
+
+### Kriterien
+
+- json:__valid_json Answer is valid JSON object
+- json:rule_1_applied Field rule_1_applied exactly matches expected value
+- json:rule_2_applied Field rule_2_applied exactly matches expected value
+- json:rule_3_applied Field rule_3_applied exactly matches expected value
+- json:rule_4_applied Field rule_4_applied exactly matches expected value
+- json:rule_5_applied Field rule_5_applied exactly matches expected value
+- json:rule_6_applied Field rule_6_applied exactly matches expected value
+- json:rule_7_applied Field rule_7_applied exactly matches expected value
+- json:rule_8_applied Field rule_8_applied exactly matches expected value
+- json:rule_9_applied Field rule_9_applied exactly matches expected value
+- json:rule_10_applied Field rule_10_applied exactly matches expected value
+- json:__no_extra_keys JSON contains exactly the expected keys and no extras
+
+### Erwartete Antwort
+
+```json
+{
+  "rule_1_applied": "no",
+  "rule_2_applied": "yes",
+  "rule_3_applied": "no",
+  "rule_4_applied": "no",
+  "rule_5_applied": "no",
+  "rule_6_applied": "no",
+  "rule_7_applied": "yes",
+  "rule_8_applied": "yes",
+  "rule_9_applied": "no",
+  "rule_10_applied": "no"
+}
+```
+
+## Frage 9
+
+Frage Nummer: 949
+Metrik: pruefung_verifikation
+Workflow Typ: App2 / CE Flowreview S4
+Testset: ce_app2
+
+### Frage
+
+```text
+Computer-evaluable app2 reasoning task #9 for Pruefung / Verifikation.
+Metric focus: ob jede Regel korrekt geprueft und angewendet wurde.
+Level: 3. Seed: 3109.
+
+Anna hat zu Beginn 9 Bananen, Ben hat zu Beginn 6 Orangen, Clara hat zu Beginn 12 Melonen, David hat zu Beginn 16 Tickets, Emma hat zu Beginn 9 Muenzen, Finn hat zu Beginn 6 Karten, Greta hat zu Beginn 9 Stifte. Gehe nun die folgenden Regeln exakt in der angegebenen Reihenfolge durch. Jede Regel wird genau einmal geprueft. Wenn eine Regel mehrere Personen veraendert, passieren diese Aenderungen gleichzeitig auf Basis des Zustands direkt vor dieser Regel. Regel 1: Wenn Greta mehr Stifte hat als Clara Melonen, dann Emma bekommt 9 Muenzen dazu. Regel 2: Wenn Emma hoechstens so viele Muenzen hat wie Clara Melonen, dann Emma gibt 4 Muenzen ab und Finn bekommt so viele Karten dazu, wie viele Orangen Ben hat. Regel 3: Wenn Clara genau so viele Melonen hat wie Finn Karten, dann Clara gibt so viele Melonen ab, wie viele Karten Finn hat und Greta gibt so viele Stifte ab, wie viele Bananen Anna hat. Regel 4: Wenn Greta mehr Stifte hat als Emma Muenzen, dann Anna teilt die Anzahl Bananen ganzzahlig durch 4. Regel 5: Wenn Ben hoechstens 16 Orangen hat, dann Emma teilt die Anzahl Muenzen ganzzahlig durch 5. Regel 6: Wenn Emma genau so viele Muenzen hat wie Finn Karten, dann Finn teilt die Anzahl Karten ganzzahlig durch 2. Regel 7: Wenn Finn weniger Karten hat als David Tickets, dann Finn teilt die Anzahl Karten ganzzahlig durch 5. Regel 8: Wenn Finn genau 15 Karten hat, dann Greta multipliziert die Anzahl Stifte mit 5. Regel 9: Wenn Finn mindestens so viele Karten hat wie Ben Orangen, dann Anna multipliziert die Anzahl Bananen mit 5. Regel 10: Wenn Anna hoechstens so viele Bananen hat wie Finn Karten, dann Clara multipliziert die Anzahl Melonen mit 2. Berechne danach die finalen Werte und gib nur das verlangte JSON zurueck.
+
+Return ONLY one valid JSON object. No markdown, no explanation, no extra keys.
+Required keys in this exact set: ["rule_1_applied","rule_2_applied","rule_3_applied","rule_4_applied","rule_5_applied","rule_6_applied","rule_7_applied","rule_8_applied","rule_9_applied","rule_10_applied"].
+Required types and allowed values: rule_1_applied: one of yes|no; rule_2_applied: one of yes|no; rule_3_applied: one of yes|no; rule_4_applied: one of yes|no; rule_5_applied: one of yes|no; rule_6_applied: one of yes|no; rule_7_applied: one of yes|no; rule_8_applied: one of yes|no; rule_9_applied: one of yes|no; rule_10_applied: one of yes|no.
+Use numbers as numbers. Use yes/no only for rule-applied fields.
+Format example, not the solution:
+{
+  "rule_1_applied": "<yes|no>",
+  "rule_2_applied": "<yes|no>",
+  "rule_3_applied": "<yes|no>",
+  "rule_4_applied": "<yes|no>",
+  "rule_5_applied": "<yes|no>",
+  "rule_6_applied": "<yes|no>",
+  "rule_7_applied": "<yes|no>",
+  "rule_8_applied": "<yes|no>",
+  "rule_9_applied": "<yes|no>",
+  "rule_10_applied": "<yes|no>"
+}
+```
+
+### Kriterien
+
+- json:__valid_json Answer is valid JSON object
+- json:rule_1_applied Field rule_1_applied exactly matches expected value
+- json:rule_2_applied Field rule_2_applied exactly matches expected value
+- json:rule_3_applied Field rule_3_applied exactly matches expected value
+- json:rule_4_applied Field rule_4_applied exactly matches expected value
+- json:rule_5_applied Field rule_5_applied exactly matches expected value
+- json:rule_6_applied Field rule_6_applied exactly matches expected value
+- json:rule_7_applied Field rule_7_applied exactly matches expected value
+- json:rule_8_applied Field rule_8_applied exactly matches expected value
+- json:rule_9_applied Field rule_9_applied exactly matches expected value
+- json:rule_10_applied Field rule_10_applied exactly matches expected value
+- json:__no_extra_keys JSON contains exactly the expected keys and no extras
+
+### Erwartete Antwort
+
+```json
+{
+  "rule_1_applied": "no",
+  "rule_2_applied": "yes",
+  "rule_3_applied": "yes",
+  "rule_4_applied": "no",
+  "rule_5_applied": "yes",
+  "rule_6_applied": "no",
+  "rule_7_applied": "yes",
+  "rule_8_applied": "no",
+  "rule_9_applied": "no",
+  "rule_10_applied": "no"
+}
+```
+
+## Frage 10
+
+Frage Nummer: 950
+Metrik: pruefung_verifikation
+Workflow Typ: App2 / CE Flowreview S4
+Testset: ce_app2
+
+### Frage
+
+```text
+Computer-evaluable app2 reasoning task #10 for Pruefung / Verifikation.
+Metric focus: ob jede Regel korrekt geprueft und angewendet wurde.
+Level: 3. Seed: 3110.
+
+Anna hat zu Beginn 9 Bananen, Ben hat zu Beginn 8 Orangen, Clara hat zu Beginn 6 Melonen, David hat zu Beginn 16 Tickets, Emma hat zu Beginn 2 Muenzen, Finn hat zu Beginn 1 Karten, Greta hat zu Beginn 18 Stifte. Gehe nun die folgenden Regeln exakt in der angegebenen Reihenfolge durch. Jede Regel wird genau einmal geprueft. Wenn eine Regel mehrere Personen veraendert, passieren diese Aenderungen gleichzeitig auf Basis des Zustands direkt vor dieser Regel. Regel 1: Wenn Greta hoechstens so viele Stifte hat wie Finn Karten, dann Emma bekommt so viele Muenzen dazu, wie viele Bananen Anna hat. Regel 2: Wenn Emma mindestens so viele Muenzen hat wie Finn Karten, dann Finn gibt so viele Karten ab, wie viele Orangen Ben hat. Regel 3: Wenn Ben mehr als 16 Orangen hat, dann Emma gibt 6 Muenzen ab. Regel 4: Wenn Emma weniger Muenzen hat als Finn Karten, dann David gibt 9 Tickets ab. Regel 5: Wenn Finn weniger Karten hat als Emma Muenzen, dann Ben bekommt so viele Orangen dazu, wie viele Stifte Greta hat und Anna gibt 6 Bananen ab. Regel 6: Wenn Clara weniger als 15 Melonen hat, dann Finn gibt so viele Karten ab, wie viele Melonen Clara hat und Anna teilt die Anzahl Bananen ganzzahlig durch 4. Regel 7: Wenn Greta mehr Stifte hat als Clara Melonen, dann Clara teilt die Anzahl Melonen ganzzahlig durch 5 und Emma teilt die Anzahl Muenzen ganzzahlig durch 3 und Greta multipliziert die Anzahl Stifte mit 4. Regel 8: Wenn Finn genau 10 Karten hat, dann Greta teilt die Anzahl Stifte ganzzahlig durch 5 und Ben multipliziert die Anzahl Orangen mit 4 und Finn teilt die Anzahl Karten ganzzahlig durch 5. Regel 9: Wenn Greta weniger als 20 Stifte hat, dann Emma teilt die Anzahl Muenzen ganzzahlig durch 4. Regel 10: Wenn Greta genau 15 Stifte hat, dann Finn multipliziert die Anzahl Karten mit 5 und Greta gibt 9 Stifte ab. Berechne danach die finalen Werte und gib nur das verlangte JSON zurueck.
+
+Return ONLY one valid JSON object. No markdown, no explanation, no extra keys.
+Required keys in this exact set: ["rule_1_applied","rule_2_applied","rule_3_applied","rule_4_applied","rule_5_applied","rule_6_applied","rule_7_applied","rule_8_applied","rule_9_applied","rule_10_applied"].
+Required types and allowed values: rule_1_applied: one of yes|no; rule_2_applied: one of yes|no; rule_3_applied: one of yes|no; rule_4_applied: one of yes|no; rule_5_applied: one of yes|no; rule_6_applied: one of yes|no; rule_7_applied: one of yes|no; rule_8_applied: one of yes|no; rule_9_applied: one of yes|no; rule_10_applied: one of yes|no.
+Use numbers as numbers. Use yes/no only for rule-applied fields.
+Format example, not the solution:
+{
+  "rule_1_applied": "<yes|no>",
+  "rule_2_applied": "<yes|no>",
+  "rule_3_applied": "<yes|no>",
+  "rule_4_applied": "<yes|no>",
+  "rule_5_applied": "<yes|no>",
+  "rule_6_applied": "<yes|no>",
+  "rule_7_applied": "<yes|no>",
+  "rule_8_applied": "<yes|no>",
+  "rule_9_applied": "<yes|no>",
+  "rule_10_applied": "<yes|no>"
+}
+```
+
+### Kriterien
+
+- json:__valid_json Answer is valid JSON object
+- json:rule_1_applied Field rule_1_applied exactly matches expected value
+- json:rule_2_applied Field rule_2_applied exactly matches expected value
+- json:rule_3_applied Field rule_3_applied exactly matches expected value
+- json:rule_4_applied Field rule_4_applied exactly matches expected value
+- json:rule_5_applied Field rule_5_applied exactly matches expected value
+- json:rule_6_applied Field rule_6_applied exactly matches expected value
+- json:rule_7_applied Field rule_7_applied exactly matches expected value
+- json:rule_8_applied Field rule_8_applied exactly matches expected value
+- json:rule_9_applied Field rule_9_applied exactly matches expected value
+- json:rule_10_applied Field rule_10_applied exactly matches expected value
+- json:__no_extra_keys JSON contains exactly the expected keys and no extras
+
+### Erwartete Antwort
+
+```json
+{
+  "rule_1_applied": "no",
+  "rule_2_applied": "yes",
+  "rule_3_applied": "no",
+  "rule_4_applied": "no",
+  "rule_5_applied": "yes",
+  "rule_6_applied": "yes",
+  "rule_7_applied": "yes",
+  "rule_8_applied": "no",
+  "rule_9_applied": "no",
+  "rule_10_applied": "no"
+}
+```
+

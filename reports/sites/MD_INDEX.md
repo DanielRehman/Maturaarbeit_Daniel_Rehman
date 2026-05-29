@@ -1,8 +1,8 @@
-# Übersicht der Markdown-Berichte
+﻿# Übersicht der Markdown-Berichte
 
 [Übersichtsseite öffnen](index.html)
 
-[Paardifferenzen in Teilgrafiken oeffnen](differenzen.html)
+[Paardifferenzen in Teilabbildungen öffnen](reports/paardifferenzen_teilabbildungen.html)
 
 Diese Datei verlinkt die vorhandenen Markdown-Dateien in `app/outputs_new`.
 
@@ -177,3 +177,4 @@ Diese Datei verlinkt die vorhandenen Markdown-Dateien in `app/outputs_new`.
 - [Vollständigkeit gemäß Frage Tabellen](../ALL/tables/07_vollstaendigkeit_gemaess_frage/tables.md)
 - [Klarheit / Verständlichkeit Tabellen](../ALL/tables/08_klarheit_verstaendlichkeit/tables.md)
 - [Relevanz Tabellen](../ALL/tables/09_relevanz/tables.md)
+

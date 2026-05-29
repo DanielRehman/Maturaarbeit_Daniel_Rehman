@@ -61,7 +61,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
-      margin-top: 28px;
+      margin-top: 12px;
     }
 
     a {
@@ -100,12 +100,17 @@
       border-color: var(--accent-dark);
     }
 
+    .link-group {
+      margin-top: 28px;
+    }
+
     .details {
       margin-top: 28px;
       padding-top: 24px;
       border-top: 1px solid var(--line);
     }
 
+    .link-group h2,
     .details h2 {
       margin: 0 0 10px;
       font-size: 1.25rem;
@@ -138,19 +143,33 @@
       <h1 id="page-title">Maturaarbeit Daniel Rehman</h1>
       <p>
         Diese Seite sammelt die wichtigsten Dateien und Auswertungen zur Maturaarbeit 2026.
-        Die Datenauswertung ist als HTML-Uebersicht und als Markdown-Index verfuegbar.
+        Die Datenauswertung sowie die Prompts und Fragesets sind als HTML-Seite und
+        als Markdown-Startseite verfuegbar.
       </p>
 
-      <div class="actions" aria-label="Wichtige Links">
-        <a class="button" href="https://DanielRehman.github.io/Maturaarbeit_Daniel_Rehman/reports/sites/index.html">Datenauswertung oeffnen</a>
-        <a class="button secondary" href="https://github.com/DanielRehman/Maturaarbeit_Daniel_Rehman/blob/main/reports/sites/MD_INDEX.md">Markdown-Index</a>
-      </div>
+      <section class="link-group" aria-labelledby="data-title">
+        <h2 id="data-title">Datenauswertung</h2>
+        <div class="actions" aria-label="Links zur Datenauswertung">
+          <a class="button" href="https://DanielRehman.github.io/Maturaarbeit_Daniel_Rehman/reports/sites/index.html">HTML-Seite oeffnen</a>
+          <a class="button secondary" href="https://github.com/DanielRehman/Maturaarbeit_Daniel_Rehman/blob/main/reports/sites/MD_INDEX.md">Markdown-Index</a>
+        </div>
+      </section>
+
+      <section class="link-group" aria-labelledby="prompts-title">
+        <h2 id="prompts-title">Prompts und Fragesets</h2>
+        <div class="actions" aria-label="Links zu Prompts und Fragesets">
+          <a class="button" href="https://DanielRehman.github.io/Maturaarbeit_Daniel_Rehman/reports/sites2/index.html">HTML-Seite oeffnen</a>
+          <a class="button secondary" href="https://github.com/DanielRehman/Maturaarbeit_Daniel_Rehman/blob/main/reports/sites2/index.md">Markdown-Startseite</a>
+        </div>
+      </section>
 
       <section class="details" aria-labelledby="details-title">
         <h2 id="details-title">Inhalt</h2>
         <p>
           Die HTML-Auswertung verlinkt die Berichte, Tabellen und Abbildungen.
-          Der Markdown-Index fuehrt zu den einzelnen Markdown-Berichten im Repository.
+          Die zweite HTML-Seite fuehrt zu Fragen, Kriterien, erwarteten Antworten und
+          verwendeten Systemprompts. Die Markdown-Links oeffnen die passenden Dateien
+          direkt im Repository.
         </p>
       </section>
     </section>

@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="de" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>App2: Verfahren der Frage-Erstellung</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="../../index.html">Anhang</a>
+  <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Darstellung wechseln">Darstellung wechseln</button>
+</header>
+<main class="shell">
+  <section class="hero"><h1>App2: Verfahren der Frage-Erstellung</h1><p>Frage-Erstellung</p></section>
+  <nav class="breadcrumb"><a href="../../index.html">Übersicht</a><span>Frage-Erstellung</span></nav>
+<article class="doc"><h2>App2 Frage Erstellen</h2>
+<h3>Input</h3>
+<pre><code class="language-text">Metrik
+Schwierigkeit / Level
+Seed
+Aufgabenindex</code></pre>
+<h3>1. Seed setzen</h3>
+<pre><code class="language-text">SeededRandom(seed)</code></pre>
+<p>Der Seed macht die Aufgabe reproduzierbar.</p>
+<p>Gleicher Seed und gleiches Level erzeugen dieselbe Aufgabe.</p>
+<h3>2. Schwierigkeitsprofil laden</h3>
+<pre><code class="language-text">levelConfig(level)</code></pre>
+<p>Das Profil bestimmt:</p>
+<pre><code class="language-text">Anzahl Variablen
+Anzahl Regeln
+maximaler Startwert
+erlaubte Vergleichsoperatoren
+erlaubte Rechenoperatoren
+Abhängigkeitstiefe
+Gruppenregeln ja/nein
+negative Updates ja/nein</code></pre>
+<h3>3. Variablen erzeugen</h3>
+<pre><code class="language-text">generateVariables(config, rng)</code></pre>
+<p>Für jede Variable wird erzeugt:</p>
+<pre><code class="language-text">interner Name: A, B, C, ...
+Person: Anna, Ben, Clara, ...
+Objekt: Bananen, Orangen, Melonen, ...
+Startwert: Zufallszahl aus dem erlaubten Bereich</code></pre>
+<p>Beispiel:</p>
+<pre><code class="language-text">A = Anna hat 9 Bananen
+B = Ben hat 12 Orangen
+C = Clara hat 2 Melonen</code></pre>
+<h3>4. Regeln erzeugen</h3>
+<pre><code class="language-text">generateRules(config, variables, rng)</code></pre>
+<p>Jede Regel besteht aus:</p>
+<pre><code class="language-text">Bedingung links
+Vergleichsoperator
+Bedingung rechts
+eine oder mehrere Änderungen</code></pre>
+<p>Beispiel intern:</p>
+<pre><code class="language-text">if C = E then G = G - C</code></pre>
+<p>Beispiel als Text:</p>
+<pre><code class="language-text">Wenn Clara genau so viele Melonen hat wie Emma Muenzen, dann Greta gibt so viele Stifte ab, wie viele Melonen Clara hat.</code></pre>
+<h3>5. Regeln lösen</h3>
+<pre><code class="language-text">new Solver().solve(task)</code></pre>
+<p>Für jede Regel:</p>
+<pre><code class="language-text">aktuellen Zustand lesen
+Bedingung prüfen
+condition_true = yes oder no
+wenn yes: Änderungen berechnen
+wenn no: Zustand bleibt gleich
+Trace speichern</code></pre>
+<p>Bei mehreren Änderungen in einer Regel:</p>
+<pre><code class="language-text">alle neuen Werte werden aus dem Zustand vor dieser Regel berechnet
+danach werden alle Änderungen gleichzeitig übernommen</code></pre>
+<p>Division:</p>
+<pre><code class="language-text">ganzzahlige Division mit Math.trunc
+Division durch 0 lässt den Wert unverändert</code></pre>
+<h3>6. Erwartete Antwort erzeugen</h3>
+<pre><code class="language-text">buildExpected(task, trace, finalValues)</code></pre>
+<p>Die erwartete Antwort enthält:</p>
+<pre><code class="language-text">finale Werte der Variablen
+rule_1_applied
+rule_2_applied
+...
+rule_n_applied</code></pre>
+<p>Beispiel:</p>
+<pre><code class="language-json">{
+  &quot;A&quot;: 9,
+  &quot;B&quot;: 12,
+  &quot;C&quot;: 2,
+  &quot;rule_1_applied&quot;: &quot;no&quot;,
+  &quot;rule_2_applied&quot;: &quot;yes&quot;
+}</code></pre>
+<h3>7. Antwortschema erzeugen</h3>
+<pre><code class="language-text">buildSchema(task)</code></pre>
+<p>Schema:</p>
+<pre><code class="language-text">Variablenfelder: number
+Regel-Felder: yes|no</code></pre>
+<p>Beispiel:</p>
+<pre><code class="language-json">{
+  &quot;A&quot;: &quot;number&quot;,
+  &quot;B&quot;: &quot;number&quot;,
+  &quot;rule_1_applied&quot;: &quot;yes|no&quot;,
+  &quot;rule_2_applied&quot;: &quot;yes|no&quot;
+}</code></pre>
+<h3>8. Metrik-Auswahl</h3>
+<pre><code class="language-text">metricExpected(metric, task, baseExpected)</code></pre>
+<p>Je nach Metrik wird festgelegt, welche Felder verlangt werden.</p>
+<pre><code class="language-text">richtigkeit: finale Werte
+pruefung_verifikation: rule_x_applied Felder
+vollstaendigkeit_frage: Auswahl aus finalen Werten und Regelchecks
+vollstaendigkeit_moeglichkeit: alle finalen Werte und alle Regelchecks
+klarheit: Aufgabe plus Strukturfelder
+relevanz: relevante und irrelevante Informationen erkennen
+rueckfragefaehigkeit: fehlende Information erkennen
+unsicherheit: Widerspruch erkennen
+internet_quellenqualitaet: beste Quelle wählen</code></pre>
+<h3>9. Fragetext erzeugen</h3>
+<pre><code class="language-text">Translator.renderTask(task)
+renderMetricTaskText(metric, task, expected)
+questionText(difficulty, metric, index, bundle, expected, schema)</code></pre>
+<p>Der Fragetext enthält:</p>
+<pre><code class="language-text">Aufgabentitel
+Metrik-Fokus
+Schwierigkeit
+Seed
+Startzustand
+Regeln in Reihenfolge
+JSON-Anforderung
+erlaubte Antwortfelder
+erlaubte Typen und Werte
+Formatbeispiel</code></pre>
+<h3>10. Frage speichern</h3>
+<pre><code class="language-text">questions.question_text = Fragetext
+questions.expected_answer_json = erwartete Antwort
+questions.answer_schema_json = Antwortschema
+questions.evaluation_type = json_exact
+questions.computer_evaluable = 1</code></pre>
+<h3>11. Frage an Workflow geben</h3>
+<pre><code class="language-text">executeRun(setupId, questionId, modelId, runSetId)</code></pre>
+<p>Der Workflow bekommt:</p>
+<pre><code class="language-text">Fragetext
+System Prompt des Workflow-Schritts
+Antwortschema</code></pre>
+<h3>12. Modellantwort erzeugen</h3>
+<p>Das Modell gibt eine JSON-Antwort zurück.</p>
+<p>Beispiel:</p>
+<pre><code class="language-json">{
+  &quot;rule_1_applied&quot;: &quot;no&quot;,
+  &quot;rule_2_applied&quot;: &quot;yes&quot;
+}</code></pre>
+<h3>13. Antwort bewerten</h3>
+<pre><code class="language-text">Evaluator.evaluate(modelAnswer, expected)</code></pre>
+<p>Für jedes erwartete Feld:</p>
+<pre><code class="language-text">Feld vorhanden?
+Wert exakt gleich?
+Typ passend?</code></pre>
+<p>Score:</p>
+<pre><code class="language-text">korrekte Felder / erwartete Felder * 100</code></pre>
+<h3>14. Output</h3>
+<pre><code class="language-text">Frage Text
+Erwartete Antwort
+Modellantwort
+Score</code></pre></article>
+<section class="source-link"><a href="../../../anhang_fragen_generator/app2_frage_erstellen_prozedur.md">Markdown-Datei öffnen</a></section>
+</main>
+<script src="../../assets/site.js"></script>
+</body>
+</html>
