@@ -1,0 +1,213 @@
+# Übersicht mit Detailauswertungen
+
+## Auswahl
+
+- Kriterien: Alle Kriterien
+- Fragensets: default, example, flowmap_set7, flowreview_set7, impossibleforai, lausyprompt, promptoptimierung_schwierig, set1, set2, set3, set4, set5
+- Run-Sets: Existing runs, run10, gpt3_prompt_schwer, lazy_gpt3, flowmap7, review7, set2_review, set2_more, set2_5, set3_flowmap, set4_flowreview, set3_more, set3_3, imposs_2_single, imposs_3_single
+- Workflow-Setups: C – Prompt-Optimierung, Flowmap, Flowreview
+- Modelle: GPT-4o Mini, Claude Haiku 3.5, DeepSeek Chat, GPT-4o, GPT-4.1, GPT-3.5 Turbo (legacy)
+- Max Paare pro Kriterium: kein Limit
+- Skip Paare pro Kriterium: 0
+- Direkt-Score behalten: aus, nichts ausgeschlossen
+- Stabiler Exportordner / Asset-Prefix: ALL
+
+Review-Antworten eingeschlossen: nein
+Manuell ausgeschlossene Antworten eingeschlossen: nein
+
+## Inhalt
+
+- `report_00_overview.md`: Uebersicht ueber alle Kriterien.
+- `report_01_richtigkeit.md`: Detailauswertung fuer Richtigkeit.
+- `report_02_rueckfragefaehigkeit.md`: Detailauswertung fuer Rückfragefähigkeit.
+- `report_03_internet-_quellenqualitaet.md`: Detailauswertung fuer Internet- / Quellenqualität.
+- `report_04_pruefung_verifikation.md`: Detailauswertung fuer Prüfung / Verifikation.
+- `report_05_unsicherheit_offenlegen.md`: Detailauswertung fuer Unsicherheit offenlegen.
+- `report_06_vollstaendigkeit_gemaess_moeglichkeit.md`: Detailauswertung fuer Vollständigkeit gemäß Möglichkeit.
+- `report_07_vollstaendigkeit_gemaess_frage.md`: Detailauswertung fuer Vollständigkeit gemäß Frage.
+- `report_08_klarheit_verstaendlichkeit.md`: Detailauswertung fuer Klarheit / Verständlichkeit.
+- `report_09_relevanz.md`: Detailauswertung fuer Relevanz.
+
+## Dateien
+
+- `ALL/tables/00_overview/short_results_table.tex`
+- `ALL/tables/00_overview/full_results_table.tex`
+- `ALL/tables/00_overview/data_quality_table.tex`
+- `ALL/tables/00_overview/tables.md`
+- `ALL/images/00_overview/chart_mean_difference_by_criterion.svg`
+- `ALL/images/00_overview/chart_mean_direkter_aufruf_vs_workflow.svg`
+- `ALL/images/00_overview/chart_data_quality_by_criterion.svg`
+- `ALL/images/00_overview/chart_ceiling_effect_by_criterion.svg`
+- `report_00_overview.md`
+- `README_00_overview.md`
+- `ALL/tables/01_richtigkeit/short_results_table.tex`
+- `ALL/tables/01_richtigkeit/full_results_table.tex`
+- `ALL/tables/01_richtigkeit/data_quality_table.tex`
+- `ALL/tables/01_richtigkeit/tables.md`
+- `ALL/images/01_richtigkeit/chart_paired_differences.svg`
+- `ALL/images/01_richtigkeit/chart_paired_differences_sample.svg`
+- `ALL/images/01_richtigkeit/chart_paired_differences_part_001.svg`
+- `ALL/images/01_richtigkeit/chart_paired_differences_part_002.svg`
+- `ALL/images/01_richtigkeit/chart_paired_differences_part_003.svg`
+- `ALL/images/01_richtigkeit/chart_paired_differences_part_004.svg`
+- `ALL/images/01_richtigkeit/chart_paired_differences_part_005.svg`
+- `ALL/images/01_richtigkeit/chart_paired_differences_part_006.svg`
+- `ALL/images/01_richtigkeit/chart_paired_differences_part_007.svg`
+- `ALL/images/01_richtigkeit/chart_paired_differences_part_008.svg`
+- `ALL/images/01_richtigkeit/chart_paired_differences_part_009.svg`
+- `ALL/images/01_richtigkeit/chart_difference_distribution.svg`
+- `ALL/images/01_richtigkeit/chart_scoreverteilung_direkter_aufruf.svg`
+- `ALL/images/01_richtigkeit/chart_direkter_aufruf_vs_workflow_scatter.svg`
+- `report_01_richtigkeit.md`
+- `README_01_richtigkeit.md`
+- `ALL/tables/02_rueckfragefaehigkeit/short_results_table.tex`
+- `ALL/tables/02_rueckfragefaehigkeit/full_results_table.tex`
+- `ALL/tables/02_rueckfragefaehigkeit/data_quality_table.tex`
+- `ALL/tables/02_rueckfragefaehigkeit/tables.md`
+- `ALL/images/02_rueckfragefaehigkeit/chart_paired_differences.svg`
+- `ALL/images/02_rueckfragefaehigkeit/chart_paired_differences_sample.svg`
+- `ALL/images/02_rueckfragefaehigkeit/chart_paired_differences_part_001.svg`
+- `ALL/images/02_rueckfragefaehigkeit/chart_paired_differences_part_002.svg`
+- `ALL/images/02_rueckfragefaehigkeit/chart_paired_differences_part_003.svg`
+- `ALL/images/02_rueckfragefaehigkeit/chart_paired_differences_part_004.svg`
+- `ALL/images/02_rueckfragefaehigkeit/chart_paired_differences_part_005.svg`
+- `ALL/images/02_rueckfragefaehigkeit/chart_paired_differences_part_006.svg`
+- `ALL/images/02_rueckfragefaehigkeit/chart_paired_differences_part_007.svg`
+- `ALL/images/02_rueckfragefaehigkeit/chart_difference_distribution.svg`
+- `ALL/images/02_rueckfragefaehigkeit/chart_scoreverteilung_direkter_aufruf.svg`
+- `ALL/images/02_rueckfragefaehigkeit/chart_direkter_aufruf_vs_workflow_scatter.svg`
+- `report_02_rueckfragefaehigkeit.md`
+- `README_02_rueckfragefaehigkeit.md`
+- `ALL/tables/03_internet-_quellenqualitaet/short_results_table.tex`
+- `ALL/tables/03_internet-_quellenqualitaet/full_results_table.tex`
+- `ALL/tables/03_internet-_quellenqualitaet/data_quality_table.tex`
+- `ALL/tables/03_internet-_quellenqualitaet/tables.md`
+- `ALL/images/03_internet-_quellenqualitaet/chart_paired_differences.svg`
+- `ALL/images/03_internet-_quellenqualitaet/chart_paired_differences_sample.svg`
+- `ALL/images/03_internet-_quellenqualitaet/chart_paired_differences_part_001.svg`
+- `ALL/images/03_internet-_quellenqualitaet/chart_paired_differences_part_002.svg`
+- `ALL/images/03_internet-_quellenqualitaet/chart_paired_differences_part_003.svg`
+- `ALL/images/03_internet-_quellenqualitaet/chart_paired_differences_part_004.svg`
+- `ALL/images/03_internet-_quellenqualitaet/chart_paired_differences_part_005.svg`
+- `ALL/images/03_internet-_quellenqualitaet/chart_paired_differences_part_006.svg`
+- `ALL/images/03_internet-_quellenqualitaet/chart_paired_differences_part_007.svg`
+- `ALL/images/03_internet-_quellenqualitaet/chart_paired_differences_part_008.svg`
+- `ALL/images/03_internet-_quellenqualitaet/chart_difference_distribution.svg`
+- `ALL/images/03_internet-_quellenqualitaet/chart_scoreverteilung_direkter_aufruf.svg`
+- `ALL/images/03_internet-_quellenqualitaet/chart_direkter_aufruf_vs_workflow_scatter.svg`
+- `report_03_internet-_quellenqualitaet.md`
+- `README_03_internet-_quellenqualitaet.md`
+- `ALL/tables/04_pruefung_verifikation/short_results_table.tex`
+- `ALL/tables/04_pruefung_verifikation/full_results_table.tex`
+- `ALL/tables/04_pruefung_verifikation/data_quality_table.tex`
+- `ALL/tables/04_pruefung_verifikation/tables.md`
+- `ALL/images/04_pruefung_verifikation/chart_paired_differences.svg`
+- `ALL/images/04_pruefung_verifikation/chart_paired_differences_sample.svg`
+- `ALL/images/04_pruefung_verifikation/chart_paired_differences_part_001.svg`
+- `ALL/images/04_pruefung_verifikation/chart_paired_differences_part_002.svg`
+- `ALL/images/04_pruefung_verifikation/chart_paired_differences_part_003.svg`
+- `ALL/images/04_pruefung_verifikation/chart_paired_differences_part_004.svg`
+- `ALL/images/04_pruefung_verifikation/chart_paired_differences_part_005.svg`
+- `ALL/images/04_pruefung_verifikation/chart_paired_differences_part_006.svg`
+- `ALL/images/04_pruefung_verifikation/chart_paired_differences_part_007.svg`
+- `ALL/images/04_pruefung_verifikation/chart_paired_differences_part_008.svg`
+- `ALL/images/04_pruefung_verifikation/chart_difference_distribution.svg`
+- `ALL/images/04_pruefung_verifikation/chart_scoreverteilung_direkter_aufruf.svg`
+- `ALL/images/04_pruefung_verifikation/chart_direkter_aufruf_vs_workflow_scatter.svg`
+- `report_04_pruefung_verifikation.md`
+- `README_04_pruefung_verifikation.md`
+- `ALL/tables/05_unsicherheit_offenlegen/short_results_table.tex`
+- `ALL/tables/05_unsicherheit_offenlegen/full_results_table.tex`
+- `ALL/tables/05_unsicherheit_offenlegen/data_quality_table.tex`
+- `ALL/tables/05_unsicherheit_offenlegen/tables.md`
+- `ALL/images/05_unsicherheit_offenlegen/chart_paired_differences.svg`
+- `ALL/images/05_unsicherheit_offenlegen/chart_paired_differences_sample.svg`
+- `ALL/images/05_unsicherheit_offenlegen/chart_paired_differences_part_001.svg`
+- `ALL/images/05_unsicherheit_offenlegen/chart_paired_differences_part_002.svg`
+- `ALL/images/05_unsicherheit_offenlegen/chart_paired_differences_part_003.svg`
+- `ALL/images/05_unsicherheit_offenlegen/chart_paired_differences_part_004.svg`
+- `ALL/images/05_unsicherheit_offenlegen/chart_paired_differences_part_005.svg`
+- `ALL/images/05_unsicherheit_offenlegen/chart_paired_differences_part_006.svg`
+- `ALL/images/05_unsicherheit_offenlegen/chart_paired_differences_part_007.svg`
+- `ALL/images/05_unsicherheit_offenlegen/chart_difference_distribution.svg`
+- `ALL/images/05_unsicherheit_offenlegen/chart_scoreverteilung_direkter_aufruf.svg`
+- `ALL/images/05_unsicherheit_offenlegen/chart_direkter_aufruf_vs_workflow_scatter.svg`
+- `report_05_unsicherheit_offenlegen.md`
+- `README_05_unsicherheit_offenlegen.md`
+- `ALL/tables/06_vollstaendigkeit_gemaess_moeglichkeit/short_results_table.tex`
+- `ALL/tables/06_vollstaendigkeit_gemaess_moeglichkeit/full_results_table.tex`
+- `ALL/tables/06_vollstaendigkeit_gemaess_moeglichkeit/data_quality_table.tex`
+- `ALL/tables/06_vollstaendigkeit_gemaess_moeglichkeit/tables.md`
+- `ALL/images/06_vollstaendigkeit_gemaess_moeglichkeit/chart_paired_differences.svg`
+- `ALL/images/06_vollstaendigkeit_gemaess_moeglichkeit/chart_paired_differences_sample.svg`
+- `ALL/images/06_vollstaendigkeit_gemaess_moeglichkeit/chart_paired_differences_part_001.svg`
+- `ALL/images/06_vollstaendigkeit_gemaess_moeglichkeit/chart_paired_differences_part_002.svg`
+- `ALL/images/06_vollstaendigkeit_gemaess_moeglichkeit/chart_paired_differences_part_003.svg`
+- `ALL/images/06_vollstaendigkeit_gemaess_moeglichkeit/chart_paired_differences_part_004.svg`
+- `ALL/images/06_vollstaendigkeit_gemaess_moeglichkeit/chart_paired_differences_part_005.svg`
+- `ALL/images/06_vollstaendigkeit_gemaess_moeglichkeit/chart_paired_differences_part_006.svg`
+- `ALL/images/06_vollstaendigkeit_gemaess_moeglichkeit/chart_paired_differences_part_007.svg`
+- `ALL/images/06_vollstaendigkeit_gemaess_moeglichkeit/chart_paired_differences_part_008.svg`
+- `ALL/images/06_vollstaendigkeit_gemaess_moeglichkeit/chart_difference_distribution.svg`
+- `ALL/images/06_vollstaendigkeit_gemaess_moeglichkeit/chart_scoreverteilung_direkter_aufruf.svg`
+- `ALL/images/06_vollstaendigkeit_gemaess_moeglichkeit/chart_direkter_aufruf_vs_workflow_scatter.svg`
+- `report_06_vollstaendigkeit_gemaess_moeglichkeit.md`
+- `README_06_vollstaendigkeit_gemaess_moeglichkeit.md`
+- `ALL/tables/07_vollstaendigkeit_gemaess_frage/short_results_table.tex`
+- `ALL/tables/07_vollstaendigkeit_gemaess_frage/full_results_table.tex`
+- `ALL/tables/07_vollstaendigkeit_gemaess_frage/data_quality_table.tex`
+- `ALL/tables/07_vollstaendigkeit_gemaess_frage/tables.md`
+- `ALL/images/07_vollstaendigkeit_gemaess_frage/chart_paired_differences.svg`
+- `ALL/images/07_vollstaendigkeit_gemaess_frage/chart_paired_differences_sample.svg`
+- `ALL/images/07_vollstaendigkeit_gemaess_frage/chart_paired_differences_part_001.svg`
+- `ALL/images/07_vollstaendigkeit_gemaess_frage/chart_paired_differences_part_002.svg`
+- `ALL/images/07_vollstaendigkeit_gemaess_frage/chart_paired_differences_part_003.svg`
+- `ALL/images/07_vollstaendigkeit_gemaess_frage/chart_paired_differences_part_004.svg`
+- `ALL/images/07_vollstaendigkeit_gemaess_frage/chart_paired_differences_part_005.svg`
+- `ALL/images/07_vollstaendigkeit_gemaess_frage/chart_paired_differences_part_006.svg`
+- `ALL/images/07_vollstaendigkeit_gemaess_frage/chart_paired_differences_part_007.svg`
+- `ALL/images/07_vollstaendigkeit_gemaess_frage/chart_paired_differences_part_008.svg`
+- `ALL/images/07_vollstaendigkeit_gemaess_frage/chart_paired_differences_part_009.svg`
+- `ALL/images/07_vollstaendigkeit_gemaess_frage/chart_difference_distribution.svg`
+- `ALL/images/07_vollstaendigkeit_gemaess_frage/chart_scoreverteilung_direkter_aufruf.svg`
+- `ALL/images/07_vollstaendigkeit_gemaess_frage/chart_direkter_aufruf_vs_workflow_scatter.svg`
+- `report_07_vollstaendigkeit_gemaess_frage.md`
+- `README_07_vollstaendigkeit_gemaess_frage.md`
+- `ALL/tables/08_klarheit_verstaendlichkeit/short_results_table.tex`
+- `ALL/tables/08_klarheit_verstaendlichkeit/full_results_table.tex`
+- `ALL/tables/08_klarheit_verstaendlichkeit/data_quality_table.tex`
+- `ALL/tables/08_klarheit_verstaendlichkeit/tables.md`
+- `ALL/images/08_klarheit_verstaendlichkeit/chart_paired_differences.svg`
+- `ALL/images/08_klarheit_verstaendlichkeit/chart_paired_differences_sample.svg`
+- `ALL/images/08_klarheit_verstaendlichkeit/chart_paired_differences_part_001.svg`
+- `ALL/images/08_klarheit_verstaendlichkeit/chart_paired_differences_part_002.svg`
+- `ALL/images/08_klarheit_verstaendlichkeit/chart_paired_differences_part_003.svg`
+- `ALL/images/08_klarheit_verstaendlichkeit/chart_paired_differences_part_004.svg`
+- `ALL/images/08_klarheit_verstaendlichkeit/chart_paired_differences_part_005.svg`
+- `ALL/images/08_klarheit_verstaendlichkeit/chart_paired_differences_part_006.svg`
+- `ALL/images/08_klarheit_verstaendlichkeit/chart_paired_differences_part_007.svg`
+- `ALL/images/08_klarheit_verstaendlichkeit/chart_paired_differences_part_008.svg`
+- `ALL/images/08_klarheit_verstaendlichkeit/chart_difference_distribution.svg`
+- `ALL/images/08_klarheit_verstaendlichkeit/chart_scoreverteilung_direkter_aufruf.svg`
+- `ALL/images/08_klarheit_verstaendlichkeit/chart_direkter_aufruf_vs_workflow_scatter.svg`
+- `report_08_klarheit_verstaendlichkeit.md`
+- `README_08_klarheit_verstaendlichkeit.md`
+- `ALL/tables/09_relevanz/short_results_table.tex`
+- `ALL/tables/09_relevanz/full_results_table.tex`
+- `ALL/tables/09_relevanz/data_quality_table.tex`
+- `ALL/tables/09_relevanz/tables.md`
+- `ALL/images/09_relevanz/chart_paired_differences.svg`
+- `ALL/images/09_relevanz/chart_paired_differences_sample.svg`
+- `ALL/images/09_relevanz/chart_paired_differences_part_001.svg`
+- `ALL/images/09_relevanz/chart_paired_differences_part_002.svg`
+- `ALL/images/09_relevanz/chart_paired_differences_part_003.svg`
+- `ALL/images/09_relevanz/chart_paired_differences_part_004.svg`
+- `ALL/images/09_relevanz/chart_paired_differences_part_005.svg`
+- `ALL/images/09_relevanz/chart_paired_differences_part_006.svg`
+- `ALL/images/09_relevanz/chart_paired_differences_part_007.svg`
+- `ALL/images/09_relevanz/chart_paired_differences_part_008.svg`
+- `ALL/images/09_relevanz/chart_difference_distribution.svg`
+- `ALL/images/09_relevanz/chart_scoreverteilung_direkter_aufruf.svg`
+- `ALL/images/09_relevanz/chart_direkter_aufruf_vs_workflow_scatter.svg`
+- `report_09_relevanz.md`
+- `README_09_relevanz.md`

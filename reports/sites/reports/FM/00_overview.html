@@ -1,0 +1,203 @@
+﻿<!doctype html>
+<html lang="de" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flowmap: Übersicht</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="../../index.html">Auswertung</a>
+  <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Darstellung wechseln">Darstellung wechseln</button>
+</header>
+<main class="shell">
+  <section class="hero">
+    <h1>Flowmap: Übersicht</h1>
+    <p>Bericht mit zugeh?rigen Tabellen und Abbildungen.</p>
+  </section>
+  <nav class="breadcrumb"><a href="../../index.html">Übersicht</a><span>FM</span><span>Übersicht</span></nav>
+  <article class="report"><h2>Ãœbersicht nach Kriterium</h2>
+<h3>Auswahl</h3>
+<ul>
+<li>Kriterien: Alle Kriterien</li>
+<li>Fragensets: default, example, flowmap_set7, flowreview_set7, impossibleforai, lausyprompt, promptoptimierung_schwierig, set1, set2, set3, set4, set5</li>
+<li>Run-Sets: Existing runs, run10, gpt3_prompt_schwer, lazy_gpt3, flowmap7, review7, set2_review, set2_more, set2_5, set3_flowmap, set4_flowreview, set3_more, set3_3, imposs_2_single, imposs_3_single</li>
+<li>Workflow-Setups: Flowmap</li>
+<li>Modelle: GPT-4o Mini, Claude Haiku 3.5, DeepSeek Chat, GPT-4o, GPT-4.1, GPT-3.5 Turbo (legacy)</li>
+<li>Max Paare pro Kriterium: kein Limit</li>
+<li>Skip Paare pro Kriterium: 0</li>
+<li>Direkt-Score behalten: aus, nichts ausgeschlossen</li>
+<li>Stabiler Exportordner / Asset-Prefix: FM</li>
+</ul>
+<p>Review-Antworten eingeschlossen: nein</p>
+<p>Manuell ausgeschlossene Antworten eingeschlossen: nein</p>
+<h3>Kurze Ergebnistabelle</h3>
+<div class="table-scroll"><table><thead><tr><th>Kriterium</th><th>n</th><th>Mittel Direkter Aufruf</th><th>Mittel Workflow</th><th>Diff.</th><th>p-Wert</th><th>Ergebnis</th></tr></thead><tbody>
+<tr><td>Richtigkeit</td><td>200</td><td>87.7</td><td>83.2</td><td>-4.5</td><td>0.0068</td><td>signifikante Verschlechterung</td></tr>
+<tr><td>RÃ¼ckfragefÃ¤higkeit</td><td>176</td><td>37.9</td><td>62.2</td><td>+24.3</td><td>&lt;0.0001</td><td>signifikante Verbesserung</td></tr>
+<tr><td>Internet- / QuellenqualitÃ¤t</td><td>194</td><td>56.0</td><td>59.9</td><td>+3.8</td><td>0.1041</td><td>nicht signifikant</td></tr>
+<tr><td>PrÃ¼fung / Verifikation</td><td>199</td><td>67.0</td><td>71.5</td><td>+4.5</td><td>0.0908</td><td>nicht signifikant</td></tr>
+<tr><td>Unsicherheit offenlegen</td><td>200</td><td>85.4</td><td>83.0</td><td>-2.4</td><td>0.3370</td><td>nicht signifikant</td></tr>
+<tr><td>VollstÃ¤ndigkeit gemÃ¤ÃŸ MÃ¶glichkeit</td><td>196</td><td>75.9</td><td>72.7</td><td>-3.2</td><td>0.2303</td><td>nicht signifikant</td></tr>
+<tr><td>VollstÃ¤ndigkeit gemÃ¤ÃŸ Frage</td><td>199</td><td>92.5</td><td>85.7</td><td>-6.8</td><td>&lt;0.0001</td><td>signifikante Verschlechterung</td></tr>
+<tr><td>Klarheit / VerstÃ¤ndlichkeit</td><td>190</td><td>79.1</td><td>75.8</td><td>-3.3</td><td>0.0675</td><td>nicht signifikant</td></tr>
+<tr><td>Relevanz</td><td>200</td><td>95.3</td><td>89.6</td><td>-5.7</td><td>&lt;0.0001</td><td>signifikante Verschlechterung</td></tr>
+</tbody></table></div>
+<p>LaTeX-gerenderte Tabelle:</p>
+<p><figure><a href="../../../FM/tables/00_overview/short_results_table.svg"><img src="../../../FM/tables/00_overview/short_results_table.svg" alt="Kurze Ergebnistabelle" loading="lazy"></a><figcaption>Kurze Ergebnistabelle</figcaption></figure></p>
+<p>FelderklÃ¤rung:</p>
+<ul>
+<li><strong>Kriterium</strong>: Bewerteter QualitÃ¤tsbereich, z.B. Richtigkeit oder VollstÃ¤ndigkeit.</li>
+<li><strong>n</strong>: Anzahl der vollstÃ¤ndigen ausgewÃ¤hlten Paare, die in Statistik und Mittelwerte eingehen.</li>
+<li><strong>Mittel Direkter Aufruf</strong>: Durchschnittlicher Score der Antworten des direkten Aufrufs in Prozent.</li>
+<li><strong>Mittel Workflow</strong>: Durchschnittlicher Score der Workflow-Antworten in Prozent.</li>
+<li><strong>Diff.</strong>: Mittlere Differenz Workflow minus Direkter Aufruf in Prozentpunkten.</li>
+<li><strong>p-Wert</strong>: Wahrscheinlichkeit fÃ¼r einen mindestens so starken Effekt, falls in Wahrheit kein Unterschied besteht.</li>
+<li><strong>Ergebnis</strong>: Kurze Interpretation des Tests, z.B. signifikante Verbesserung oder nicht signifikant.</li>
+</ul>
+<h3>AusfÃ¼hrliche Statistiktabelle</h3>
+<div class="table-scroll"><table><thead><tr><th>Kriterium</th><th>n</th><th>Mittel Direkter Aufruf</th><th>Mittel Workflow</th><th>Diff.</th><th>SD Diff.</th><th>t-Wert</th><th>df</th><th>p-Wert</th><th>95% KI</th><th>Cohen dz</th><th>Ergebnis</th></tr></thead><tbody>
+<tr><td>Richtigkeit</td><td>200</td><td>87.67</td><td>83.18</td><td>-4.49</td><td>23.19</td><td>-2.736</td><td>199</td><td>0.0068</td><td>[-7.70; -1.27]</td><td>-0.19</td><td>signifikante Verschlechterung</td></tr>
+<tr><td>RÃ¼ckfragefÃ¤higkeit</td><td>176</td><td>37.89</td><td>62.15</td><td>+24.26</td><td>34.33</td><td>9.374</td><td>175</td><td>&lt;0.0001</td><td>[+19.19; +29.33]</td><td>0.71</td><td>signifikante Verbesserung</td></tr>
+<tr><td>Internet- / QuellenqualitÃ¤t</td><td>194</td><td>56.01</td><td>59.85</td><td>+3.84</td><td>32.73</td><td>1.633</td><td>193</td><td>0.1041</td><td>[-0.77; +8.44]</td><td>0.12</td><td>nicht signifikant</td></tr>
+<tr><td>PrÃ¼fung / Verifikation</td><td>199</td><td>67.03</td><td>71.54</td><td>+4.51</td><td>37.42</td><td>1.700</td><td>198</td><td>0.0908</td><td>[-0.69; +9.71]</td><td>0.12</td><td>nicht signifikant</td></tr>
+<tr><td>Unsicherheit offenlegen</td><td>200</td><td>85.40</td><td>83.00</td><td>-2.40</td><td>35.31</td><td>-0.962</td><td>199</td><td>0.3370</td><td>[-7.30; +2.49]</td><td>-0.07</td><td>nicht signifikant</td></tr>
+<tr><td>VollstÃ¤ndigkeit gemÃ¤ÃŸ MÃ¶glichkeit</td><td>196</td><td>75.94</td><td>72.75</td><td>-3.19</td><td>37.10</td><td>-1.203</td><td>195</td><td>0.2303</td><td>[-8.38; +2.01]</td><td>-0.09</td><td>nicht signifikant</td></tr>
+<tr><td>VollstÃ¤ndigkeit gemÃ¤ÃŸ Frage</td><td>199</td><td>92.46</td><td>85.66</td><td>-6.80</td><td>23.56</td><td>-4.071</td><td>198</td><td>&lt;0.0001</td><td>[-10.07; -3.52]</td><td>-0.29</td><td>signifikante Verschlechterung</td></tr>
+<tr><td>Klarheit / VerstÃ¤ndlichkeit</td><td>190</td><td>79.14</td><td>75.83</td><td>-3.30</td><td>24.77</td><td>-1.839</td><td>189</td><td>0.0675</td><td>[-6.83; +0.22]</td><td>-0.13</td><td>nicht signifikant</td></tr>
+<tr><td>Relevanz</td><td>200</td><td>95.31</td><td>89.63</td><td>-5.68</td><td>19.75</td><td>-4.067</td><td>199</td><td>&lt;0.0001</td><td>[-8.42; -2.94]</td><td>-0.29</td><td>signifikante Verschlechterung</td></tr>
+</tbody></table></div>
+<p>LaTeX-gerenderte Tabelle:</p>
+<p><figure><a href="../../../FM/tables/00_overview/full_results_table.svg"><img src="../../../FM/tables/00_overview/full_results_table.svg" alt="Ausführliche Statistiktabelle" loading="lazy"></a><figcaption>Ausführliche Statistiktabelle</figcaption></figure></p>
+<p>FelderklÃ¤rung:</p>
+<ul>
+<li><strong>Kriterium</strong>: Bewerteter QualitÃ¤tsbereich, z.B. Richtigkeit oder VollstÃ¤ndigkeit.</li>
+<li><strong>n</strong>: Anzahl der vollstÃ¤ndigen ausgewÃ¤hlten Paare, die in Statistik und Mittelwerte eingehen.</li>
+<li><strong>Mittel Direkter Aufruf</strong>: Durchschnittlicher Score der Antworten des direkten Aufrufs in Prozent.</li>
+<li><strong>Mittel Workflow</strong>: Durchschnittlicher Score der Workflow-Antworten in Prozent.</li>
+<li><strong>Diff.</strong>: Mittlere Differenz Workflow minus Direkter Aufruf in Prozentpunkten.</li>
+<li><strong>p-Wert</strong>: Wahrscheinlichkeit fÃ¼r einen mindestens so starken Effekt, falls in Wahrheit kein Unterschied besteht.</li>
+<li><strong>Ergebnis</strong>: Kurze Interpretation des Tests, z.B. signifikante Verbesserung oder nicht signifikant.</li>
+<li><strong>SD Diff.</strong>: Standardabweichung der paarweisen Differenzen; zeigt die Streuung des Effekts.</li>
+<li><strong>t-Wert</strong>: Teststatistik des gepaarten t-Tests; wird mit dem kritischen Wert bzw. p-Wert beurteilt.</li>
+<li><strong>df</strong>: Freiheitsgrade des Tests, hier normalerweise n minus 1.</li>
+<li><strong>95% KI</strong>: 95-Prozent-Konfidenzintervall der mittleren Differenz; enthÃ¤lt es 0, ist der Effekt unsicherer.</li>
+<li><strong>Cohen dz</strong>: EffektstÃ¤rke fÃ¼r gepaarte Daten; macht die GrÃ¶ÃŸe des Effekts vergleichbarer.</li>
+</ul>
+<h3>Tabelle zur Datengrundlage</h3>
+<div class="table-scroll"><table><thead><tr><th>Kriterium</th><th>Gesamt</th><th>GÃ¼ltig</th><th>AusgewÃ¤hlt</th><th>Ausgelassen</th><th>Fehler</th><th>Review</th><th>Manuell ausgeschlossen</th><th>UnvollstÃ¤ndig</th></tr></thead><tbody>
+<tr><td>Richtigkeit</td><td>200</td><td>200</td><td>200</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+<tr><td>RÃ¼ckfragefÃ¤higkeit</td><td>200</td><td>200</td><td>176</td><td>0</td><td>0</td><td>24</td><td>0</td><td>0</td></tr>
+<tr><td>Internet- / QuellenqualitÃ¤t</td><td>200</td><td>200</td><td>194</td><td>0</td><td>0</td><td>6</td><td>0</td><td>0</td></tr>
+<tr><td>PrÃ¼fung / Verifikation</td><td>200</td><td>200</td><td>199</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td></tr>
+<tr><td>Unsicherheit offenlegen</td><td>200</td><td>200</td><td>200</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+<tr><td>VollstÃ¤ndigkeit gemÃ¤ÃŸ MÃ¶glichkeit</td><td>200</td><td>200</td><td>196</td><td>0</td><td>0</td><td>4</td><td>0</td><td>0</td></tr>
+<tr><td>VollstÃ¤ndigkeit gemÃ¤ÃŸ Frage</td><td>200</td><td>200</td><td>199</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td></tr>
+<tr><td>Klarheit / VerstÃ¤ndlichkeit</td><td>200</td><td>200</td><td>190</td><td>0</td><td>0</td><td>10</td><td>0</td><td>0</td></tr>
+<tr><td>Relevanz</td><td>200</td><td>200</td><td>200</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+</tbody></table></div>
+<p>LaTeX-gerenderte Tabelle:</p>
+<p><figure><a href="../../../FM/tables/00_overview/data_quality_table.svg"><img src="../../../FM/tables/00_overview/data_quality_table.svg" alt="Tabelle zur Datengrundlage" loading="lazy"></a><figcaption>Tabelle zur Datengrundlage</figcaption></figure></p>
+<p>FelderklÃ¤rung:</p>
+<ul>
+<li><strong>Kriterium</strong>: Bewerteter QualitÃ¤tsbereich.</li>
+<li><strong>Gesamt</strong>: Alle gefundenen Paare nach den gesetzten Filtern vor Bereinigung.</li>
+<li><strong>GÃ¼ltig</strong>: Paare ohne Fehler und ohne unvollstÃ¤ndige oder unbewertete Seite.</li>
+<li><strong>AusgewÃ¤hlt</strong>: Paare, die tatsÃ¤chlich in Analyse, Statistik und Charts verwendet werden.</li>
+<li><strong>Ausgelassen</strong>: Paare, die durch den optionalen Direkt-Score-Behalten-Bereich ausgeschlossen wurden, weil der direkte Aufruf auÃŸerhalb des eingestellten Bereichs lag.</li>
+<li><strong>Fehler</strong>: Paare, bei denen mindestens eine Seite einen technischen Fehler hatte.</li>
+<li><strong>Review</strong>: Paare mit Review-Markierung; standardmÃ¤ÃŸig nicht in der Analyse enthalten.</li>
+<li><strong>Manuell ausgeschlossen</strong>: Paare, die vom Nutzer manuell aus der Analyse ausgeschlossen wurden.</li>
+<li><strong>UnvollstÃ¤ndig</strong>: Paare mit fehlender Seite, laufendem Run oder fehlendem Score.</li>
+</ul>
+<h3>Diagramme</h3>
+<h4>Mittlere Differenz nach Kriterium</h4>
+<div class="table-scroll"><table><thead><tr><th>Feld</th><th>Wert</th></tr></thead><tbody>
+<tr><td>Datei</td><td><code>FM/images/00_overview/chart_mean_difference_by_criterion.svg</code></td></tr>
+<tr><td>Bedeutung</td><td>Einheit: Prozentpunkte. Bedeutung: Workflow minus Direkter Aufruf. Positive Werte bedeuten Verbesserung durch den Workflow, negative Werte Verschlechterung.</td></tr>
+</tbody></table></div>
+<p><figure><a href="../../../FM/images/00_overview/chart_mean_difference_by_criterion.svg"><img src="../../../FM/images/00_overview/chart_mean_difference_by_criterion.svg" alt="Mittlere Differenz nach Kriterium" loading="lazy"></a><figcaption>Mittlere Differenz nach Kriterium</figcaption></figure></p>
+<p>FelderklÃ¤rung:</p>
+<ul>
+<li><strong>X-Achse / Kriterium</strong>: Verglichenes Bewertungskriterium.</li>
+<li><strong>Y-Achse / mittlere Differenz</strong>: Workflow minus Direkter Aufruf in Prozentpunkten.</li>
+<li><strong>Y-Skala</strong>: Skala der mittleren Differenzwerte mit Hilfslinien.</li>
+<li><strong>Zahlen auf Balken</strong>: Konkrete mittlere Differenz pro Kriterium.</li>
+<li><strong>0-Linie</strong>: Kein Unterschied zwischen Workflow und Direkter Aufruf.</li>
+<li><strong>Positive Werte</strong>: Workflow wurde im Mittel hÃ¶her bewertet.</li>
+<li><strong>Negative Werte</strong>: Direkter Aufruf wurde im Mittel hÃ¶her bewertet.</li>
+</ul>
+<h4>Mittelwert Direkter Aufruf vs Workflow</h4>
+<div class="table-scroll"><table><thead><tr><th>Feld</th><th>Wert</th></tr></thead><tbody>
+<tr><td>Datei</td><td><code>FM/images/00_overview/chart_mean_direkter_aufruf_vs_workflow.svg</code></td></tr>
+<tr><td>Bedeutung</td><td>Zeigt die durchschnittlichen Scores pro Kriterium und macht mÃ¶gliche Deckeneffekte sichtbar.</td></tr>
+</tbody></table></div>
+<p><figure><a href="../../../FM/images/00_overview/chart_mean_direkter_aufruf_vs_workflow.svg"><img src="../../../FM/images/00_overview/chart_mean_direkter_aufruf_vs_workflow.svg" alt="Mittelwert Direkter Aufruf vs Workflow" loading="lazy"></a><figcaption>Mittelwert Direkter Aufruf vs Workflow</figcaption></figure></p>
+<p>FelderklÃ¤rung:</p>
+<ul>
+<li><strong>Kriterium</strong>: Bewerteter QualitÃ¤tsbereich.</li>
+<li><strong>Direkter Aufruf</strong>: Mittlerer Score der Antworten des direkten Aufrufs.</li>
+<li><strong>Workflow</strong>: Mittlerer Score der Workflow-Antworten.</li>
+<li><strong>Y-Achse</strong>: Durchschnittlicher Score in Prozent.</li>
+<li><strong>Y-Skala</strong>: Skala von 0 bis 100 Prozent mit Hilfslinien.</li>
+<li><strong>Zahlen auf Balken</strong>: Konkreter Mittelwert pro Methode.</li>
+<li><strong>Zweck</strong>: Schneller Vergleich der beiden Methoden pro Kriterium.</li>
+</ul>
+<h4>DatenqualitÃ¤t nach Kriterium</h4>
+<div class="table-scroll"><table><thead><tr><th>Feld</th><th>Wert</th></tr></thead><tbody>
+<tr><td>Datei</td><td><code>FM/images/00_overview/chart_data_quality_by_criterion.svg</code></td></tr>
+<tr><td>Bedeutung</td><td>Zeigt ausgewÃ¤hlte Paare und Review-Paare pro Kriterium zur Transparenz der Datengrundlage.</td></tr>
+</tbody></table></div>
+<p><figure><a href="../../../FM/images/00_overview/chart_data_quality_by_criterion.svg"><img src="../../../FM/images/00_overview/chart_data_quality_by_criterion.svg" alt="DatenqualitÃ¤t nach Kriterium" loading="lazy"></a><figcaption>DatenqualitÃ¤t nach Kriterium</figcaption></figure></p>
+<p>FelderklÃ¤rung:</p>
+<ul>
+<li><strong>Kriterium</strong>: Bewerteter QualitÃ¤tsbereich.</li>
+<li><strong>AusgewÃ¤hlt</strong>: Paare, die in die Analyse eingehen.</li>
+<li><strong>Review</strong>: Paare, die manuell geprÃ¼ft werden sollten.</li>
+<li><strong>Y-Achse</strong>: Anzahl der Paare.</li>
+<li><strong>Y-Skala</strong>: Skala der Paaranzahl mit Hilfslinien.</li>
+<li><strong>Zahlen auf Balken</strong>: Konkrete Anzahl der Paare.</li>
+<li><strong>Zweck</strong>: Zeigt, ob die Datengrundlage pro Kriterium stabil genug ist.</li>
+</ul>
+<h4>Verbesserungspotenzial des direkten Aufrufs</h4>
+<div class="table-scroll"><table><thead><tr><th>Feld</th><th>Wert</th></tr></thead><tbody>
+<tr><td>Datei</td><td><code>FM/images/00_overview/chart_ceiling_effect_by_criterion.svg</code></td></tr>
+<tr><td>Bedeutung</td><td>Zeigt pro Kriterium, wie viele Antworten des direkten Aufrufs bereits 100%, nahe 100% oder deutlich darunter lagen. Viele 100%-Werte bedeuten Deckeneffekt: Der Workflow kann kaum noch verbessern, aber verschlechtern.</td></tr>
+</tbody></table></div>
+<p><figure><a href="../../../FM/images/00_overview/chart_ceiling_effect_by_criterion.svg"><img src="../../../FM/images/00_overview/chart_ceiling_effect_by_criterion.svg" alt="Verbesserungspotenzial des direkten Aufrufs" loading="lazy"></a><figcaption>Verbesserungspotenzial des direkten Aufrufs</figcaption></figure></p>
+<p>FelderklÃ¤rung:</p>
+<ul>
+<li><strong>Direkter Aufruf 100 / rot</strong>: Direkter Aufruf war bereits perfekt; kaum messbares Verbesserungspotenzial.</li>
+<li><strong>Direkter Aufruf 75-99 / orange</strong>: Direkter Aufruf war nahe an perfekt; wenig Verbesserungspotenzial.</li>
+<li><strong>Direkter Aufruf &lt;75 / grÃ¼n</strong>: Direkter Aufruf hatte klarere Fehler; Workflow konnte eher verbessern.</li>
+<li><strong>Y-Achse</strong>: Anzahl der Paare.</li>
+<li><strong>Y-Skala</strong>: Skala der Paaranzahl mit Hilfslinien.</li>
+<li><strong>Zweck</strong>: Macht den Deckeneffekt pro Kriterium sichtbar.</li>
+</ul></article>
+<section class="asset-section">
+  <h2>Charts</h2>
+  <div class="asset-grid">
+    <article class="asset-card"><a href="../../../FM/images/00_overview/chart_ceiling_effect_by_criterion.svg"><img src="../../../FM/images/00_overview/chart_ceiling_effect_by_criterion.svg" alt="chart_ceiling_effect_by_criterion.svg" loading="lazy"></a><a class="file-link" href="../../../FM/images/00_overview/chart_ceiling_effect_by_criterion.svg">chart_ceiling_effect_by_criterion.svg</a></article>
+<article class="asset-card"><a href="../../../FM/images/00_overview/chart_data_quality_by_criterion.svg"><img src="../../../FM/images/00_overview/chart_data_quality_by_criterion.svg" alt="chart_data_quality_by_criterion.svg" loading="lazy"></a><a class="file-link" href="../../../FM/images/00_overview/chart_data_quality_by_criterion.svg">chart_data_quality_by_criterion.svg</a></article>
+<article class="asset-card"><a href="../../../FM/images/00_overview/chart_mean_difference_by_criterion.svg"><img src="../../../FM/images/00_overview/chart_mean_difference_by_criterion.svg" alt="chart_mean_difference_by_criterion.svg" loading="lazy"></a><a class="file-link" href="../../../FM/images/00_overview/chart_mean_difference_by_criterion.svg">chart_mean_difference_by_criterion.svg</a></article>
+<article class="asset-card"><a href="../../../FM/images/00_overview/chart_mean_direkter_aufruf_vs_workflow.svg"><img src="../../../FM/images/00_overview/chart_mean_direkter_aufruf_vs_workflow.svg" alt="chart_mean_direkter_aufruf_vs_workflow.svg" loading="lazy"></a><a class="file-link" href="../../../FM/images/00_overview/chart_mean_direkter_aufruf_vs_workflow.svg">chart_mean_direkter_aufruf_vs_workflow.svg</a></article>
+  </div>
+</section>
+
+<section class="asset-section">
+  <h2>Tabellen</h2>
+  <div class="asset-grid">
+    <article class="asset-card"><a href="../../../FM/tables/00_overview/data_quality_table.svg"><img src="../../../FM/tables/00_overview/data_quality_table.svg" alt="data_quality_table.svg" loading="lazy"></a><a class="file-link" href="../../../FM/tables/00_overview/data_quality_table.svg">data_quality_table.svg</a></article>
+<article class="asset-card compact"><a class="file-link" href="../../../FM/tables/00_overview/data_quality_table.tex">data_quality_table.tex</a></article>
+<article class="asset-card"><a href="../../../FM/tables/00_overview/full_results_table.svg"><img src="../../../FM/tables/00_overview/full_results_table.svg" alt="full_results_table.svg" loading="lazy"></a><a class="file-link" href="../../../FM/tables/00_overview/full_results_table.svg">full_results_table.svg</a></article>
+<article class="asset-card compact"><a class="file-link" href="../../../FM/tables/00_overview/full_results_table.tex">full_results_table.tex</a></article>
+<article class="asset-card"><a href="../../../FM/tables/00_overview/short_results_table.svg"><img src="../../../FM/tables/00_overview/short_results_table.svg" alt="short_results_table.svg" loading="lazy"></a><a class="file-link" href="../../../FM/tables/00_overview/short_results_table.svg">short_results_table.svg</a></article>
+<article class="asset-card compact"><a class="file-link" href="../../../FM/tables/00_overview/short_results_table.tex">short_results_table.tex</a></article>
+<article class="asset-card compact"><a class="file-link" href="../../../FM/tables/00_overview/tables.md">tables.md</a></article>
+  </div>
+</section>
+</main>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

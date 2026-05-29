@@ -1,0 +1,141 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000">
+  <defs>
+    <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#0647b8"/></marker>
+    <marker id="arrowRed" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#d60000"/></marker>
+    <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#007a2f"/></marker>
+    <marker id="arrowPurple" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#6a1b9a"/></marker>
+    <style>
+      .title{font-family:Arial,Helvetica,sans-serif;font-size:46px;font-weight:700;fill:#06246b}
+      .subtitle{font-family:Arial,Helvetica,sans-serif;font-size:27px;font-weight:700;fill:#06246b}
+      .text{font-family:Arial,Helvetica,sans-serif;font-size:18px;fill:#000}
+      .small{font-family:Arial,Helvetica,sans-serif;font-size:15px;fill:#000}
+      .blue{font-family:Arial,Helvetica,sans-serif;fill:#0647b8;font-weight:700}
+      .red{font-family:Arial,Helvetica,sans-serif;fill:#d60000;font-weight:700}
+      .green{font-family:Arial,Helvetica,sans-serif;fill:#007a2f;font-weight:700}
+      .purple{font-family:Arial,Helvetica,sans-serif;fill:#6a1b9a;font-weight:700}
+      .axis{stroke:#000;stroke-width:3}
+      .curve{fill:none;stroke:#0647b8;stroke-width:5}
+      .dashRed{stroke:#e00000;stroke-width:3;stroke-dasharray:10 8}
+      .dashGreen{stroke:#007a2f;stroke-width:3;stroke-dasharray:10 8}
+      .dashBlack{stroke:#000;stroke-width:2;stroke-dasharray:10 8}
+    </style>
+  </defs>
+
+  <rect width="1600" height="1000" fill="white"/>
+
+  <text x="800" y="55" text-anchor="middle" class="title">T-Verteilung: einseitiger t-Test</text>
+  <text x="800" y="92" text-anchor="middle" class="subtitle">(Wahrscheinlichkeitsverteilung für Mittelwerte)</text>
+
+  <!-- Axis -->
+  <line x1="60" y1="570" x2="1220" y2="570" class="axis" marker-end="url(#arrowBlue)" style="marker-end:url(#arrowBlue);stroke:#000"/>
+  <text x="1198" y="600" class="text" font-weight="700">t</text>
+
+  <!-- Alpha critical area: only right side -->
+  <path d="M960,470 C1015,525 1080,555 1150,564 L1150,570 L960,570 Z" fill="#ff4b4b" opacity="0.35"/>
+
+  <!-- P-value area from observed T value outward -->
+  <path d="M1025,532 C1065,552 1105,560 1150,564 L1150,570 L1025,570 Z" fill="#8e44ad" opacity="0.42"/>
+
+  <!-- Curve -->
+  <path d="M90,560 C170,555 240,530 300,470 C370,400 430,260 520,180 C585,120 675,120 740,180 C830,260 890,400 960,470 C1020,530 1090,555 1150,564" class="curve"/>
+
+  <!-- Lines -->
+  <line x1="960" y1="430" x2="960" y2="665" class="dashRed"/>
+  <line x1="630" y1="130" x2="630" y2="590" class="dashBlack"/>
+  <line x1="1025" y1="525" x2="1025" y2="735" class="dashGreen"/>
+  <circle cx="1025" cy="735" r="7" fill="#007a2f"/>
+
+  <!-- Labels -->
+  <text x="960" y="615" text-anchor="middle" class="text" font-weight="700">t<tspan baseline-shift="sub" font-size="14">kritisch</tspan></text>
+  <text x="630" y="600" text-anchor="middle" class="text" font-weight="700">0</text>
+  <text x="1025" y="765" text-anchor="middle" class="green" font-size="19">T Wert</text>
+  <text x="1025" y="790" text-anchor="middle" class="green" font-size="19">(Messwert)</text>
+
+  <!-- P label -->
+  <text x="1115" y="525" class="purple" font-size="21">P-Wert</text>
+  <text x="1115" y="550" class="purple" font-size="17">Fläche ab T-Wert</text>
+  <line x1="1110" y1="555" x2="1065" y2="562" stroke="#6a1b9a" stroke-width="2" marker-end="url(#arrowPurple)"/>
+
+  <!-- Standard error -->
+  <line x1="450" y1="500" x2="810" y2="500" stroke="#0647b8" stroke-width="3" marker-start="url(#arrowBlue)" marker-end="url(#arrowBlue)"/>
+  <text x="630" y="475" text-anchor="middle" class="blue" font-size="20">± 1 Standard Error</text>
+  <text x="630" y="500" text-anchor="middle" class="blue" font-size="20">(Breite der Kurve)</text>
+
+  <!-- Acceptance area -->
+  <line x1="90" y1="665" x2="960" y2="665" stroke="#007a2f" stroke-width="3"/>
+  <line x1="960" y1="650" x2="960" y2="665" stroke="#007a2f" stroke-width="3"/>
+  <rect x="470" y="645" width="260" height="55" fill="white"/>
+  <text x="600" y="675" text-anchor="middle" class="green" font-size="22">H0 Annahme Bereich</text>
+  <text x="600" y="700" text-anchor="middle" class="green" font-size="20">Fläche = 95%</text>
+
+  <!-- Small text boxes -->
+  <rect x="35" y="120" width="335" height="185" rx="8" fill="white" stroke="#0647b8" stroke-width="2"/>
+  <text x="55" y="150" class="blue" font-size="22">Standard Error</text>
+  <text x="55" y="176" class="text" fill="#0647b8">(Standard Abweichung für Mittelwerte)</text>
+  <line x1="55" y1="190" x2="345" y2="190" stroke="#0647b8"/>
+  <text x="55" y="220" class="small">Breite der T-Verteilung.</text>
+  <text x="55" y="245" class="small">Typische Schwankung der</text>
+  <text x="55" y="270" class="small">Stichprobenmittelwerte um 0.</text>
+  <line x1="370" y1="300" x2="425" y2="390" stroke="#0647b8" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+  <rect x="990" y="125" width="300" height="125" rx="8" fill="white" stroke="#d60000" stroke-width="2"/>
+  <text x="1010" y="155" class="red" font-size="22">Signifikanzniveau 5%</text>
+  <text x="1010" y="180" class="red" font-size="22">= α-Wert und Fläche</text>
+  <line x1="1010" y1="193" x2="1265" y2="193" stroke="#d60000"/>
+  <text x="1140" y="220" text-anchor="middle" class="red" font-size="20">α = 0,05</text>
+  <text x="1015" y="240" class="small">Einseitig: 5% nur rechts außen.</text>
+  <line x1="1080" y1="250" x2="980" y2="450" stroke="#d60000" stroke-width="2" marker-end="url(#arrowRed)"/>
+
+  <rect x="1085" y="300" width="245" height="135" rx="8" fill="white" stroke="#6a1b9a" stroke-width="2"/>
+  <text x="1105" y="330" class="purple" font-size="21">P-Wert = Fläche</text>
+  <text x="1105" y="360" class="small">Beim einseitigen Test:</text>
+  <text x="1105" y="383" class="small">Fläche rechts vom T-Wert.</text>
+  <text x="1105" y="406" class="small">Je kleiner, desto stärker</text>
+  <text x="1105" y="429" class="small">gegen H₀.</text>
+  <line x1="1120" y1="435" x2="1045" y2="535" stroke="#6a1b9a" stroke-width="2" marker-end="url(#arrowPurple)"/>
+
+  <rect x="1308" y="150" width="250" height="330" rx="8" fill="white" stroke="#007a2f" stroke-width="2"/>
+  <text x="1328" y="180" class="green" font-size="22">T Wert ungefähr</text>
+  <text x="1328" y="212" class="small">standardisierter Messwert:</text>
+  <text x="1328" y="235" class="small">Abstand des Ergebnisses</text>
+  <text x="1328" y="258" class="small">von 0 in Einheiten des</text>
+  <text x="1328" y="281" class="small">Standard Errors.</text>
+  <line x1="1328" y1="301" x2="1535" y2="301" stroke="#007a2f"/>
+  <text x="1328" y="331" class="green" font-size="17">Interpretation:</text>
+  <text x="1328" y="356" class="small">Je weiter rechts von 0,</text>
+  <text x="1328" y="379" class="small">desto unwahrscheinlicher</text>
+  <text x="1328" y="402" class="small">unter der Nullhypothese.</text>
+  <text x="1328" y="435" class="green" font-size="17">Beispiel:</text>
+  <text x="1328" y="460" class="small">T = 3 bedeutet ungefähr:</text>
+  <!-- Critical note -->
+  <text x="875" y="695" class="red" font-size="18">T kritisch (Rand)</text>
+  <text x="835" y="720" class="small">Grenze zwischen Annahmebereich</text>
+  <text x="835" y="740" class="small">und kritischem Bereich</text>
+
+  <!-- Summary box -->
+  <rect x="40" y="795" width="900" height="180" rx="8" fill="white" stroke="#000" stroke-width="1.5"/>
+  <line x1="260" y1="795" x2="260" y2="975" stroke="#999"/>
+  <line x1="40" y1="830" x2="940" y2="830" stroke="#999"/>
+  <line x1="40" y1="865" x2="940" y2="865" stroke="#999"/>
+  <line x1="40" y1="900" x2="940" y2="900" stroke="#999"/>
+  <line x1="40" y1="935" x2="940" y2="935" stroke="#999"/>
+  <text x="65" y="820" class="blue" font-size="17">T-Verteilung</text><text x="280" y="820" class="small">= Wahrscheinlichkeitsverteilung der Mittelwerte unter H₀.</text>
+  <text x="65" y="855" class="blue" font-size="17">Standard Error</text><text x="280" y="855" class="small">= Standard Abweichung für Mittelwerte.</text>
+  <text x="65" y="890" class="red" font-size="17">Signifikanzniveau α</text><text x="280" y="890" class="small">= 5% Fläche rechts außen.</text>
+  <text x="65" y="925" class="red" font-size="17">T kritisch</text><text x="280" y="925" class="small">= rechter Rand zwischen Annahmebereich und kritischem Bereich.</text>
+  <text x="65" y="960" class="green" font-size="17">T Wert / P-Wert</text><text x="280" y="960" class="small">= Messwert / Fläche rechts vom T-Wert.</text>
+
+  <!-- Legend -->
+  <rect x="1265" y="700" width="290" height="245" rx="8" fill="white" stroke="#000" stroke-width="1.5"/>
+  <text x="1410" y="727" text-anchor="middle" class="text" font-weight="700">Legende</text>
+  <line x1="1290" y1="755" x2="1320" y2="755" class="curve"/>
+  <text x="1340" y="761" class="small">T-Verteilung</text>
+  <rect x="1290" y="780" width="30" height="16" fill="#ff4b4b" opacity="0.35" stroke="#d60000"/>
+  <text x="1340" y="795" class="small">α = 5% rechts</text>
+  <rect x="1290" y="810" width="30" height="16" fill="#8e44ad" opacity="0.42" stroke="#6a1b9a"/>
+  <text x="1340" y="825" class="small">P-Wert-Fläche</text>
+  <line x1="1290" y1="850" x2="1320" y2="850" class="dashRed"/>
+  <text x="1340" y="855" class="small">T kritisch</text>
+  <line x1="1290" y1="880" x2="1320" y2="880" class="dashGreen"/>
+  <text x="1340" y="885" class="small">T Wert</text>
+</svg>

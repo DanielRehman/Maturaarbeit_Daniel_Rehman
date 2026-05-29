@@ -1,0 +1,159 @@
+# Übersicht mit Detailauswertungen
+
+## Auswahl
+
+- Kriterien: Alle Kriterien
+- Fragensets: default, example, flowmap_set7, flowreview_set7, impossibleforai, lausyprompt, promptoptimierung_schwierig, set1, set2, set3, set4, set5
+- Run-Sets: Existing runs, run10, gpt3_prompt_schwer, lazy_gpt3, flowmap7, review7, set2_review, set2_more, set2_5, set3_flowmap, set4_flowreview, set3_more, set3_3, imposs_2_single, imposs_3_single
+- Workflow-Setups: Flowmap
+- Modelle: GPT-4o Mini, Claude Haiku 3.5, DeepSeek Chat, GPT-4o, GPT-4.1, GPT-3.5 Turbo (legacy)
+- Max Paare pro Kriterium: kein Limit
+- Skip Paare pro Kriterium: 0
+- Direkt-Score behalten: aus, nichts ausgeschlossen
+- Stabiler Exportordner / Asset-Prefix: FM
+
+Review-Antworten eingeschlossen: nein
+Manuell ausgeschlossene Antworten eingeschlossen: nein
+
+## Inhalt
+
+- `report_00_overview.md`: Uebersicht ueber alle Kriterien.
+- `report_01_richtigkeit.md`: Detailauswertung fuer Richtigkeit.
+- `report_02_rueckfragefaehigkeit.md`: Detailauswertung fuer Rückfragefähigkeit.
+- `report_03_internet-_quellenqualitaet.md`: Detailauswertung fuer Internet- / Quellenqualität.
+- `report_04_pruefung_verifikation.md`: Detailauswertung fuer Prüfung / Verifikation.
+- `report_05_unsicherheit_offenlegen.md`: Detailauswertung fuer Unsicherheit offenlegen.
+- `report_06_vollstaendigkeit_gemaess_moeglichkeit.md`: Detailauswertung fuer Vollständigkeit gemäß Möglichkeit.
+- `report_07_vollstaendigkeit_gemaess_frage.md`: Detailauswertung fuer Vollständigkeit gemäß Frage.
+- `report_08_klarheit_verstaendlichkeit.md`: Detailauswertung fuer Klarheit / Verständlichkeit.
+- `report_09_relevanz.md`: Detailauswertung fuer Relevanz.
+
+## Dateien
+
+- `FM/tables/00_overview/short_results_table.tex`
+- `FM/tables/00_overview/full_results_table.tex`
+- `FM/tables/00_overview/data_quality_table.tex`
+- `FM/tables/00_overview/tables.md`
+- `FM/images/00_overview/chart_mean_difference_by_criterion.svg`
+- `FM/images/00_overview/chart_mean_direkter_aufruf_vs_workflow.svg`
+- `FM/images/00_overview/chart_data_quality_by_criterion.svg`
+- `FM/images/00_overview/chart_ceiling_effect_by_criterion.svg`
+- `report_00_overview.md`
+- `README_00_overview.md`
+- `FM/tables/01_richtigkeit/short_results_table.tex`
+- `FM/tables/01_richtigkeit/full_results_table.tex`
+- `FM/tables/01_richtigkeit/data_quality_table.tex`
+- `FM/tables/01_richtigkeit/tables.md`
+- `FM/images/01_richtigkeit/chart_paired_differences.svg`
+- `FM/images/01_richtigkeit/chart_paired_differences_sample.svg`
+- `FM/images/01_richtigkeit/chart_paired_differences_part_001.svg`
+- `FM/images/01_richtigkeit/chart_paired_differences_part_002.svg`
+- `FM/images/01_richtigkeit/chart_difference_distribution.svg`
+- `FM/images/01_richtigkeit/chart_scoreverteilung_direkter_aufruf.svg`
+- `FM/images/01_richtigkeit/chart_direkter_aufruf_vs_workflow_scatter.svg`
+- `report_01_richtigkeit.md`
+- `README_01_richtigkeit.md`
+- `FM/tables/02_rueckfragefaehigkeit/short_results_table.tex`
+- `FM/tables/02_rueckfragefaehigkeit/full_results_table.tex`
+- `FM/tables/02_rueckfragefaehigkeit/data_quality_table.tex`
+- `FM/tables/02_rueckfragefaehigkeit/tables.md`
+- `FM/images/02_rueckfragefaehigkeit/chart_paired_differences.svg`
+- `FM/images/02_rueckfragefaehigkeit/chart_paired_differences_sample.svg`
+- `FM/images/02_rueckfragefaehigkeit/chart_paired_differences_part_001.svg`
+- `FM/images/02_rueckfragefaehigkeit/chart_paired_differences_part_002.svg`
+- `FM/images/02_rueckfragefaehigkeit/chart_difference_distribution.svg`
+- `FM/images/02_rueckfragefaehigkeit/chart_scoreverteilung_direkter_aufruf.svg`
+- `FM/images/02_rueckfragefaehigkeit/chart_direkter_aufruf_vs_workflow_scatter.svg`
+- `report_02_rueckfragefaehigkeit.md`
+- `README_02_rueckfragefaehigkeit.md`
+- `FM/tables/03_internet-_quellenqualitaet/short_results_table.tex`
+- `FM/tables/03_internet-_quellenqualitaet/full_results_table.tex`
+- `FM/tables/03_internet-_quellenqualitaet/data_quality_table.tex`
+- `FM/tables/03_internet-_quellenqualitaet/tables.md`
+- `FM/images/03_internet-_quellenqualitaet/chart_paired_differences.svg`
+- `FM/images/03_internet-_quellenqualitaet/chart_paired_differences_sample.svg`
+- `FM/images/03_internet-_quellenqualitaet/chart_paired_differences_part_001.svg`
+- `FM/images/03_internet-_quellenqualitaet/chart_paired_differences_part_002.svg`
+- `FM/images/03_internet-_quellenqualitaet/chart_difference_distribution.svg`
+- `FM/images/03_internet-_quellenqualitaet/chart_scoreverteilung_direkter_aufruf.svg`
+- `FM/images/03_internet-_quellenqualitaet/chart_direkter_aufruf_vs_workflow_scatter.svg`
+- `report_03_internet-_quellenqualitaet.md`
+- `README_03_internet-_quellenqualitaet.md`
+- `FM/tables/04_pruefung_verifikation/short_results_table.tex`
+- `FM/tables/04_pruefung_verifikation/full_results_table.tex`
+- `FM/tables/04_pruefung_verifikation/data_quality_table.tex`
+- `FM/tables/04_pruefung_verifikation/tables.md`
+- `FM/images/04_pruefung_verifikation/chart_paired_differences.svg`
+- `FM/images/04_pruefung_verifikation/chart_paired_differences_sample.svg`
+- `FM/images/04_pruefung_verifikation/chart_paired_differences_part_001.svg`
+- `FM/images/04_pruefung_verifikation/chart_paired_differences_part_002.svg`
+- `FM/images/04_pruefung_verifikation/chart_difference_distribution.svg`
+- `FM/images/04_pruefung_verifikation/chart_scoreverteilung_direkter_aufruf.svg`
+- `FM/images/04_pruefung_verifikation/chart_direkter_aufruf_vs_workflow_scatter.svg`
+- `report_04_pruefung_verifikation.md`
+- `README_04_pruefung_verifikation.md`
+- `FM/tables/05_unsicherheit_offenlegen/short_results_table.tex`
+- `FM/tables/05_unsicherheit_offenlegen/full_results_table.tex`
+- `FM/tables/05_unsicherheit_offenlegen/data_quality_table.tex`
+- `FM/tables/05_unsicherheit_offenlegen/tables.md`
+- `FM/images/05_unsicherheit_offenlegen/chart_paired_differences.svg`
+- `FM/images/05_unsicherheit_offenlegen/chart_paired_differences_sample.svg`
+- `FM/images/05_unsicherheit_offenlegen/chart_paired_differences_part_001.svg`
+- `FM/images/05_unsicherheit_offenlegen/chart_paired_differences_part_002.svg`
+- `FM/images/05_unsicherheit_offenlegen/chart_difference_distribution.svg`
+- `FM/images/05_unsicherheit_offenlegen/chart_scoreverteilung_direkter_aufruf.svg`
+- `FM/images/05_unsicherheit_offenlegen/chart_direkter_aufruf_vs_workflow_scatter.svg`
+- `report_05_unsicherheit_offenlegen.md`
+- `README_05_unsicherheit_offenlegen.md`
+- `FM/tables/06_vollstaendigkeit_gemaess_moeglichkeit/short_results_table.tex`
+- `FM/tables/06_vollstaendigkeit_gemaess_moeglichkeit/full_results_table.tex`
+- `FM/tables/06_vollstaendigkeit_gemaess_moeglichkeit/data_quality_table.tex`
+- `FM/tables/06_vollstaendigkeit_gemaess_moeglichkeit/tables.md`
+- `FM/images/06_vollstaendigkeit_gemaess_moeglichkeit/chart_paired_differences.svg`
+- `FM/images/06_vollstaendigkeit_gemaess_moeglichkeit/chart_paired_differences_sample.svg`
+- `FM/images/06_vollstaendigkeit_gemaess_moeglichkeit/chart_paired_differences_part_001.svg`
+- `FM/images/06_vollstaendigkeit_gemaess_moeglichkeit/chart_paired_differences_part_002.svg`
+- `FM/images/06_vollstaendigkeit_gemaess_moeglichkeit/chart_difference_distribution.svg`
+- `FM/images/06_vollstaendigkeit_gemaess_moeglichkeit/chart_scoreverteilung_direkter_aufruf.svg`
+- `FM/images/06_vollstaendigkeit_gemaess_moeglichkeit/chart_direkter_aufruf_vs_workflow_scatter.svg`
+- `report_06_vollstaendigkeit_gemaess_moeglichkeit.md`
+- `README_06_vollstaendigkeit_gemaess_moeglichkeit.md`
+- `FM/tables/07_vollstaendigkeit_gemaess_frage/short_results_table.tex`
+- `FM/tables/07_vollstaendigkeit_gemaess_frage/full_results_table.tex`
+- `FM/tables/07_vollstaendigkeit_gemaess_frage/data_quality_table.tex`
+- `FM/tables/07_vollstaendigkeit_gemaess_frage/tables.md`
+- `FM/images/07_vollstaendigkeit_gemaess_frage/chart_paired_differences.svg`
+- `FM/images/07_vollstaendigkeit_gemaess_frage/chart_paired_differences_sample.svg`
+- `FM/images/07_vollstaendigkeit_gemaess_frage/chart_paired_differences_part_001.svg`
+- `FM/images/07_vollstaendigkeit_gemaess_frage/chart_paired_differences_part_002.svg`
+- `FM/images/07_vollstaendigkeit_gemaess_frage/chart_difference_distribution.svg`
+- `FM/images/07_vollstaendigkeit_gemaess_frage/chart_scoreverteilung_direkter_aufruf.svg`
+- `FM/images/07_vollstaendigkeit_gemaess_frage/chart_direkter_aufruf_vs_workflow_scatter.svg`
+- `report_07_vollstaendigkeit_gemaess_frage.md`
+- `README_07_vollstaendigkeit_gemaess_frage.md`
+- `FM/tables/08_klarheit_verstaendlichkeit/short_results_table.tex`
+- `FM/tables/08_klarheit_verstaendlichkeit/full_results_table.tex`
+- `FM/tables/08_klarheit_verstaendlichkeit/data_quality_table.tex`
+- `FM/tables/08_klarheit_verstaendlichkeit/tables.md`
+- `FM/images/08_klarheit_verstaendlichkeit/chart_paired_differences.svg`
+- `FM/images/08_klarheit_verstaendlichkeit/chart_paired_differences_sample.svg`
+- `FM/images/08_klarheit_verstaendlichkeit/chart_paired_differences_part_001.svg`
+- `FM/images/08_klarheit_verstaendlichkeit/chart_paired_differences_part_002.svg`
+- `FM/images/08_klarheit_verstaendlichkeit/chart_difference_distribution.svg`
+- `FM/images/08_klarheit_verstaendlichkeit/chart_scoreverteilung_direkter_aufruf.svg`
+- `FM/images/08_klarheit_verstaendlichkeit/chart_direkter_aufruf_vs_workflow_scatter.svg`
+- `report_08_klarheit_verstaendlichkeit.md`
+- `README_08_klarheit_verstaendlichkeit.md`
+- `FM/tables/09_relevanz/short_results_table.tex`
+- `FM/tables/09_relevanz/full_results_table.tex`
+- `FM/tables/09_relevanz/data_quality_table.tex`
+- `FM/tables/09_relevanz/tables.md`
+- `FM/images/09_relevanz/chart_paired_differences.svg`
+- `FM/images/09_relevanz/chart_paired_differences_sample.svg`
+- `FM/images/09_relevanz/chart_paired_differences_part_001.svg`
+- `FM/images/09_relevanz/chart_paired_differences_part_002.svg`
+- `FM/images/09_relevanz/chart_difference_distribution.svg`
+- `FM/images/09_relevanz/chart_scoreverteilung_direkter_aufruf.svg`
+- `FM/images/09_relevanz/chart_direkter_aufruf_vs_workflow_scatter.svg`
+- `report_09_relevanz.md`
+- `README_09_relevanz.md`

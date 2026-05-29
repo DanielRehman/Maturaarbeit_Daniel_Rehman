@@ -1,0 +1,206 @@
+﻿<!doctype html>
+<html lang="de" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flowmap: Richtigkeit</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="../../index.html">Auswertung</a>
+  <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Darstellung wechseln">Darstellung wechseln</button>
+</header>
+<main class="shell">
+  <section class="hero">
+    <h1>Flowmap: Richtigkeit</h1>
+    <p>Bericht mit zugeh?rigen Tabellen und Abbildungen.</p>
+  </section>
+  <nav class="breadcrumb"><a href="../../index.html">Übersicht</a><span>FM</span><span>Richtigkeit</span></nav>
+  <article class="report"><h2>AusgewÃ¤hlte Analyse</h2>
+<h3>Auswahl</h3>
+<ul>
+<li>Kriterien: Richtigkeit</li>
+<li>Fragensets: default, example, flowmap_set7, flowreview_set7, impossibleforai, lausyprompt, promptoptimierung_schwierig, set1, set2, set3, set4, set5</li>
+<li>Run-Sets: Existing runs, run10, gpt3_prompt_schwer, lazy_gpt3, flowmap7, review7, set2_review, set2_more, set2_5, set3_flowmap, set4_flowreview, set3_more, set3_3, imposs_2_single, imposs_3_single</li>
+<li>Workflow-Setups: Flowmap</li>
+<li>Modelle: GPT-4o Mini, Claude Haiku 3.5, DeepSeek Chat, GPT-4o, GPT-4.1, GPT-3.5 Turbo (legacy)</li>
+<li>Max Paare pro Kriterium: kein Limit</li>
+<li>Skip Paare pro Kriterium: 0</li>
+<li>Direkt-Score behalten: aus, nichts ausgeschlossen</li>
+<li>Stabiler Exportordner / Asset-Prefix: FM</li>
+</ul>
+<p>Review-Antworten eingeschlossen: nein</p>
+<p>Manuell ausgeschlossene Antworten eingeschlossen: nein</p>
+<h3>Kurze Ergebnistabelle</h3>
+<div class="table-scroll"><table><thead><tr><th>Kriterium</th><th>n</th><th>Mittel Direkter Aufruf</th><th>Mittel Workflow</th><th>Diff.</th><th>p-Wert</th><th>Ergebnis</th></tr></thead><tbody>
+<tr><td>Richtigkeit</td><td>200</td><td>87.7</td><td>83.2</td><td>-4.5</td><td>0.0068</td><td>signifikante Verschlechterung</td></tr>
+</tbody></table></div>
+<p>LaTeX-gerenderte Tabelle:</p>
+<p><figure><a href="../../../FM/tables/01_richtigkeit/short_results_table.svg"><img src="../../../FM/tables/01_richtigkeit/short_results_table.svg" alt="Kurze Ergebnistabelle" loading="lazy"></a><figcaption>Kurze Ergebnistabelle</figcaption></figure></p>
+<p>FelderklÃ¤rung:</p>
+<ul>
+<li><strong>Kriterium</strong>: Bewerteter QualitÃ¤tsbereich, z.B. Richtigkeit oder VollstÃ¤ndigkeit.</li>
+<li><strong>n</strong>: Anzahl der vollstÃ¤ndigen ausgewÃ¤hlten Paare, die in Statistik und Mittelwerte eingehen.</li>
+<li><strong>Mittel Direkter Aufruf</strong>: Durchschnittlicher Score der Antworten des direkten Aufrufs in Prozent.</li>
+<li><strong>Mittel Workflow</strong>: Durchschnittlicher Score der Workflow-Antworten in Prozent.</li>
+<li><strong>Diff.</strong>: Mittlere Differenz Workflow minus Direkter Aufruf in Prozentpunkten.</li>
+<li><strong>p-Wert</strong>: Wahrscheinlichkeit fÃ¼r einen mindestens so starken Effekt, falls in Wahrheit kein Unterschied besteht.</li>
+<li><strong>Ergebnis</strong>: Kurze Interpretation des Tests, z.B. signifikante Verbesserung oder nicht signifikant.</li>
+</ul>
+<h3>AusfÃ¼hrliche Statistiktabelle</h3>
+<div class="table-scroll"><table><thead><tr><th>Kriterium</th><th>n</th><th>Mittel Direkter Aufruf</th><th>Mittel Workflow</th><th>Diff.</th><th>SD Diff.</th><th>t-Wert</th><th>df</th><th>p-Wert</th><th>95% KI</th><th>Cohen dz</th><th>Ergebnis</th></tr></thead><tbody>
+<tr><td>Richtigkeit</td><td>200</td><td>87.67</td><td>83.18</td><td>-4.49</td><td>23.19</td><td>-2.736</td><td>199</td><td>0.0068</td><td>[-7.70; -1.27]</td><td>-0.19</td><td>signifikante Verschlechterung</td></tr>
+</tbody></table></div>
+<p>LaTeX-gerenderte Tabelle:</p>
+<p><figure><a href="../../../FM/tables/01_richtigkeit/full_results_table.svg"><img src="../../../FM/tables/01_richtigkeit/full_results_table.svg" alt="Ausführliche Statistiktabelle" loading="lazy"></a><figcaption>Ausführliche Statistiktabelle</figcaption></figure></p>
+<p>FelderklÃ¤rung:</p>
+<ul>
+<li><strong>Kriterium</strong>: Bewerteter QualitÃ¤tsbereich, z.B. Richtigkeit oder VollstÃ¤ndigkeit.</li>
+<li><strong>n</strong>: Anzahl der vollstÃ¤ndigen ausgewÃ¤hlten Paare, die in Statistik und Mittelwerte eingehen.</li>
+<li><strong>Mittel Direkter Aufruf</strong>: Durchschnittlicher Score der Antworten des direkten Aufrufs in Prozent.</li>
+<li><strong>Mittel Workflow</strong>: Durchschnittlicher Score der Workflow-Antworten in Prozent.</li>
+<li><strong>Diff.</strong>: Mittlere Differenz Workflow minus Direkter Aufruf in Prozentpunkten.</li>
+<li><strong>p-Wert</strong>: Wahrscheinlichkeit fÃ¼r einen mindestens so starken Effekt, falls in Wahrheit kein Unterschied besteht.</li>
+<li><strong>Ergebnis</strong>: Kurze Interpretation des Tests, z.B. signifikante Verbesserung oder nicht signifikant.</li>
+<li><strong>SD Diff.</strong>: Standardabweichung der paarweisen Differenzen; zeigt die Streuung des Effekts.</li>
+<li><strong>t-Wert</strong>: Teststatistik des gepaarten t-Tests; wird mit dem kritischen Wert bzw. p-Wert beurteilt.</li>
+<li><strong>df</strong>: Freiheitsgrade des Tests, hier normalerweise n minus 1.</li>
+<li><strong>95% KI</strong>: 95-Prozent-Konfidenzintervall der mittleren Differenz; enthÃ¤lt es 0, ist der Effekt unsicherer.</li>
+<li><strong>Cohen dz</strong>: EffektstÃ¤rke fÃ¼r gepaarte Daten; macht die GrÃ¶ÃŸe des Effekts vergleichbarer.</li>
+</ul>
+<h3>Tabelle zur Datengrundlage</h3>
+<div class="table-scroll"><table><thead><tr><th>Kriterium</th><th>Gesamt</th><th>GÃ¼ltig</th><th>AusgewÃ¤hlt</th><th>Ausgelassen</th><th>Fehler</th><th>Review</th><th>Manuell ausgeschlossen</th><th>UnvollstÃ¤ndig</th></tr></thead><tbody>
+<tr><td>Richtigkeit</td><td>200</td><td>200</td><td>200</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+</tbody></table></div>
+<p>LaTeX-gerenderte Tabelle:</p>
+<p><figure><a href="../../../FM/tables/01_richtigkeit/data_quality_table.svg"><img src="../../../FM/tables/01_richtigkeit/data_quality_table.svg" alt="Tabelle zur Datengrundlage" loading="lazy"></a><figcaption>Tabelle zur Datengrundlage</figcaption></figure></p>
+<p>FelderklÃ¤rung:</p>
+<ul>
+<li><strong>Kriterium</strong>: Bewerteter QualitÃ¤tsbereich.</li>
+<li><strong>Gesamt</strong>: Alle gefundenen Paare nach den gesetzten Filtern vor Bereinigung.</li>
+<li><strong>GÃ¼ltig</strong>: Paare ohne Fehler und ohne unvollstÃ¤ndige oder unbewertete Seite.</li>
+<li><strong>AusgewÃ¤hlt</strong>: Paare, die tatsÃ¤chlich in Analyse, Statistik und Charts verwendet werden.</li>
+<li><strong>Ausgelassen</strong>: Paare, die durch den optionalen Direkt-Score-Behalten-Bereich ausgeschlossen wurden, weil der direkte Aufruf auÃŸerhalb des eingestellten Bereichs lag.</li>
+<li><strong>Fehler</strong>: Paare, bei denen mindestens eine Seite einen technischen Fehler hatte.</li>
+<li><strong>Review</strong>: Paare mit Review-Markierung; standardmÃ¤ÃŸig nicht in der Analyse enthalten.</li>
+<li><strong>Manuell ausgeschlossen</strong>: Paare, die vom Nutzer manuell aus der Analyse ausgeschlossen wurden.</li>
+<li><strong>UnvollstÃ¤ndig</strong>: Paare mit fehlender Seite, laufendem Run oder fehlendem Score.</li>
+</ul>
+<h3>Diagramme</h3>
+<h4>Paarweise Differenzen</h4>
+<div class="table-scroll"><table><thead><tr><th>Feld</th><th>Wert</th></tr></thead><tbody>
+<tr><td>Datei</td><td><code>FM/images/01_richtigkeit/chart_paired_differences.svg</code></td></tr>
+<tr><td>Bedeutung</td><td>Zeigt fÃ¼r jedes Paar die Differenz Workflow minus Direkter Aufruf.</td></tr>
+</tbody></table></div>
+<p><figure><a href="../../../FM/images/01_richtigkeit/chart_paired_differences.svg"><img src="../../../FM/images/01_richtigkeit/chart_paired_differences.svg" alt="Paarweise Differenzen" loading="lazy"></a><figcaption>Paarweise Differenzen</figcaption></figure></p>
+<p>FelderklÃ¤rung:</p>
+<ul>
+<li><strong>X-Achse / Antwortpaar</strong>: Ein gepaarter Vergleich aus direktem Aufruf und Workflow.</li>
+<li><strong>Y-Achse / Differenz</strong>: Workflow minus Direkter Aufruf in Prozentpunkten.</li>
+<li><strong>Zahlen auf Balken</strong>: Konkrete Differenz des jeweiligen Antwortpaars in Prozentpunkten.</li>
+<li><strong>Y-Skala</strong>: Skala der Differenzwerte; positive und negative Bereiche werden getrennt sichtbar.</li>
+<li><strong>0-Linie</strong>: Beide Antworten wurden gleich bewertet.</li>
+<li><strong>Positive Balken</strong>: Workflow war besser.</li>
+<li><strong>Negative Balken</strong>: Direkter Aufruf war besser.</li>
+</ul>
+<h4>Paarweise Differenzen (Sample)</h4>
+<div class="table-scroll"><table><thead><tr><th>Feld</th><th>Wert</th></tr></thead><tbody>
+<tr><td>Datei</td><td><code>FM/images/01_richtigkeit/chart_paired_differences_sample.svg</code></td></tr>
+<tr><td>Bedeutung</td><td>Zeigt dieselbe Darstellung für die ersten 120 Paare. Diese Version ist besser lesbar, aber nicht vollstaendig.</td></tr>
+</tbody></table></div>
+<p><figure><a href="../../../FM/images/01_richtigkeit/chart_paired_differences_sample.svg"><img src="../../../FM/images/01_richtigkeit/chart_paired_differences_sample.svg" alt="Paarweise Differenzen (Sample)" loading="lazy"></a><figcaption>Paarweise Differenzen (Sample)</figcaption></figure></p>
+<p>FelderklÃ¤rung:</p>
+<ul>
+<li><strong>Datei</strong>: Exportiertes Diagramm.</li>
+<li><strong>Bedeutung</strong>: Visualisiert einen Teil der statistischen Auswertung.</li>
+</ul>
+<h4>Paarweise Differenzen in Teilen</h4>
+<div class="table-scroll"><table><thead><tr><th>Feld</th><th>Wert</th></tr></thead><tbody>
+<tr><td>Datei</td><td><code>FM/images/01_richtigkeit/chart_paired_differences_part_001.svg usw.</code></td></tr>
+<tr><td>Bedeutung</td><td>Zusaetzliche mehrteilige Version mit bis zu 100 Paaren pro SVG. Diese Dateien sind besser lesbar als der vollstaendige Chart und decken zusammen alle Paare ab.</td></tr>
+</tbody></table></div>
+<p><strong>Paarweise Differenzen in Teilen:</strong> siehe die einzelnen Teilgrafiken unten im Abschnitt Charts.</p>
+<p>FelderklÃ¤rung:</p>
+<ul>
+<li><strong>Datei</strong>: Exportiertes Diagramm.</li>
+<li><strong>Bedeutung</strong>: Visualisiert einen Teil der statistischen Auswertung.</li>
+</ul>
+<h4>Verteilung der Paardifferenzen</h4>
+<div class="table-scroll"><table><thead><tr><th>Feld</th><th>Wert</th></tr></thead><tbody>
+<tr><td>Datei</td><td><code>FM/images/01_richtigkeit/chart_difference_distribution.svg</code></td></tr>
+<tr><td>Bedeutung</td><td>Zeigt, ob der Workflow-Effekt stabil ist oder stark streut.</td></tr>
+</tbody></table></div>
+<p><figure><a href="../../../FM/images/01_richtigkeit/chart_difference_distribution.svg"><img src="../../../FM/images/01_richtigkeit/chart_difference_distribution.svg" alt="Verteilung der Paardifferenzen" loading="lazy"></a><figcaption>Verteilung der Paardifferenzen</figcaption></figure></p>
+<p>FelderklÃ¤rung:</p>
+<ul>
+<li><strong>X-Achse</strong>: Bereich der paarweisen Differenz in Prozentpunkten.</li>
+<li><strong>Y-Achse</strong>: Anzahl der Paare in diesem Bereich.</li>
+<li><strong>Zahlen auf Balken</strong>: Anzahl der Paare in diesem Differenzbereich.</li>
+<li><strong>GrÃ¼ne Balken</strong>: Differenzbereich liegt oberhalb von 0; Workflow war besser.</li>
+<li><strong>Rote Balken</strong>: Differenzbereich liegt unterhalb von 0; Direkter Aufruf war besser.</li>
+<li><strong>Mitte bei 0</strong>: Kein Unterschied zwischen Workflow und Direkter Aufruf.</li>
+<li><strong>Rechts von 0</strong>: Workflow-Vorteile.</li>
+<li><strong>Links von 0</strong>: Workflow-Nachteile.</li>
+</ul>
+<h4>Verteilung der Scores des direkten Aufrufs</h4>
+<div class="table-scroll"><table><thead><tr><th>Feld</th><th>Wert</th></tr></thead><tbody>
+<tr><td>Datei</td><td><code>FM/images/01_richtigkeit/chart_scoreverteilung_direkter_aufruf.svg</code></td></tr>
+<tr><td>Bedeutung</td><td>Zeigt, wie viele Antworten des direkten Aufrufs bereits nahe oder genau bei 100% lagen. Das macht den Deckeneffekt sichtbar.</td></tr>
+</tbody></table></div>
+<p><figure><a href="../../../FM/images/01_richtigkeit/chart_scoreverteilung_direkter_aufruf.svg"><img src="../../../FM/images/01_richtigkeit/chart_scoreverteilung_direkter_aufruf.svg" alt="Verteilung der Scores des direkten Aufrufs" loading="lazy"></a><figcaption>Verteilung der Scores des direkten Aufrufs</figcaption></figure></p>
+<p>FelderklÃ¤rung:</p>
+<ul>
+<li><strong>&lt;50 / grÃ¼n</strong>: Direkter Aufruf war klar schwach; viel Verbesserungspotenzial.</li>
+<li><strong>50-74 / hellgrÃ¼n</strong>: Direkter Aufruf war teilweise richtig; noch deutliches Verbesserungspotenzial.</li>
+<li><strong>75-99 / orange</strong>: Direkter Aufruf war nahe an vollstÃ¤ndig; wenig Verbesserungspotenzial.</li>
+<li><strong>100 / rot</strong>: Direkter Aufruf war bereits perfekt; Workflow kann nicht weiter verbessern und nur gleich bleiben oder verschlechtern.</li>
+<li><strong>Zahlen auf Balken</strong>: Anzahl der Paare in dieser Score-Gruppe.</li>
+<li><strong>Y-Achse</strong>: Anzahl der Paare.</li>
+<li><strong>Zweck</strong>: Zeigt den Deckeneffekt in der Detailanalyse.</li>
+</ul>
+<h4>Scorevergleich Direkter Aufruf vs Workflow</h4>
+<div class="table-scroll"><table><thead><tr><th>Feld</th><th>Wert</th></tr></thead><tbody>
+<tr><td>Datei</td><td><code>FM/images/01_richtigkeit/chart_direkter_aufruf_vs_workflow_scatter.svg</code></td></tr>
+<tr><td>Bedeutung</td><td>Punkte oberhalb der Diagonale bedeuten, dass der Workflow hÃ¶her bewertet wurde als der direkte Aufruf. Gleiche Score-Kombinationen werden leicht versetzt und mit ihrer Anzahl beschriftet.</td></tr>
+</tbody></table></div>
+<p><figure><a href="../../../FM/images/01_richtigkeit/chart_direkter_aufruf_vs_workflow_scatter.svg"><img src="../../../FM/images/01_richtigkeit/chart_direkter_aufruf_vs_workflow_scatter.svg" alt="Scorevergleich Direkter Aufruf vs Workflow" loading="lazy"></a><figcaption>Scorevergleich Direkter Aufruf vs Workflow</figcaption></figure></p>
+<p>FelderklÃ¤rung:</p>
+<ul>
+<li><strong>X-Achse</strong>: Score des direkten Aufrufs in Prozent.</li>
+<li><strong>Y-Achse</strong>: Score des Workflows in Prozent.</li>
+<li><strong>X/Y-Skala</strong>: Skalen von 0 bis 100 Prozent mit Hilfslinien.</li>
+<li><strong>Diagonale</strong>: Gleicher Score bei direktem Aufruf und Workflow.</li>
+<li><strong>Punkte oberhalb</strong>: Workflow war besser.</li>
+<li><strong>Punkte unterhalb</strong>: Direkter Aufruf war besser.</li>
+<li><strong>Zahlen an Punkten</strong>: Mehrere Paare liegen auf derselben Score-Kombination.</li>
+</ul></article>
+<section class="asset-section">
+  <h2>Charts</h2>
+  <div class="asset-grid">
+    <article class="asset-card"><a href="../../../FM/images/01_richtigkeit/chart_difference_distribution.svg"><img src="../../../FM/images/01_richtigkeit/chart_difference_distribution.svg" alt="chart_difference_distribution.svg" loading="lazy"></a><a class="file-link" href="../../../FM/images/01_richtigkeit/chart_difference_distribution.svg">chart_difference_distribution.svg</a></article>
+<article class="asset-card"><a href="../../../FM/images/01_richtigkeit/chart_direkter_aufruf_vs_workflow_scatter.svg"><img src="../../../FM/images/01_richtigkeit/chart_direkter_aufruf_vs_workflow_scatter.svg" alt="chart_direkter_aufruf_vs_workflow_scatter.svg" loading="lazy"></a><a class="file-link" href="../../../FM/images/01_richtigkeit/chart_direkter_aufruf_vs_workflow_scatter.svg">chart_direkter_aufruf_vs_workflow_scatter.svg</a></article>
+<article class="asset-card"><a href="../../../FM/images/01_richtigkeit/chart_paired_differences.svg"><img src="../../../FM/images/01_richtigkeit/chart_paired_differences.svg" alt="chart_paired_differences.svg" loading="lazy"></a><a class="file-link" href="../../../FM/images/01_richtigkeit/chart_paired_differences.svg">chart_paired_differences.svg</a></article>
+<article class="asset-card"><a href="../../../FM/images/01_richtigkeit/chart_paired_differences_part_001.svg"><img src="../../../FM/images/01_richtigkeit/chart_paired_differences_part_001.svg" alt="chart_paired_differences_part_001.svg" loading="lazy"></a><a class="file-link" href="../../../FM/images/01_richtigkeit/chart_paired_differences_part_001.svg">chart_paired_differences_part_001.svg</a></article>
+<article class="asset-card"><a href="../../../FM/images/01_richtigkeit/chart_paired_differences_part_002.svg"><img src="../../../FM/images/01_richtigkeit/chart_paired_differences_part_002.svg" alt="chart_paired_differences_part_002.svg" loading="lazy"></a><a class="file-link" href="../../../FM/images/01_richtigkeit/chart_paired_differences_part_002.svg">chart_paired_differences_part_002.svg</a></article>
+<article class="asset-card"><a href="../../../FM/images/01_richtigkeit/chart_paired_differences_sample.svg"><img src="../../../FM/images/01_richtigkeit/chart_paired_differences_sample.svg" alt="chart_paired_differences_sample.svg" loading="lazy"></a><a class="file-link" href="../../../FM/images/01_richtigkeit/chart_paired_differences_sample.svg">chart_paired_differences_sample.svg</a></article>
+<article class="asset-card"><a href="../../../FM/images/01_richtigkeit/chart_scoreverteilung_direkter_aufruf.svg"><img src="../../../FM/images/01_richtigkeit/chart_scoreverteilung_direkter_aufruf.svg" alt="chart_scoreverteilung_direkter_aufruf.svg" loading="lazy"></a><a class="file-link" href="../../../FM/images/01_richtigkeit/chart_scoreverteilung_direkter_aufruf.svg">chart_scoreverteilung_direkter_aufruf.svg</a></article>
+  </div>
+</section>
+
+<section class="asset-section">
+  <h2>Tabellen</h2>
+  <div class="asset-grid">
+    <article class="asset-card"><a href="../../../FM/tables/01_richtigkeit/data_quality_table.svg"><img src="../../../FM/tables/01_richtigkeit/data_quality_table.svg" alt="data_quality_table.svg" loading="lazy"></a><a class="file-link" href="../../../FM/tables/01_richtigkeit/data_quality_table.svg">data_quality_table.svg</a></article>
+<article class="asset-card compact"><a class="file-link" href="../../../FM/tables/01_richtigkeit/data_quality_table.tex">data_quality_table.tex</a></article>
+<article class="asset-card"><a href="../../../FM/tables/01_richtigkeit/full_results_table.svg"><img src="../../../FM/tables/01_richtigkeit/full_results_table.svg" alt="full_results_table.svg" loading="lazy"></a><a class="file-link" href="../../../FM/tables/01_richtigkeit/full_results_table.svg">full_results_table.svg</a></article>
+<article class="asset-card compact"><a class="file-link" href="../../../FM/tables/01_richtigkeit/full_results_table.tex">full_results_table.tex</a></article>
+<article class="asset-card"><a href="../../../FM/tables/01_richtigkeit/short_results_table.svg"><img src="../../../FM/tables/01_richtigkeit/short_results_table.svg" alt="short_results_table.svg" loading="lazy"></a><a class="file-link" href="../../../FM/tables/01_richtigkeit/short_results_table.svg">short_results_table.svg</a></article>
+<article class="asset-card compact"><a class="file-link" href="../../../FM/tables/01_richtigkeit/short_results_table.tex">short_results_table.tex</a></article>
+<article class="asset-card compact"><a class="file-link" href="../../../FM/tables/01_richtigkeit/tables.md">tables.md</a></article>
+  </div>
+</section>
+</main>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

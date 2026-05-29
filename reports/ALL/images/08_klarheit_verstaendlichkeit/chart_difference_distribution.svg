@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="560" viewBox="0 0 980 560" role="img" aria-label="Verteilung der Paardifferenzen">
+<rect width="100%" height="100%" fill="white"/>
+<text x="490" y="34" text-anchor="middle" font-size="26" font-weight="700" fill="#0f172a">Verteilung der Paardifferenzen</text>
+<text x="28" y="227.5" transform="rotate(-90 28 227.5)" text-anchor="middle" font-size="24" fill="#475569">Anzahl Paare</text>
+
+<line x1="115" y1="390.0" x2="950" y2="390.0" stroke="#94a3b8" stroke-dasharray="4 4"/>
+<line x1="115" y1="65" x2="115" y2="390" stroke="#cbd5e1"/>
+<line x1="115" y1="390" x2="950" y2="390" stroke="#cbd5e1"/>
+<line x1="115" y1="390.0" x2="950" y2="390.0" stroke="#e2e8f0"/>
+<text x="105" y="395.0" text-anchor="end" font-size="16" fill="#64748b">0</text>
+<line x1="115" y1="308.8" x2="950" y2="308.8" stroke="#e2e8f0"/>
+<text x="105" y="313.8" text-anchor="end" font-size="16" fill="#64748b">100</text>
+<line x1="115" y1="227.5" x2="950" y2="227.5" stroke="#e2e8f0"/>
+<text x="105" y="232.5" text-anchor="end" font-size="16" fill="#64748b">201</text>
+<line x1="115" y1="146.3" x2="950" y2="146.3" stroke="#e2e8f0"/>
+<text x="105" y="151.3" text-anchor="end" font-size="16" fill="#64748b">301</text>
+<line x1="115" y1="65.0" x2="950" y2="65.0" stroke="#e2e8f0"/>
+<text x="105" y="70.0" text-anchor="end" font-size="16" fill="#64748b">401</text>
+<rect x="128.0" y="384.3" width="66.8" height="5.7" fill="#dc2626" opacity="0.78"/>
+<text x="161.4" y="376.3" text-anchor="middle" font-size="16" font-weight="700" fill="#0f172a">7</text>
+<rect x="220.8" y="381.9" width="66.8" height="8.1" fill="#dc2626" opacity="0.78"/>
+<text x="254.2" y="373.9" text-anchor="middle" font-size="16" font-weight="700" fill="#0f172a">10</text>
+<rect x="313.5" y="368.9" width="66.8" height="21.1" fill="#dc2626" opacity="0.78"/>
+<text x="346.9" y="360.9" text-anchor="middle" font-size="16" font-weight="700" fill="#0f172a">26</text>
+<rect x="406.3" y="281.4" width="66.8" height="108.6" fill="#dc2626" opacity="0.78"/>
+<text x="439.7" y="273.4" text-anchor="middle" font-size="16" font-weight="700" fill="#0f172a">134</text>
+<rect x="499.1" y="65.0" width="66.8" height="325.0" fill="#64748b" opacity="0.78"/>
+<text x="532.5" y="79.0" text-anchor="middle" font-size="16" font-weight="700" fill="#0f172a">401</text>
+<rect x="591.9" y="381.1" width="66.8" height="8.9" fill="#15803d" opacity="0.78"/>
+<text x="625.3" y="373.1" text-anchor="middle" font-size="16" font-weight="700" fill="#0f172a">11</text>
+<rect x="684.7" y="305.7" width="66.8" height="84.3" fill="#15803d" opacity="0.78"/>
+<text x="718.1" y="297.7" text-anchor="middle" font-size="16" font-weight="700" fill="#0f172a">104</text>
+<rect x="777.4" y="379.5" width="66.8" height="10.5" fill="#15803d" opacity="0.78"/>
+<text x="810.8" y="371.5" text-anchor="middle" font-size="16" font-weight="700" fill="#0f172a">13</text>
+<rect x="870.2" y="388.4" width="66.8" height="1.6" fill="#15803d" opacity="0.78"/>
+<text x="903.6" y="380.4" text-anchor="middle" font-size="16" font-weight="700" fill="#0f172a">2</text>
+<text x="161.4" y="414.0" transform="rotate(-45 161.4 414.0)" font-size="20" text-anchor="end" fill="#475569">-100 bis -75</text>
+<text x="254.2" y="414.0" transform="rotate(-45 254.2 414.0)" font-size="20" text-anchor="end" fill="#475569">-75 bis -50</text>
+<text x="346.9" y="414.0" transform="rotate(-45 346.9 414.0)" font-size="20" text-anchor="end" fill="#475569">-50 bis -25</text>
+<text x="439.7" y="414.0" transform="rotate(-45 439.7 414.0)" font-size="20" text-anchor="end" fill="#475569">-25 bis 0</text>
+<text x="532.5" y="414.0" transform="rotate(-45 532.5 414.0)" font-size="20" text-anchor="end" fill="#475569">0</text>
+<text x="625.3" y="414.0" transform="rotate(-45 625.3 414.0)" font-size="20" text-anchor="end" fill="#475569">0 bis 19</text>
+<text x="718.1" y="414.0" transform="rotate(-45 718.1 414.0)" font-size="20" text-anchor="end" fill="#475569">19 bis 38</text>
+<text x="810.8" y="414.0" transform="rotate(-45 810.8 414.0)" font-size="20" text-anchor="end" fill="#475569">38 bis 56</text>
+<text x="903.6" y="414.0" transform="rotate(-45 903.6 414.0)" font-size="20" text-anchor="end" fill="#475569">56 bis 75</text>
+</svg>

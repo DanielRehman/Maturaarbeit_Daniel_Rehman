@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="585" viewBox="0 0 980 585" role="img" aria-label="Datenqualität nach Kriterium">
+<rect width="100%" height="100%" fill="white"/>
+<text x="490" y="34" text-anchor="middle" font-size="26" font-weight="700" fill="#0f172a">Datenqualität nach Kriterium</text>
+<rect x="665" y="18" width="18" height="18" fill="#64748b" opacity="0.78"/><text x="690" y="33" font-size="20" fill="#475569">Ausgewählt</text>
+<rect x="790" y="18" width="18" height="18" fill="#2563eb" opacity="0.78"/><text x="815" y="33" font-size="20" fill="#475569">Review</text>
+<text x="28" y="243.5" transform="rotate(-90 28 243.5)" text-anchor="middle" font-size="24" fill="#475569">Paare</text>
+<line x1="115" y1="415" x2="950" y2="415" stroke="#cbd5e1"/>
+<line x1="115" y1="72" x2="115" y2="415" stroke="#cbd5e1"/>
+<line x1="115" y1="415.0" x2="950" y2="415.0" stroke="#e2e8f0"/>
+<text x="105" y="420.0" text-anchor="end" font-size="16" fill="#64748b">0</text>
+<line x1="115" y1="329.3" x2="950" y2="329.3" stroke="#e2e8f0"/>
+<text x="105" y="334.3" text-anchor="end" font-size="16" fill="#64748b">38</text>
+<line x1="115" y1="243.5" x2="950" y2="243.5" stroke="#e2e8f0"/>
+<text x="105" y="248.5" text-anchor="end" font-size="16" fill="#64748b">75</text>
+<line x1="115" y1="157.8" x2="950" y2="157.8" stroke="#e2e8f0"/>
+<text x="105" y="162.8" text-anchor="end" font-size="16" fill="#64748b">113</text>
+<line x1="115" y1="72.0" x2="950" y2="72.0" stroke="#e2e8f0"/>
+<text x="105" y="77.0" text-anchor="end" font-size="16" fill="#64748b">150</text>
+<rect x="134.4" y="72.0" width="26.0" height="343.0" fill="#64748b" opacity="0.78"/>
+<rect x="162.4" y="415.0" width="26.0" height="0.0" fill="#2563eb" opacity="0.78"/>
+<text x="147.4" y="65.0" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">150</text>
+<text x="175.4" y="408.0" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">0</text>
+<rect x="227.2" y="140.6" width="26.0" height="274.4" fill="#64748b" opacity="0.78"/>
+<rect x="255.2" y="346.4" width="26.0" height="68.6" fill="#2563eb" opacity="0.78"/>
+<text x="240.2" y="133.6" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">120</text>
+<text x="268.2" y="339.4" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">30</text>
+<rect x="320.0" y="72.0" width="26.0" height="343.0" fill="#64748b" opacity="0.78"/>
+<rect x="347.9" y="415.0" width="26.0" height="0.0" fill="#2563eb" opacity="0.78"/>
+<text x="333.0" y="65.0" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">150</text>
+<text x="360.9" y="408.0" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">0</text>
+<rect x="412.7" y="72.0" width="26.0" height="343.0" fill="#64748b" opacity="0.78"/>
+<rect x="440.7" y="415.0" width="26.0" height="0.0" fill="#2563eb" opacity="0.78"/>
+<text x="425.7" y="65.0" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">150</text>
+<text x="453.7" y="408.0" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">0</text>
+<rect x="505.5" y="72.0" width="26.0" height="343.0" fill="#64748b" opacity="0.78"/>
+<rect x="533.5" y="415.0" width="26.0" height="0.0" fill="#2563eb" opacity="0.78"/>
+<text x="518.5" y="65.0" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">150</text>
+<text x="546.5" y="408.0" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">0</text>
+<rect x="598.3" y="76.6" width="26.0" height="338.4" fill="#64748b" opacity="0.78"/>
+<rect x="626.3" y="410.4" width="26.0" height="4.6" fill="#2563eb" opacity="0.78"/>
+<text x="611.3" y="69.6" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">148</text>
+<text x="639.3" y="403.4" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">2</text>
+<rect x="691.1" y="72.0" width="26.0" height="343.0" fill="#64748b" opacity="0.78"/>
+<rect x="719.1" y="415.0" width="26.0" height="0.0" fill="#2563eb" opacity="0.78"/>
+<text x="704.1" y="65.0" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">150</text>
+<text x="732.0" y="408.0" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">0</text>
+<rect x="783.9" y="85.7" width="26.0" height="329.3" fill="#64748b" opacity="0.78"/>
+<rect x="811.8" y="401.3" width="26.0" height="13.7" fill="#2563eb" opacity="0.78"/>
+<text x="796.8" y="78.7" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">144</text>
+<text x="824.8" y="394.3" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">6</text>
+<rect x="876.6" y="72.0" width="26.0" height="343.0" fill="#64748b" opacity="0.78"/>
+<rect x="904.6" y="415.0" width="26.0" height="0.0" fill="#2563eb" opacity="0.78"/>
+<text x="889.6" y="65.0" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">150</text>
+<text x="917.6" y="408.0" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">0</text>
+<text x="161.4" y="439.0" transform="rotate(-45 161.4 439.0)" font-size="20" text-anchor="end" fill="#475569">Richtigkeit</text>
+<text x="254.2" y="439.0" transform="rotate(-45 254.2 439.0)" font-size="20" text-anchor="end" fill="#475569">Rückfragefähigkeit</text>
+<text x="346.9" y="439.0" transform="rotate(-45 346.9 439.0)" font-size="20" text-anchor="end" fill="#475569">Internet- / Quelle...</text>
+<text x="439.7" y="439.0" transform="rotate(-45 439.7 439.0)" font-size="20" text-anchor="end" fill="#475569">Prüfung / Verifika...</text>
+<text x="532.5" y="439.0" transform="rotate(-45 532.5 439.0)" font-size="20" text-anchor="end" fill="#475569">Unsicherheit offen...</text>
+<text x="625.3" y="439.0" transform="rotate(-45 625.3 439.0)" font-size="20" text-anchor="end" fill="#475569">Vollständigkeit ge...</text>
+<text x="718.1" y="439.0" transform="rotate(-45 718.1 439.0)" font-size="20" text-anchor="end" fill="#475569">Vollständigkeit ge...</text>
+<text x="810.8" y="439.0" transform="rotate(-45 810.8 439.0)" font-size="20" text-anchor="end" fill="#475569">Klarheit / Verstän...</text>
+<text x="903.6" y="439.0" transform="rotate(-45 903.6 439.0)" font-size="20" text-anchor="end" fill="#475569">Relevanz</text>
+</svg>

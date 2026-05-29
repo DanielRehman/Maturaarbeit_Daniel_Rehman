@@ -1,0 +1,1 @@
+const root=document.documentElement;const key='outputs-new-theme';const saved=localStorage.getItem(key);if(saved)root.dataset.theme=saved;document.getElementById('theme-toggle')?.addEventListener('click',()=>{const next=root.dataset.theme==='dark'?'light':'dark';root.dataset.theme=next;localStorage.setItem(key,next);});

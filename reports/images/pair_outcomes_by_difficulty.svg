@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="298" viewBox="0 0 1040 298">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="520" y="30" text-anchor="middle" font-family="Arial" font-size="20" font-weight="700">Paar-Outcomes nach Schwierigkeit</text>
+<text x="198" y="80" text-anchor="end" font-family="Arial" font-size="12">d1 mit PICK</text>
+<rect x="210" y="65" width="59.25" height="20" fill="#dc2626"/>
+<text x="239.625" y="80" text-anchor="middle" font-family="Arial" font-size="11" fill="#111827">12</text>
+<rect x="269.25" y="65" width="651.75" height="20" fill="#eab308"/>
+<text x="595.125" y="80" text-anchor="middle" font-family="Arial" font-size="11" fill="#111827">132</text>
+<rect x="921" y="65" width="79" height="20" fill="#16a34a"/>
+<text x="960.5" y="80" text-anchor="middle" font-family="Arial" font-size="11" fill="#111827">16</text>
+<text x="198" y="114" text-anchor="end" font-family="Arial" font-size="12">d1 ohne PICK</text>
+<rect x="210" y="99" width="83.9375" height="20" fill="#dc2626"/>
+<text x="251.96875" y="114" text-anchor="middle" font-family="Arial" font-size="11" fill="#111827">17</text>
+<rect x="293.9375" y="99" width="641.875" height="20" fill="#eab308"/>
+<text x="614.875" y="114" text-anchor="middle" font-family="Arial" font-size="11" fill="#111827">130</text>
+<rect x="935.8125" y="99" width="64.1875" height="20" fill="#16a34a"/>
+<text x="967.90625" y="114" text-anchor="middle" font-family="Arial" font-size="11" fill="#111827">13</text>
+<text x="198" y="148" text-anchor="end" font-family="Arial" font-size="12">d2 mit PICK</text>
+<rect x="210" y="133" width="54.31250000000001" height="20" fill="#dc2626"/>
+<text x="237.15625" y="148" text-anchor="middle" font-family="Arial" font-size="11" fill="#111827">11</text>
+<rect x="264.3125" y="133" width="676.4375" height="20" fill="#eab308"/>
+<text x="602.53125" y="148" text-anchor="middle" font-family="Arial" font-size="11" fill="#111827">137</text>
+<rect x="940.75" y="133" width="59.25" height="20" fill="#16a34a"/>
+<text x="970.375" y="148" text-anchor="middle" font-family="Arial" font-size="11" fill="#111827">12</text>
+<text x="198" y="182" text-anchor="end" font-family="Arial" font-size="12">d2 ohne PICK</text>
+<rect x="210" y="167" width="74.0625" height="20" fill="#dc2626"/>
+<text x="247.03125" y="182" text-anchor="middle" font-family="Arial" font-size="11" fill="#111827">15</text>
+<rect x="284.0625" y="167" width="661.625" height="20" fill="#eab308"/>
+<text x="614.875" y="182" text-anchor="middle" font-family="Arial" font-size="11" fill="#111827">134</text>
+<rect x="945.6875" y="167" width="54.31250000000001" height="20" fill="#16a34a"/>
+<text x="972.84375" y="182" text-anchor="middle" font-family="Arial" font-size="11" fill="#111827">11</text>
+<text x="198" y="216" text-anchor="end" font-family="Arial" font-size="12">d3 mit PICK</text>
+<rect x="210" y="201" width="14.8125" height="20" fill="#dc2626"/>
+<rect x="224.8125" y="201" width="750.5" height="20" fill="#eab308"/>
+<text x="600.0625" y="216" text-anchor="middle" font-family="Arial" font-size="11" fill="#111827">152</text>
+<rect x="975.3125" y="201" width="24.6875" height="20" fill="#16a34a"/>
+<text x="198" y="250" text-anchor="end" font-family="Arial" font-size="12">d3 ohne PICK</text>
+<rect x="210" y="235" width="44.4375" height="20" fill="#dc2626"/>
+<text x="232.21875" y="250" text-anchor="middle" font-family="Arial" font-size="11" fill="#111827">9</text>
+<rect x="254.4375" y="235" width="691.25" height="20" fill="#eab308"/>
+<text x="600.0625" y="250" text-anchor="middle" font-family="Arial" font-size="11" fill="#111827">140</text>
+<rect x="945.6875" y="235" width="54.31250000000001" height="20" fill="#16a34a"/>
+<text x="972.84375" y="250" text-anchor="middle" font-family="Arial" font-size="11" fill="#111827">11</text>
+<rect x="210" y="273" width="14" height="14" fill="#dc2626"/>
+<text x="230" y="286" font-family="Arial" font-size="13">schlechter</text>
+<rect x="350" y="273" width="14" height="14" fill="#eab308"/>
+<text x="370" y="286" font-family="Arial" font-size="13">gleich</text>
+<rect x="490" y="273" width="14" height="14" fill="#16a34a"/>
+<text x="510" y="286" font-family="Arial" font-size="13">besser</text>
+</svg>
