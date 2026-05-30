@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="de" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Systemprompts: Engine Instructions</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="../../index.html">Anhang</a>
+  <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Darstellung wechseln">Darstellung wechseln</button>
+</header>
+<main class="shell">
+  <section class="hero"><h1>Systemprompts: Engine Instructions</h1><p>Systemprompts und Bewertungsschritte</p></section>
+  <nav class="breadcrumb"><a href="../../index.html">Uebersicht</a><span>Systemprompts und Bewertungsschritte</span></nav>
+<article class="doc"><h2>Engine Instructions</h2>
+<h3>System Prompt</h3>
+<p>Workflow Type: Engine / Response Format</p>
+<p>Step: Base Response Format</p>
+<pre><code class="language-text">Work autonomously. Try your best to solve the question on your own. Only ask for internet search or additional information if it is truly necessary. Find the best possible answer.
+
+You MUST respond with valid JSON only - no text outside the JSON object.
+
+Response format:
+{
+  "answer": "your complete response here",
+  "isfinished": true
+}</code></pre>
+<h3>System Prompt</h3>
+<p>Workflow Type: Engine / Internet Search</p>
+<p>Step: Search Request Format</p>
+<pre><code class="language-text">ADD-ON A - Internet search available:
+If you need current information from the internet, add your search queries and set isfinished to false:
+{
+  "answer": "",
+  "internet_search_requests": ["your search query here"],
+  "isfinished": false
+}
+You will receive the search results and can then provide your final answer with isfinished: true.</code></pre>
+<h3>System Prompt</h3>
+<p>Workflow Type: Engine / Intermediate Workflow Step</p>
+<p>Step: Next-Step Instruction Format</p>
+<pre><code class="language-text">ADD-ON B - You may pass instructions to the next processing step:
+{
+  "answer": "your answer so far",
+  "optional_nextprompt": "instruction for the next step",
+  "isfinished": false
+}</code></pre>
+<h3>System Prompt</h3>
+<p>Workflow Type: Engine / Computer-Evaluable Internet Search</p>
+<p>Step: Search Request Format</p>
+<pre><code class="language-text">Internet search is available for this step.
+For the final answer, return ONLY the final JSON object requested by the user.
+If you truly need current internet information before answering, return ONLY this temporary search-request JSON:
+{
+  "internet_search_requests": ["your search query here"],
+  "isfinished": false
+}
+After search results are provided, return ONLY the final JSON object requested by the user.</code></pre>
+<h3>System Prompt</h3>
+<p>Workflow Type: Engine / Unexpected Clarification</p>
+<p>Step: Autoanswer Checker</p>
+<pre><code class="language-text">You represent the user in an evaluation run.
+The AI unexpectedly asked a clarification question. Provide a short, neutral, plausible user answer so the run can continue.
+Do not solve the original task. Only answer the missing information.
+Return plain text, no markdown.</code></pre>
+</article>
+</main>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

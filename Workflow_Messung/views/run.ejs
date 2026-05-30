@@ -1,0 +1,1792 @@
+<%- include('partials/header', {title, activePage}) %>
+
+<div x-data="runPage()" x-init="init()">
+  <h1 class="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-6">Run Workflow</h1>
+
+  <div class="flex flex-col lg:flex-row gap-6">
+    <!-- Sidebar: Selection -->
+    <div class="lg:w-80 flex-shrink-0">
+      <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-4 space-y-4">
+        <h2 class="text-sm font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wide">Configuration</h2>
+
+        <!-- Setup -->
+        <div>
+          <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Setup</label>
+          <select x-model="form.setupId" @change="filterQuestions()" :disabled="busyLocked()" class="w-full text-sm border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-60 disabled:cursor-not-allowed">
+            <option value="">Select setup…</option>
+            <% setups.filter(function(s) { return s.id !== 'setup_direct' && s.id !== 'setup_ce_direct'; }).forEach(function(s) { %>
+              <option value="<%= s.id %>"><%= s.name %></option>
+            <% }) %>
+          </select>
+        </div>
+
+        <!-- Model -->
+        <div>
+          <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Model</label>
+          <select x-model="form.llmConfigId" :disabled="busyLocked()" class="w-full text-sm border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-60 disabled:cursor-not-allowed">
+            <option value="">Select model…</option>
+            <% models.forEach(function(m) { %>
+              <option value="<%= m.id %>"><%= m.label %> (<%= m.model_id %>)</option>
+            <% }) %>
+          </select>
+        </div>
+
+        <!-- Question set -->
+        <div>
+          <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Question set</label>
+          <select x-model="form.testset" @change="filterQuestions()" :disabled="busyLocked()" class="w-full text-sm border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-60 disabled:cursor-not-allowed">
+            <option value="">All question sets</option>
+            <template x-for="ts in testsets" :key="ts.id">
+              <option :value="ts.id" x-text="ts.name || ts.id"></option>
+            </template>
+          </select>
+        </div>
+
+        <!-- Run set -->
+        <div>
+          <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Run set</label>
+          <select x-model="form.runSetId" :disabled="busyLocked()" class="w-full text-sm border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-60 disabled:cursor-not-allowed">
+            <template x-for="rs in runSets" :key="rs.id">
+              <option :value="rs.id" x-text="rs.name + ' (' + rs.id + ')'"></option>
+            </template>
+          </select>
+          <div class="mt-2 flex gap-2">
+            <input type="text" x-model="newRunSetName" @keydown.enter="createRunSet()" :disabled="busyLocked()" placeholder="new run set"
+                   class="flex-1 text-xs border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200 disabled:opacity-60 disabled:cursor-not-allowed">
+            <button @click="createRunSet()" :disabled="busyLocked()" class="px-2 py-1.5 text-xs rounded bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 disabled:opacity-60 disabled:cursor-not-allowed">Add</button>
+          </div>
+        </div>
+
+        <!-- Criteria filter -->
+        <div>
+          <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Filter by Criteria</label>
+          <select x-model="form.criteriaFilter" @change="filterQuestions()" :disabled="busyLocked()" class="w-full text-sm border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-60 disabled:cursor-not-allowed">
+            <option value="">All criteria</option>
+            <% criteria.forEach(function(c) { %>
+              <option value="<%= c.id %>"><%= c.name_de %></option>
+            <% }) %>
+          </select>
+        </div>
+
+        <!-- Question -->
+        <div>
+          <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Question</label>
+          <select x-model="form.questionId" :disabled="busyLocked()" class="w-full text-sm border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-60 disabled:cursor-not-allowed">
+            <option value="">Select question…</option>
+            <template x-for="q in filteredQuestions" :key="q.id">
+              <option :value="q.id" x-text="q.question_text.length > 60 ? q.question_text.slice(0,60)+'…' : q.question_text"></option>
+            </template>
+          </select>
+          <p x-show="form.questionId" x-text="selectedQuestionText()" class="mt-1 text-xs text-slate-500 dark:text-slate-400 italic"></p>
+        </div>
+
+        <!-- Batch options -->
+        <div class="flex gap-2">
+          <div class="flex-1">
+            <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Runs per question</label>
+            <input type="number" x-model.number="runsPerQuestion" min="1" max="20" :disabled="busyLocked()"
+                   class="w-full text-sm border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-60 disabled:cursor-not-allowed">
+          </div>
+          <div class="flex-1">
+            <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Parallel</label>
+            <input type="number" x-model.number="parallelCount" min="1" max="10" :disabled="busyLocked()"
+                   class="w-full text-sm border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-60 disabled:cursor-not-allowed">
+          </div>
+        </div>
+
+        <!-- Single run -->
+        <button @click="executeRun()"
+                :disabled="running || !form.setupId || !form.llmConfigId || !form.questionId"
+                class="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 dark:disabled:bg-slate-600 disabled:cursor-not-allowed text-white text-sm font-medium rounded transition-colors flex items-center justify-center gap-2">
+          <svg x-show="running && !batchRunning" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+          </svg>
+          <span x-text="(running && !batchRunning) ? 'Running…' : 'Run Paired Test'"></span>
+        </button>
+
+        <!-- Batch run -->
+        <button @click="runAll()"
+                :disabled="running || !form.setupId || !form.llmConfigId || filteredQuestions.length === 0"
+                class="w-full py-2 px-4 bg-slate-700 hover:bg-slate-800 dark:bg-slate-600 dark:hover:bg-slate-500 disabled:bg-slate-300 dark:disabled:bg-slate-600 disabled:cursor-not-allowed text-white text-sm font-medium rounded transition-colors flex items-center justify-center gap-2">
+          <svg x-show="batchRunning" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+          </svg>
+          <span x-text="batchRunning ? ('Running ' + batchProgress + '/' + batchTotal + '…') : ('Run All (' + filteredQuestions.length + ')')"></span>
+        </button>
+
+        <button @click="runMissing()"
+                :disabled="running || !form.setupId || !form.llmConfigId || filteredQuestions.length === 0"
+                class="w-full py-2 px-4 bg-teal-700 hover:bg-teal-800 dark:bg-teal-600 dark:hover:bg-teal-500 disabled:bg-slate-300 dark:disabled:bg-slate-600 disabled:cursor-not-allowed text-white text-sm font-medium rounded transition-colors flex items-center justify-center gap-2">
+          <svg x-show="batchRunning" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+          </svg>
+          <span x-text="batchRunning ? ('Running ' + batchProgress + '/' + batchTotal + '…') : 'Run Missing'"></span>
+        </button>
+
+        <div x-show="running || batchScoring || statusMessage" class="rounded border px-3 py-2 text-xs"
+             :class="busyLocked() ? 'bg-amber-50 border-amber-200 text-amber-800 dark:bg-amber-900/20 dark:border-amber-700 dark:text-amber-200' : 'bg-green-50 border-green-200 text-green-800 dark:bg-green-900/20 dark:border-green-700 dark:text-green-200'">
+          <p class="font-semibold" x-text="busyLocked() ? 'Bitte UI nicht ändern: Prozess läuft' : 'Fertig'"></p>
+          <p x-text="statusMessage"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main area: Results -->
+    <div class="flex-1 min-w-0">
+      <!-- Empty state -->
+      <div x-show="!result && !batchResults.length && !running && !error" class="flex flex-col items-center justify-center h-48 text-slate-400 dark:text-slate-500 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-lg">
+        <svg class="w-10 h-10 mb-2 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+        </svg>
+        <p class="text-sm">Select a setup and model, then run a single question or all filtered questions</p>
+      </div>
+
+      <!-- Batch results -->
+      <div x-show="batchResults.length > 0" class="space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h3 class="text-sm font-semibold text-slate-700 dark:text-slate-300" x-text="batchTitle()"></h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400" x-text="batchSummary()"></p>
+          </div>
+          <span x-show="batchRunning" class="text-xs text-blue-600 dark:text-blue-400 font-medium" x-text="'Running ' + batchProgress + '/' + batchTotal"></span>
+          <span x-show="!batchRunning && batchResults.length" class="text-xs text-green-600 dark:text-green-400 font-medium">Batch finished</span>
+        </div>
+        <div class="h-2 bg-slate-100 dark:bg-slate-800 rounded overflow-hidden">
+          <div class="h-full transition-all"
+               :class="batchRunning ? 'bg-blue-500' : batchFailedCount() > 0 ? 'bg-amber-500' : 'bg-green-500'"
+               :style="'width: ' + batchPercent() + '%'"></div>
+        </div>
+        <div class="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
+          <table class="w-full text-sm">
+            <thead class="bg-slate-50 dark:bg-slate-800">
+              <tr>
+                <th class="text-left px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Question</th>
+                <th class="text-left px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Criteria</th>
+                <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">#</th>
+                <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Status</th>
+                <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Run ID</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-for="(r, idx) in batchResults" :key="idx">
+                <tr class="border-t border-slate-100 dark:border-slate-800">
+                  <td class="px-3 py-2 text-slate-700 dark:text-slate-300 max-w-xs" x-text="r.questionText.length > 70 ? r.questionText.slice(0,70)+'…' : r.questionText"></td>
+                  <td class="px-3 py-2 text-slate-500 dark:text-slate-400 text-xs" x-text="r.criteriaName"></td>
+                  <td class="px-3 py-2 text-center text-slate-500 dark:text-slate-400 text-xs" x-text="r.runNr"></td>
+                  <td class="px-3 py-2 text-center">
+                    <span x-show="r.status === 'pending'" class="text-xs text-slate-400">waiting</span>
+                    <span x-show="r.status === 'running'" class="text-xs text-blue-500">running…</span>
+                    <span x-show="r.status === 'done'" class="text-xs text-green-600 dark:text-green-400">done</span>
+                    <span x-show="r.status === 'skipped'" class="text-xs text-slate-400">exists</span>
+                    <span x-show="r.status === 'error'" class="text-xs text-red-500" :title="r.error">error</span>
+                  </td>
+                  <td class="px-3 py-2 text-center text-slate-500 dark:text-slate-400 text-xs" x-text="r.runId || '—'"></td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Error state -->
+      <div x-show="error" class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-4">
+        <p class="text-sm font-medium text-red-700 dark:text-red-400">Error</p>
+        <p x-text="error" class="text-sm text-red-600 dark:text-red-300 mt-1"></p>
+      </div>
+
+      <!-- Results -->
+      <div x-show="result" class="space-y-4">
+        <template x-for="(step, i) in (result ? result.steps : [])" :key="step.step">
+          <div class="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
+            <div class="bg-slate-50 dark:bg-slate-800 px-4 py-2 flex items-center justify-between">
+              <span class="text-sm font-medium text-slate-700 dark:text-slate-300" x-text="'Step ' + step.step"></span>
+              <template x-if="step.searchQueries && step.searchQueries.length > 0">
+                <div class="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                  <span x-text="step.searchQueries.length + ' search(es)'"></span>
+                </div>
+              </template>
+            </div>
+            <div class="p-4">
+              <template x-if="step.searchQueries && step.searchQueries.length > 0">
+                <div class="mb-3">
+                  <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Search queries:</p>
+                  <div class="flex flex-wrap gap-1">
+                    <template x-for="q in step.searchQueries" :key="q">
+                      <span class="text-xs bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded border border-blue-200 dark:border-blue-700" x-text="q"></span>
+                    </template>
+                  </div>
+                </div>
+              </template>
+              <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">Answer:</p>
+              <div class="text-sm text-slate-700 dark:text-slate-300 prose-answer bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded p-3 max-h-96 overflow-y-auto" x-text="step.finalAnswer"></div>
+            </div>
+          </div>
+        </template>
+
+        <!-- Score (auto-populated after run) -->
+        <div x-show="result && result.score" class="border border-slate-200 dark:border-slate-700 rounded-lg p-4 space-y-4">
+          <h3 class="text-sm font-semibold text-slate-700 dark:text-slate-300">Score</h3>
+
+          <!-- Score summary -->
+          <div class="flex items-center gap-4 p-3 bg-slate-50 dark:bg-slate-800 rounded">
+            <div class="text-center">
+              <div class="text-2xl font-bold"
+                   :class="result && result.score && result.score.scorePercent >= 70 ? 'text-green-600' : result && result.score && result.score.scorePercent >= 40 ? 'text-yellow-600' : 'text-red-600'"
+                   x-text="result && result.score ? result.score.scorePercent.toFixed(1) + '%' : ''"></div>
+              <div class="text-xs text-slate-500 dark:text-slate-400">Score</div>
+            </div>
+            <div class="text-center">
+              <div class="text-lg font-semibold text-slate-700 dark:text-slate-300"
+                   x-text="result && result.score ? result.score.passed + '/' + result.score.total : ''"></div>
+              <div class="text-xs text-slate-500 dark:text-slate-400">Checkpoints</div>
+            </div>
+            <div class="flex-1">
+              <p class="text-xs text-slate-600 dark:text-slate-400 italic"
+                 x-text="result && result.score ? result.score.report : ''"></p>
+              <template x-if="result && result.score && result.score.reviewRequired">
+                <p class="mt-2 text-xs text-yellow-700 dark:text-yellow-300"
+                   x-text="'Review: ' + (result.score.reviewReason || 'Scorer marked this run for manual review.')"></p>
+              </template>
+            </div>
+          </div>
+
+          <!-- Checkpoint table -->
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-slate-200 dark:border-slate-700">
+                <th class="text-left py-1.5 text-xs font-medium text-slate-500 dark:text-slate-400">Checkpoint</th>
+                <th class="text-center py-1.5 text-xs font-medium text-slate-500 dark:text-slate-400 w-16">Result</th>
+                <th class="text-left py-1.5 text-xs font-medium text-slate-500 dark:text-slate-400">Reasoning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-for="cp in (result && result.score ? result.score.checkpointResults : [])" :key="cp.checkpointId">
+                <tr class="border-b border-slate-100 dark:border-slate-800 align-top"
+                    :class="cp.passed ? '' : 'bg-red-50 dark:bg-red-900/20'">
+                  <td class="py-2 pr-3 text-slate-700 dark:text-slate-300 text-xs" x-text="cp.itemText"></td>
+                  <td class="py-2 text-center">
+                    <span x-show="cp.passed" class="text-green-600 dark:text-green-400 font-bold">✓</span>
+                    <span x-show="!cp.passed" class="text-red-500 dark:text-red-400 font-bold">✗</span>
+                  </td>
+                  <td class="py-2 text-slate-500 dark:text-slate-400 text-xs leading-snug" x-text="cp.explanation"></td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Run search actions -->
+  <div class="mt-10 mb-4 flex items-center gap-3">
+    <h2 class="text-base font-semibold text-slate-800 dark:text-slate-200">Runs</h2>
+    <div class="flex items-center gap-2 ml-auto">
+      <select x-model="batchScoringModelId"
+              class="text-xs border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500">
+        <option value="">Scoring model…</option>
+        <% models.forEach(function(m) { %>
+          <option value="<%= m.id %>"><%= m.label %></option>
+        <% }) %>
+      </select>
+      <button @click="scoreAllUnscored()"
+              :disabled="batchScoring || !batchScoringModelId"
+              class="py-1.5 px-3 bg-slate-700 hover:bg-slate-800 dark:bg-slate-600 dark:hover:bg-slate-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs rounded transition-colors flex items-center gap-1.5">
+        <svg x-show="batchScoring && batchScoringMode === 'score'" class="animate-spin w-3 h-3" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+        </svg>
+        <span x-text="batchScoring && batchScoringMode === 'score' ? ('Scoring ' + batchScoreProgress + '/' + batchScoreTotal + '…') : 'Score all unscored'"></span>
+      </button>
+      <button @click="revalidateFilteredRuns()"
+              :disabled="batchScoring || !batchScoringModelId"
+              class="py-1.5 px-3 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs rounded transition-colors flex items-center gap-1.5">
+        <svg x-show="batchScoring && batchScoringMode === 'revalidate'" class="animate-spin w-3 h-3" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+        </svg>
+        <span x-text="batchScoring && batchScoringMode === 'revalidate' ? ('Revalidating ' + batchScoreProgress + '/' + batchScoreTotal + '…') : 'Revalidate filtered'"></span>
+      </button>
+      <button @click="rerunFilteredRuns('all')"
+              :disabled="running || batchScoring"
+              class="py-1.5 px-3 bg-red-700 hover:bg-red-800 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs rounded transition-colors">
+        Rerun filtered pair
+      </button>
+      <button @click="rerunFilteredRuns('single')"
+              :disabled="running || batchScoring"
+              class="py-1.5 px-3 bg-slate-600 hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs rounded transition-colors">
+        Rerun single
+      </button>
+      <button @click="rerunFilteredRuns('workflow')"
+              :disabled="running || batchScoring"
+              class="py-1.5 px-3 bg-blue-700 hover:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs rounded transition-colors">
+        Rerun workflow
+      </button>
+    </div>
+  </div>
+
+  <!-- Runs search table -->
+  <div class="mb-8">
+    <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-3 mb-3 bg-slate-50 dark:bg-slate-800">
+      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-12 gap-2 items-end">
+        <div>
+          <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Run ID</label>
+          <input type="number" x-model="runSearch.runId" @keydown.enter="searchRuns(true)" class="w-full text-xs border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Run Nr</label>
+          <input type="number" x-model="runSearch.runNr" @keydown.enter="searchRuns(true)" class="w-full text-xs border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+        </div>
+        <div class="md:col-span-2">
+          <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Search text</label>
+          <input type="text" x-model="runSearch.text" placeholder="question, criteria, setup..." @keydown.enter="searchRuns(true)" class="w-full text-xs border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Question set</label>
+          <select x-model="runSearch.testset" class="w-full text-xs border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+            <option value="">All</option>
+            <template x-for="ts in testsets" :key="ts.id">
+              <option :value="ts.id" x-text="ts.name || ts.id"></option>
+            </template>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Run set</label>
+          <select x-model="runSearch.runSetId" class="w-full text-xs border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+            <option value="">All</option>
+            <template x-for="rs in runSets" :key="rs.id">
+              <option :value="rs.id" x-text="rs.name"></option>
+            </template>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Setup</label>
+          <select x-model="runSearch.setupId" class="w-full text-xs border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+            <option value="">All</option>
+            <% setups.forEach(function(s) { %>
+              <option value="<%= s.id %>"><%= s.name %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Criteria</label>
+          <select x-model="runSearch.criteriaId" class="w-full text-xs border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+            <option value="">All</option>
+            <% criteria.forEach(function(c) { %>
+              <option value="<%= c.id %>"><%= c.name_de %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Status</label>
+          <select x-model="runSearch.status" class="w-full text-xs border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+            <option value="">All</option>
+            <option value="completed">completed</option>
+            <option value="error">error</option>
+            <option value="running">running</option>
+            <option value="archived">archived</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Has error</label>
+          <select x-model="runSearch.hasError" class="w-full text-xs border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+            <option value="">All</option>
+            <option value="yes">yes</option>
+            <option value="no">no</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Has review</label>
+          <select x-model="runSearch.hasReview" class="w-full text-xs border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+            <option value="">All</option>
+            <option value="yes">yes</option>
+            <option value="no">no</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Search used</label>
+          <select x-model="runSearch.hasSearch" class="w-full text-xs border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+            <option value="">All</option>
+            <option value="yes">yes</option>
+            <option value="no">no</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Autoanswer</label>
+          <select x-model="runSearch.hasAutoanswer" class="w-full text-xs border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+            <option value="">All</option>
+            <option value="yes">yes</option>
+            <option value="no">no</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Score from</label>
+          <input type="number" step="0.1" min="0" max="100" x-model="runSearch.scoreFrom" @keydown.enter="searchRuns(true)" placeholder="any"
+                 class="w-full text-xs border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Score to</label>
+          <input type="number" step="0.1" min="0" max="100" x-model="runSearch.scoreTo" @keydown.enter="searchRuns(true)" placeholder="any"
+                 class="w-full text-xs border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Score Single from</label>
+          <input type="number" step="0.1" min="0" max="100" x-model="runSearch.singleScoreFrom" @keydown.enter="searchRuns(true)" placeholder="any"
+                 class="w-full text-xs border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Score Single to</label>
+          <input type="number" step="0.1" min="0" max="100" x-model="runSearch.singleScoreTo" @keydown.enter="searchRuns(true)" placeholder="any"
+                 class="w-full text-xs border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Scored after</label>
+          <div class="flex gap-1">
+            <input type="datetime-local" x-model="runSearch.scoredFrom" @keydown.enter="searchRuns(true)"
+                   class="min-w-0 flex-1 text-xs border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+            <button type="button" @click="runSearch.scoredFrom = ''; searchRuns(true)"
+                    class="px-2 py-1.5 text-xs rounded bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300">Clear</button>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Scored before</label>
+          <div class="flex gap-1">
+            <input type="datetime-local" x-model="runSearch.scoredTo" @keydown.enter="searchRuns(true)"
+                   class="min-w-0 flex-1 text-xs border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+            <button type="button" @click="runSearch.scoredTo = ''; searchRuns(true)"
+                    class="px-2 py-1.5 text-xs rounded bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300">Clear</button>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Diff from</label>
+          <input type="number" step="0.1" min="-100" max="100" x-model="runSearch.diffFrom" @keydown.enter="searchRuns(true)" placeholder="any"
+                 class="w-full text-xs border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Diff to</label>
+          <input type="number" step="0.1" min="-100" max="100" x-model="runSearch.diffTo" @keydown.enter="searchRuns(true)" placeholder="any"
+                 class="w-full text-xs border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+        </div>
+      </div>
+      <div class="mt-3 flex items-center gap-2">
+        <button @click="searchRuns(true)" class="py-1.5 px-3 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded">Search</button>
+        <button @click="clearRunSearch()" class="py-1.5 px-3 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 text-xs rounded">Clear</button>
+        <span class="ml-auto text-xs text-slate-500 dark:text-slate-400" x-text="runSearch.total + ' runs'"></span>
+      </div>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
+        <thead class="bg-slate-50 dark:bg-slate-800">
+          <tr>
+            <th class="text-left px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400"><button @click="sortRuns('id')" class="hover:text-slate-800 dark:hover:text-slate-200">Run <span x-text="runSortMark('id')"></span></button></th>
+            <th class="text-left px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400"><button @click="sortRuns('runNr')" class="hover:text-slate-800 dark:hover:text-slate-200"># <span x-text="runSortMark('runNr')"></span></button></th>
+            <th class="text-left px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400"><button @click="sortRuns('date')" class="hover:text-slate-800 dark:hover:text-slate-200">Date <span x-text="runSortMark('date')"></span></button></th>
+            <th class="text-left px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400"><button @click="sortRuns('testset')" class="hover:text-slate-800 dark:hover:text-slate-200">Question set <span x-text="runSortMark('testset')"></span></button></th>
+            <th class="text-left px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400"><button @click="sortRuns('runSet')" class="hover:text-slate-800 dark:hover:text-slate-200">Run set <span x-text="runSortMark('runSet')"></span></button></th>
+            <th class="text-left px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400"><button @click="sortRuns('setup')" class="hover:text-slate-800 dark:hover:text-slate-200">Setup <span x-text="runSortMark('setup')"></span></button></th>
+            <th class="text-left px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400"><button @click="sortRuns('criteria')" class="hover:text-slate-800 dark:hover:text-slate-200">Criteria <span x-text="runSortMark('criteria')"></span></button></th>
+            <th class="text-left px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400"><button @click="sortRuns('question')" class="hover:text-slate-800 dark:hover:text-slate-200">Question <span x-text="runSortMark('question')"></span></button></th>
+            <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400"><button @click="sortRuns('steps')" class="hover:text-slate-800 dark:hover:text-slate-200">Steps <span x-text="runSortMark('steps')"></span></button></th>
+            <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400"><button @click="sortRuns('internet')" class="hover:text-slate-800 dark:hover:text-slate-200">Internet <span x-text="runSortMark('internet')"></span></button></th>
+            <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400"><button @click="sortRuns('search')" class="hover:text-slate-800 dark:hover:text-slate-200">Search <span x-text="runSortMark('search')"></span></button></th>
+            <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400"><button @click="sortRuns('auto')" class="hover:text-slate-800 dark:hover:text-slate-200">Auto <span x-text="runSortMark('auto')"></span></button></th>
+            <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400"><button @click="sortRuns('repeat')" class="hover:text-slate-800 dark:hover:text-slate-200">Repeat <span x-text="runSortMark('repeat')"></span></button></th>
+            <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400"><button @click="sortRuns('score')" class="hover:text-slate-800 dark:hover:text-slate-200">Score <span x-text="runSortMark('score')"></span></button></th>
+            <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400"><button @click="sortRuns('singleScore')" class="hover:text-slate-800 dark:hover:text-slate-200">Score Single <span x-text="runSortMark('singleScore')"></span></button></th>
+            <th class="text-left px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400"><button @click="sortRuns('scored')" class="hover:text-slate-800 dark:hover:text-slate-200">Scored <span x-text="runSortMark('scored')"></span></button></th>
+            <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400"><button @click="sortRuns('diff')" class="hover:text-slate-800 dark:hover:text-slate-200">Diff <span x-text="runSortMark('diff')"></span></button></th>
+            <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400"><button @click="sortRuns('review')" class="hover:text-slate-800 dark:hover:text-slate-200">Review <span x-text="runSortMark('review')"></span></button></th>
+            <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400"><button @click="sortRuns('excluded')" class="hover:text-slate-800 dark:hover:text-slate-200">Excluded <span x-text="runSortMark('excluded')"></span></button></th>
+            <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400"><button @click="sortRuns('status')" class="hover:text-slate-800 dark:hover:text-slate-200">Status <span x-text="runSortMark('status')"></span></button></th>
+          </tr>
+        </thead>
+        <tbody>
+          <template x-for="run in searchedRuns" :key="run.id">
+            <tr class="border-t border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer" @click="openRunDetail(run.id)">
+              <td class="px-3 py-2 text-slate-500 dark:text-slate-400 font-mono text-xs" x-text="run.id"></td>
+              <td class="px-3 py-2 text-slate-500 dark:text-slate-400 font-mono text-xs" x-text="run.run_nr || '-'"></td>
+              <td class="px-3 py-2 text-slate-500 dark:text-slate-400 text-xs whitespace-nowrap" x-text="String(run.created_at).slice(0,16).replace('T',' ')"></td>
+              <td class="px-3 py-2 text-slate-500 dark:text-slate-400 text-xs" x-text="testsetName(run.testset)"></td>
+              <td class="px-3 py-2 text-slate-500 dark:text-slate-400 text-xs" x-text="run.run_set_name || run.run_set_id || '-'"></td>
+              <td class="px-3 py-2 text-slate-700 dark:text-slate-300 text-xs" x-text="run.setup_name"></td>
+              <td class="px-3 py-2 text-slate-600 dark:text-slate-400 text-xs" x-text="run.criteria_name"></td>
+              <td class="px-3 py-2 text-slate-700 dark:text-slate-300 max-w-xs truncate" :title="run.question_text" x-text="shortText(run.question_text, 55)"></td>
+              <td class="px-3 py-2 text-center">
+                <span class="text-xs px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300" x-text="run.step_count || 0"></span>
+              </td>
+              <td class="px-3 py-2 text-center">
+                <span class="text-xs px-1.5 py-0.5 rounded" :class="run.internet_step_count > 0 ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'" x-text="run.internet_step_count || 0"></span>
+              </td>
+              <td class="px-3 py-2 text-center">
+                <span class="text-xs px-1.5 py-0.5 rounded" :class="run.search_step_count > 0 ? 'bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'" x-text="run.search_step_count || 0"></span>
+              </td>
+              <td class="px-3 py-2 text-center">
+                <span class="text-xs px-1.5 py-0.5 rounded" :class="run.autoanswer_count > 0 ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 font-semibold' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'" x-text="run.autoanswer_count || 0"></span>
+              </td>
+              <td class="px-3 py-2 text-center">
+                <span class="text-xs px-1.5 py-0.5 rounded" :class="run.repeated_formal_step_count > 0 ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 font-semibold' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'" x-text="run.repeated_formal_step_count || 0"></span>
+              </td>
+              <td class="px-3 py-2 text-center">
+                <span class="font-medium" :class="run.score_percent >= 70 ? 'text-green-600' : run.score_percent >= 40 ? 'text-yellow-600' : run.score_percent != null ? 'text-red-500' : 'text-slate-400'" x-text="run.score_percent != null ? Number(run.score_percent).toFixed(1) + '%' : '-'"></span>
+              </td>
+              <td class="px-3 py-2 text-center">
+                <span class="font-medium text-slate-600 dark:text-slate-300" x-text="run.single_score_percent != null ? Number(run.single_score_percent).toFixed(1) + '%' : '-'"></span>
+              </td>
+              <td class="px-3 py-2 text-slate-500 dark:text-slate-400 text-xs whitespace-nowrap" x-text="run.scored_at ? String(run.scored_at).slice(0,16).replace('T',' ') : '-'"></td>
+              <td class="px-3 py-2 text-center">
+                <span class="font-medium"
+                      :class="run.pair_score_diff > 0 ? 'text-green-600 dark:text-green-400' : run.pair_score_diff < 0 ? 'text-red-500 dark:text-red-400' : run.pair_score_diff != null ? 'text-slate-500 dark:text-slate-400' : 'text-slate-400'"
+                      x-text="run.pair_score_diff != null ? (Number(run.pair_score_diff) >= 0 ? '+' : '') + Number(run.pair_score_diff).toFixed(1) + '%' : '-'"></span>
+              </td>
+              <td class="px-3 py-2 text-center">
+                <span class="text-xs px-1.5 py-0.5 rounded" :class="Number(run.review_required) === 1 ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'" x-text="Number(run.review_required) === 1 ? 'yes' : 'no'"></span>
+              </td>
+              <td class="px-3 py-2 text-center">
+                <span class="text-xs px-1.5 py-0.5 rounded" :class="Number(run.exclude_from_analysis) === 1 ? 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'" x-text="Number(run.exclude_from_analysis) === 1 ? 'yes' : 'no'"></span>
+              </td>
+              <td class="px-3 py-2 text-center">
+                <span class="text-xs px-1.5 py-0.5 rounded" :class="run.status === 'completed' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' : run.status === 'error' ? 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400' : 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400'" x-text="run.status"></span>
+              </td>
+            </tr>
+          </template>
+          <tr x-show="searchedRuns.length === 0">
+            <td colspan="20" class="px-3 py-6 text-center text-slate-400 dark:text-slate-500 text-xs">No runs match the search</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-3 flex items-center justify-between">
+      <button @click="prevRunPage()" :disabled="runSearch.offset === 0" class="py-1.5 px-3 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 disabled:opacity-40 text-slate-700 dark:text-slate-300 text-xs rounded">Previous</button>
+      <span class="text-xs text-slate-500 dark:text-slate-400" x-text="runSearch.total === 0 ? '0 of 0' : ((runSearch.offset + 1) + '-' + Math.min(runSearch.offset + runSearch.limit, runSearch.total) + ' of ' + runSearch.total)"></span>
+      <button @click="nextRunPage()" :disabled="runSearch.offset + runSearch.limit >= runSearch.total" class="py-1.5 px-3 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 disabled:opacity-40 text-slate-700 dark:text-slate-300 text-xs rounded">Next</button>
+    </div>
+  </div>
+
+  <!-- Run Detail Modal -->
+  <div x-show="modal.open" x-cloak
+       class="fixed inset-0 z-50 flex items-start justify-center p-4 overflow-y-auto"
+       @keydown.escape.window="modal.open = false">
+    <!-- Backdrop -->
+    <div class="fixed inset-0 bg-black/50" @click="modal.open = false"></div>
+
+    <!-- Panel -->
+    <div class="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl w-full max-w-7xl my-6 flex flex-col">
+
+      <!-- Header -->
+      <div class="flex items-start justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex-shrink-0">
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 mb-1">
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">Run Detail</p>
+            <template x-if="modal.data && modal.data.primary">
+              <span class="text-xs bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded font-medium"
+                    x-text="modal.data.primary.run.criteria_name"></span>
+            </template>
+          </div>
+          <p class="text-sm font-medium text-slate-800 dark:text-slate-200 leading-snug"
+             x-text="modal.data && modal.data.primary ? modal.data.primary.run.question_text : 'Loading…'"></p>
+        </div>
+        <button @click="modal.open = false" class="ml-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 flex-shrink-0 mt-0.5">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Body -->
+      <div class="flex-1 px-6 py-6">
+
+        <!-- Loading -->
+        <div x-show="modal.loading" class="text-center text-slate-400 py-16 text-sm">Loading…</div>
+
+        <!-- Error -->
+        <div x-show="modal.data && modal.data.error && !modal.loading" class="text-red-500 text-sm py-8 text-center" x-text="modal.data && modal.data.error"></div>
+
+        <template x-if="modal.data && !modal.data.error && !modal.loading">
+          <div class="space-y-5">
+
+            <div class="flex items-center gap-2 border-b border-slate-200 dark:border-slate-700">
+              <template x-for="tab in modalTabs()" :key="tab.key">
+                <button type="button"
+                        @click="if (tab.panel) { modal.activeTab = tab.key; modal.activePanelId = tab.panel.run.id }"
+                        :disabled="!tab.panel"
+                        class="px-3 py-2 text-sm font-medium border-b-2 -mb-px transition-colors disabled:cursor-not-allowed"
+                        :class="modal.activeTab === tab.key
+                          ? (tab.key === 'single' ? 'border-slate-700 text-slate-800 dark:border-slate-200 dark:text-slate-100' : 'border-blue-600 text-blue-700 dark:border-blue-400 dark:text-blue-300')
+                          : (tab.panel ? 'border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200' : 'border-transparent text-slate-300 dark:text-slate-600')">
+                  <span x-text="tab.label"></span>
+                  <span class="ml-1 text-xs opacity-70" x-text="tab.panel ? ('#' + tab.panel.run.id) : '(missing)'"></span>
+                </button>
+              </template>
+            </div>
+
+            <template x-if="modal.activeTab === 'single' && !modalTabs().find(tab => tab.key === 'single').panel">
+              <div class="border border-dashed border-slate-300 dark:border-slate-700 rounded-lg p-6 text-center">
+                <p class="text-sm font-medium text-slate-600 dark:text-slate-300">No connected Single Prompt run found.</p>
+                <p class="text-xs text-slate-400 dark:text-slate-500 mt-1">Run the same question with Setup A to compare it here.</p>
+              </div>
+            </template>
+
+            <template x-if="modal.activeTab === 'workflow' && !modalTabs().find(tab => tab.key === 'workflow').panel">
+              <div class="border border-dashed border-slate-300 dark:border-slate-700 rounded-lg p-6 text-center">
+                <p class="text-sm font-medium text-slate-600 dark:text-slate-300">No connected Workflow run found.</p>
+                <p class="text-xs text-slate-400 dark:text-slate-500 mt-1">Run a workflow setup for the same question to compare it here.</p>
+              </div>
+            </template>
+
+            <template x-for="panel in orderedPanels()" :key="panel.run.id">
+              <div class="space-y-5 border border-slate-200 dark:border-slate-700 rounded-xl p-4">
+
+                <!-- ── Run label ── -->
+                <div class="flex items-center gap-2 pb-2 border-b-2"
+                     :class="isDirectSetup(panel.run.setup_id) ? 'border-slate-300 dark:border-slate-600' : 'border-blue-400 dark:border-blue-600'">
+                  <span class="text-sm font-bold"
+                        :class="isDirectSetup(panel.run.setup_id) ? 'text-slate-700 dark:text-slate-200' : 'text-blue-700 dark:text-blue-300'"
+                        x-text="isDirectSetup(panel.run.setup_id) ? 'Direct baseline' : 'Workflow'"></span>
+                  <span class="text-xs px-2 py-0.5 rounded font-medium"
+                        :class="isDirectSetup(panel.run.setup_id) ? 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300' : 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300'"
+                        x-text="panel.run.setup_name"></span>
+                </div>
+
+                <!-- ── Run metadata ── -->
+                <div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-4 space-y-3">
+                  <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                    <div>
+                      <p class="text-slate-400 dark:text-slate-500 uppercase tracking-wide font-semibold mb-1">Criteria</p>
+                      <p class="text-slate-700 dark:text-slate-200 font-medium"
+                         x-text="(panel.run.criteria_name || 'Unknown') + ' (#' + panel.run.criteria_id + ')'"></p>
+                    </div>
+                    <div>
+                      <p class="text-slate-400 dark:text-slate-500 uppercase tracking-wide font-semibold mb-1">Question ID</p>
+                      <p class="text-slate-700 dark:text-slate-200 font-mono" x-text="panel.run.question_id"></p>
+                    </div>
+                    <div>
+                      <p class="text-slate-400 dark:text-slate-500 uppercase tracking-wide font-semibold mb-1">Testset</p>
+                      <p class="text-slate-700 dark:text-slate-200" x-text="testsetName(panel.run.testset)"></p>
+                    </div>
+                    <div>
+                      <p class="text-slate-400 dark:text-slate-500 uppercase tracking-wide font-semibold mb-1">Run set</p>
+                      <p class="text-slate-700 dark:text-slate-200" x-text="panel.run.run_set_name || panel.run.run_set_id || '-'"></p>
+                    </div>
+                  </div>
+                  <div>
+                    <p class="text-slate-400 dark:text-slate-500 uppercase tracking-wide font-semibold text-xs mb-1">Prompt question</p>
+                    <p class="text-sm text-slate-800 dark:text-slate-100 leading-relaxed whitespace-pre-wrap" x-text="panel.run.question_text"></p>
+                  </div>
+                  <template x-if="panel.run.notes">
+                    <div>
+                      <p class="text-slate-400 dark:text-slate-500 uppercase tracking-wide font-semibold text-xs mb-1">Question notes</p>
+                      <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-wrap" x-text="panel.run.notes"></p>
+                    </div>
+                  </template>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-1.5 text-xs">
+                  <div class="flex gap-2">
+                    <span class="text-slate-400 dark:text-slate-500 w-20 flex-shrink-0">Run ID</span>
+                    <span class="text-slate-700 dark:text-slate-300 font-mono" x-text="panel.run.id"></span>
+                  </div>
+                  <div class="flex gap-2">
+                    <span class="text-slate-400 dark:text-slate-500 w-20 flex-shrink-0">Run Nr</span>
+                    <span class="text-slate-700 dark:text-slate-300 font-mono" x-text="panel.run.run_nr || 'â€”'"></span>
+                  </div>
+                  <div class="flex gap-2">
+                    <span class="text-slate-400 dark:text-slate-500 w-20 flex-shrink-0">Status</span>
+                    <span class="font-medium"
+                          :class="panel.run.status === 'completed' ? 'text-green-600 dark:text-green-400' : panel.run.status === 'error' ? 'text-red-500' : 'text-yellow-600'"
+                          x-text="panel.run.status"></span>
+                  </div>
+                  <div class="flex gap-2">
+                    <span class="text-slate-400 dark:text-slate-500 w-20 flex-shrink-0">Model</span>
+                    <span class="text-slate-700 dark:text-slate-300" x-text="panel.run.model_label"></span>
+                  </div>
+                  <div class="flex gap-2">
+                    <span class="text-slate-400 dark:text-slate-500 w-20 flex-shrink-0">Model ID</span>
+                    <span class="text-slate-700 dark:text-slate-300 font-mono" x-text="panel.run.model_id || 'â€”'"></span>
+                  </div>
+                  <div class="flex gap-2">
+                    <span class="text-slate-400 dark:text-slate-500 w-20 flex-shrink-0">Provider</span>
+                    <span class="text-slate-700 dark:text-slate-300" x-text="panel.run.provider || 'â€”'"></span>
+                  </div>
+                  <div class="flex gap-2">
+                    <span class="text-slate-400 dark:text-slate-500 w-20 flex-shrink-0">Testset</span>
+                    <span class="text-slate-700 dark:text-slate-300" x-text="testsetName(panel.run.testset)"></span>
+                  </div>
+                  <div class="flex gap-2">
+                    <span class="text-slate-400 dark:text-slate-500 w-20 flex-shrink-0">Run set</span>
+                    <span class="text-slate-700 dark:text-slate-300" x-text="panel.run.run_set_name || panel.run.run_set_id || '-'"></span>
+                  </div>
+                  <div class="flex gap-2">
+                    <span class="text-slate-400 dark:text-slate-500 w-20 flex-shrink-0">Date</span>
+                    <span class="text-slate-700 dark:text-slate-300" x-text="String(panel.run.created_at).slice(0,16).replace('T',' ')"></span>
+                  </div>
+                  <div class="flex gap-2">
+                    <span class="text-slate-400 dark:text-slate-500 w-20 flex-shrink-0">Group</span>
+                    <span class="text-slate-700 dark:text-slate-300 font-mono" x-text="panel.run.comparison_group_id || '—'"></span>
+                  </div>
+                  <div class="flex gap-2">
+                    <span class="text-slate-400 dark:text-slate-500 w-20 flex-shrink-0">Score</span>
+                    <span class="font-semibold"
+                          :class="panel.score && panel.score.score_percent >= 70 ? 'text-green-600 dark:text-green-400' : panel.score && panel.score.score_percent >= 40 ? 'text-yellow-600' : panel.score ? 'text-red-500' : 'text-slate-400'"
+                          x-text="panel.score ? Number(panel.score.score_percent).toFixed(1) + '%' : '—'"></span>
+                  </div>
+                  <div class="flex gap-2">
+                    <span class="text-slate-400 dark:text-slate-500 w-20 flex-shrink-0">Points</span>
+                    <span class="text-slate-700 dark:text-slate-300"
+                          x-text="panel.score ? panel.score.passed_checkpoints + ' / ' + panel.score.total_checkpoints : '—'"></span>
+                  </div>
+                </div>
+
+                <!-- ── Score summary ── -->
+                <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4 space-y-3">
+                  <label class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200 cursor-pointer">
+                    <input type="checkbox"
+                           :checked="Number(panel.run.exclude_from_analysis) === 1"
+                           @change="panel.run.exclude_from_analysis = $event.target.checked ? 1 : 0; updateRunFlags(panel.run)"
+                           class="rounded border-slate-300">
+                    <span>Exclude this run from data analysis</span>
+                  </label>
+                  <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-1">Exclude note</label>
+                    <input type="text"
+                           x-model="panel.run.exclude_reason"
+                           @change="updateRunFlags(panel.run)"
+                           placeholder="Reason for manual exclusion"
+                           class="w-full text-xs border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs">
+                  <div class="bg-slate-50 dark:bg-slate-800 rounded p-3">
+                    <p class="text-slate-400 dark:text-slate-500 uppercase tracking-wide font-semibold mb-1">Points</p>
+                    <p class="text-slate-700 dark:text-slate-200 font-semibold" x-text="panel.score ? panel.score.passed_checkpoints : '-'"></p>
+                  </div>
+                  <div class="bg-slate-50 dark:bg-slate-800 rounded p-3">
+                    <p class="text-slate-400 dark:text-slate-500 uppercase tracking-wide font-semibold mb-1">Max points</p>
+                    <p class="text-slate-700 dark:text-slate-200 font-semibold" x-text="panel.score ? panel.score.total_checkpoints : '-'"></p>
+                  </div>
+                  <div class="bg-slate-50 dark:bg-slate-800 rounded p-3">
+                    <p class="text-slate-400 dark:text-slate-500 uppercase tracking-wide font-semibold mb-1">Failed</p>
+                    <p class="text-slate-700 dark:text-slate-200 font-semibold"
+                       x-text="panel.score ? Math.max(0, Number(panel.score.total_checkpoints || 0) - Number(panel.score.passed_checkpoints || 0)) : '-'"></p>
+                  </div>
+                  <div class="bg-slate-50 dark:bg-slate-800 rounded p-3">
+                    <p class="text-slate-400 dark:text-slate-500 uppercase tracking-wide font-semibold mb-1">Scoring model</p>
+                    <p class="text-slate-700 dark:text-slate-200 font-semibold truncate" x-text="panel.score ? panel.score.scoring_model : '-'"></p>
+                  </div>
+                </div>
+                <template x-if="panel.score && panel.score.scored_at">
+                  <p class="text-[11px] text-slate-400 dark:text-slate-500"
+                     x-text="'Last scored: ' + String(panel.score.scored_at).slice(0,16).replace('T',' ')"></p>
+                </template>
+
+                <template x-if="panel.score">
+                  <div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-4">
+                    <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">Overall Report</p>
+                    <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed italic" x-text="panel.score.report"></p>
+                    <template x-if="Number(panel.score.review_required) === 1">
+                      <div class="mt-3 border border-yellow-200 dark:border-yellow-700 bg-yellow-50 dark:bg-yellow-900/20 rounded p-3">
+                        <p class="text-xs font-semibold text-yellow-700 dark:text-yellow-300 uppercase tracking-wide mb-1">Review required</p>
+                        <p class="text-xs text-yellow-700 dark:text-yellow-200 leading-relaxed" x-text="panel.score.review_reason || 'Scorer marked this run for manual review.'"></p>
+                      </div>
+                    </template>
+                  </div>
+                </template>
+                <template x-if="!panel.score">
+                  <div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-4">
+                    <p class="text-xs text-slate-400 italic mb-3">Not yet scored</p>
+                    <div class="flex items-center gap-2">
+                      <select x-model="modal.scoringModelId"
+                              class="flex-1 text-xs border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                        <option value="">Select model to score…</option>
+                        <% models.forEach(function(m) { %>
+                          <option value="<%= m.id %>"><%= m.label %></option>
+                        <% }) %>
+                      </select>
+                      <button @click="scorePanel(panel.run.id)"
+                              :disabled="modal.scoring || !modal.scoringModelId"
+                              class="py-1.5 px-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs rounded transition-colors flex items-center gap-1.5">
+                        <svg x-show="modal.scoring" class="animate-spin w-3 h-3" fill="none" viewBox="0 0 24 24">
+                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                        </svg>
+                        <span x-text="modal.scoring ? 'Scoring…' : 'Score now'"></span>
+                      </button>
+                    </div>
+                  </div>
+                </template>
+
+                <template x-if="(panel.scoreHistory && panel.scoreHistory.length) || (panel.runHistory && panel.runHistory.length)">
+                  <div class="border border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg p-4 space-y-3">
+                    <p class="text-xs font-semibold text-indigo-700 dark:text-indigo-300 uppercase tracking-wide">History</p>
+                    <template x-if="panel.scoreHistory && panel.scoreHistory.length">
+                      <div>
+                        <p class="text-xs font-medium text-indigo-700 dark:text-indigo-300 mb-1" x-text="'Score history: ' + panel.scoreHistory.length + ' old validation(s)'"></p>
+                        <div class="space-y-1">
+                          <template x-for="h in panel.scoreHistory.slice(0, 5)" :key="'score-history-' + h.id">
+                            <p class="text-xs text-slate-700 dark:text-slate-300"
+                               x-text="'#' + h.id + ' · ' + (h.score_percent == null ? '-' : Number(h.score_percent).toFixed(1) + '%') + ' · ' + (h.passed_checkpoints || 0) + '/' + (h.total_checkpoints || 0) + ' · ' + (h.scoring_model || '-') + ' · archived ' + String(h.archived_at).slice(0,16).replace('T',' ')"></p>
+                          </template>
+                        </div>
+                      </div>
+                    </template>
+                    <template x-if="panel.runHistory && panel.runHistory.length">
+                      <div>
+                        <p class="text-xs font-medium text-indigo-700 dark:text-indigo-300 mb-1" x-text="'Rerun history: ' + panel.runHistory.length + ' archived run(s)'"></p>
+                        <div class="space-y-1">
+                          <template x-for="h in panel.runHistory.slice(0, 5)" :key="'run-history-' + h.id">
+                            <p class="text-xs text-slate-700 dark:text-slate-300"
+                               x-text="'old run #' + h.original_run_id + ' · ' + (h.score_percent == null ? '-' : Number(h.score_percent).toFixed(1) + '%') + ' · ' + (h.archived_reason || '-') + ' · archived ' + String(h.archived_at).slice(0,16).replace('T',' ')"></p>
+                          </template>
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+                </template>
+
+                <!-- ── Checkpoint results ── -->
+                <div>
+                  <h4 class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-2">Checkpoint Results</h4>
+                  <template x-if="panel.checkpointResults && panel.checkpointResults.length > 0">
+                    <div class="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
+                      <table class="w-full text-xs">
+                        <thead class="bg-slate-50 dark:bg-slate-800">
+                          <tr>
+                            <th class="text-left px-3 py-2 font-medium text-slate-500 dark:text-slate-400 w-16">ID</th>
+                            <th class="text-left px-3 py-2 font-medium text-slate-500 dark:text-slate-400">Checkpoint</th>
+                            <th class="text-center px-3 py-2 font-medium text-slate-500 dark:text-slate-400 w-20">Points</th>
+                            <th class="text-center px-3 py-2 font-medium text-slate-500 dark:text-slate-400 w-8">Pass</th>
+                            <th class="text-left px-3 py-2 font-medium text-slate-500 dark:text-slate-400">Reasoning</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <template x-for="cp in panel.checkpointResults" :key="cp.id">
+                            <tr class="border-t border-slate-100 dark:border-slate-800 align-top"
+                                :class="cp.passed ? '' : 'bg-red-50 dark:bg-red-900/20'">
+                              <td class="px-3 py-2 text-slate-400 dark:text-slate-500 font-mono" x-text="cp.checkpoint_id"></td>
+                              <td class="px-3 py-2 text-slate-700 dark:text-slate-300 leading-snug" x-text="cp.item_text"></td>
+                              <td class="px-3 py-2 text-center text-slate-600 dark:text-slate-300" x-text="cp.passed ? '1 / 1' : '0 / 1'"></td>
+                              <td class="px-3 py-2 text-center">
+                                <span x-show="cp.passed" class="text-green-600 dark:text-green-400 text-base font-bold">✓</span>
+                                <span x-show="!cp.passed" class="text-red-500 dark:text-red-400 text-base font-bold">✗</span>
+                              </td>
+                              <td class="px-3 py-2 text-slate-500 dark:text-slate-400 leading-snug" x-text="cp.explanation"></td>
+                            </tr>
+                          </template>
+                        </tbody>
+                      </table>
+                    </div>
+                  </template>
+                  <template x-if="!panel.checkpointResults || panel.checkpointResults.length === 0">
+                    <p class="text-xs text-slate-400 italic">No checkpoint results — run scoring first</p>
+                  </template>
+                </div>
+
+                <!-- ── Steps / Answers ── -->
+                <div>
+                  <h4 class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-2"
+                      x-text="'Steps (' + (panel.steps ? panel.steps.length : 0) + ' saved step rows)'"></h4>
+                  <div class="space-y-3">
+                    <template x-for="step in panel.steps" :key="step.step">
+                      <div class="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
+                        <div class="bg-slate-50 dark:bg-slate-800 px-3 py-2 space-y-2">
+                          <div class="flex flex-wrap items-center justify-between gap-2">
+                            <div class="flex flex-wrap items-center gap-2">
+                              <span class="text-xs font-semibold text-slate-700 dark:text-slate-200" x-text="'Step ' + step.step"></span>
+                              <span class="text-[11px] px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300" x-text="'formal ' + (step.formal_step || step.step)"></span>
+                              <span class="text-[11px] px-1.5 py-0.5 rounded bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-200" x-text="stepRole(panel.run.setup_id, step.formal_step || step.step)"></span>
+                              <span class="text-[11px] px-1.5 py-0.5 rounded"
+                                    :class="Number(step.internet_allowed) === 1 ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-200' : 'bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400'"
+                                    x-text="Number(step.internet_allowed) === 1 ? 'internet allowed' : 'no internet'"></span>
+                              <span class="text-[11px] px-1.5 py-0.5 rounded"
+                                    :class="searchQueries(step).length > 0 ? 'bg-teal-100 dark:bg-teal-900/40 text-teal-700 dark:text-teal-200' : 'bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400'"
+                                    x-text="searchQueries(step).length + ' search query' + (searchQueries(step).length === 1 ? '' : 'ies')"></span>
+                              <template x-if="autoanswerMessages(step).length > 0">
+                                <span class="text-[11px] px-1.5 py-0.5 rounded bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-200 font-semibold">autoanswer</span>
+                              </template>
+                              <template x-if="hasTechnicalAnswerWrapper(step.final_answer)">
+                                <span class="text-[11px] px-1.5 py-0.5 rounded bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-200 font-semibold">technical wrapper</span>
+                              </template>
+                            </div>
+                            <span class="text-[11px] text-slate-400 dark:text-slate-500" x-text="String(step.created_at || '').slice(0,16).replace('T',' ')"></span>
+                          </div>
+                          <template x-if="searchQueries(step).length > 0">
+                            <div class="flex flex-wrap gap-1">
+                              <template x-for="sq in searchQueries(step)" :key="sq">
+                                <span class="text-xs bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 px-1.5 py-0.5 rounded border border-blue-200 dark:border-blue-700" x-text="'Search: ' + sq"></span>
+                              </template>
+                            </div>
+                          </template>
+                        </div>
+                        <div class="p-3">
+                          <details class="mb-3 border border-slate-200 dark:border-slate-700 rounded bg-white dark:bg-slate-950">
+                            <summary class="cursor-pointer px-3 py-2 text-xs font-medium text-slate-600 dark:text-slate-300">Full system prompt used for this step</summary>
+                            <pre class="px-3 pb-3 text-xs text-slate-600 dark:text-slate-300 whitespace-pre-wrap overflow-x-auto" x-text="step.system_prompt_used || '(empty)'"></pre>
+                          </details>
+                          <div>
+                            <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-1">Saved final answer for this step</p>
+                            <div class="text-xs text-slate-700 dark:text-slate-300 whitespace-pre-wrap bg-white dark:bg-slate-950 border border-slate-100 dark:border-slate-700 rounded p-3 leading-relaxed" x-text="step.final_answer || '(no answer)'"></div>
+                          </div>
+                          <template x-if="hasTechnicalAnswerWrapper(step.final_answer)">
+                            <div class="mt-3 border border-orange-300 dark:border-orange-700 bg-orange-50 dark:bg-orange-900/20 rounded p-3">
+                              <p class="text-xs font-semibold uppercase tracking-wide text-orange-700 dark:text-orange-300 mb-1">Technical wrapper detected</p>
+                              <p class="text-xs text-orange-800 dark:text-orange-200 leading-relaxed">The saved final answer still contains the workflow JSON wrapper. This is useful for debugging and should usually be reviewed.</p>
+                            </div>
+                          </template>
+                          <template x-if="autoanswerMessages(step).length > 0">
+                            <div class="mt-3 border border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/20 rounded p-3">
+                              <p class="text-xs font-semibold uppercase tracking-wide text-red-700 dark:text-red-300 mb-2">Autoanswer inserted into this step</p>
+                              <template x-for="(msg, msgIndex) in autoanswerMessages(step)" :key="'autoanswer-' + step.step + '-' + msgIndex">
+                                <pre class="text-xs text-red-800 dark:text-red-200 whitespace-pre-wrap leading-relaxed" x-text="cleanAutoanswerContent(msg.content)"></pre>
+                              </template>
+                            </div>
+                          </template>
+                          <div class="mt-3 border border-slate-200 dark:border-slate-700 rounded bg-white dark:bg-slate-950 overflow-hidden">
+                            <div class="px-3 py-2 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
+                              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Prompt conversation sent to this step</p>
+                            </div>
+                            <template x-if="promptMessages(step).length === 0">
+                              <p class="px-3 py-2 text-xs text-slate-400 italic">No prompt messages saved.</p>
+                            </template>
+                            <div class="divide-y divide-slate-100 dark:divide-slate-800">
+                              <template x-for="(msg, msgIndex) in promptMessages(step)" :key="'msg-' + step.step + '-' + msgIndex">
+                                <div class="p-3"
+                                     :class="isAutoanswerMessage(msg) ? 'bg-red-50 dark:bg-red-900/20' : ''">
+                                  <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-[11px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded"
+                                          :class="messageRoleClass(msg.role, isAutoanswerMessage(msg))"
+                                          x-text="isAutoanswerMessage(msg) ? 'autoanswer user input' : (msg.role || 'message')"></span>
+                                  </div>
+                                  <pre class="text-xs whitespace-pre-wrap leading-relaxed"
+                                       :class="isAutoanswerMessage(msg) ? 'text-red-800 dark:text-red-200' : 'text-slate-700 dark:text-slate-300'"
+                                       x-text="msg.content || ''"></pre>
+                                </div>
+                              </template>
+                            </div>
+                          </div>
+                          <div class="mt-3 space-y-2">
+                            <details open class="border border-slate-200 dark:border-slate-700 rounded bg-white dark:bg-slate-950">
+                              <summary class="cursor-pointer px-3 py-2 text-xs font-medium text-slate-600 dark:text-slate-300">Raw model response for this step</summary>
+                              <pre class="px-3 pb-3 text-xs text-slate-600 dark:text-slate-300 whitespace-pre-wrap overflow-x-auto" x-text="step.response_text || '(empty)'"></pre>
+                            </details>
+                            <details open class="border border-slate-200 dark:border-slate-700 rounded bg-white dark:bg-slate-950">
+                              <summary class="cursor-pointer px-3 py-2 text-xs font-medium text-slate-600 dark:text-slate-300">Search results saved for this step</summary>
+                              <pre class="px-3 pb-3 text-xs text-slate-600 dark:text-slate-300 whitespace-pre-wrap overflow-x-auto" x-text="formatJson(step.search_results_json)"></pre>
+                            </details>
+                            <details class="border border-slate-200 dark:border-slate-700 rounded bg-white dark:bg-slate-950">
+                              <summary class="cursor-pointer px-3 py-2 text-xs font-medium text-slate-600 dark:text-slate-300">Raw prompt messages JSON</summary>
+                              <pre class="px-3 pb-3 text-xs text-slate-600 dark:text-slate-300 whitespace-pre-wrap overflow-x-auto" x-text="formatJson(step.messages_json)"></pre>
+                            </details>
+                          </div>
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+
+              </div>
+            </template>
+
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const allQuestions = <%- JSON.stringify(questions) %>;
+  const savedTestsets = <%- JSON.stringify(testsets) %>;
+  const savedRunSets = <%- JSON.stringify(runSets) %>;
+
+  function runPage() {
+    return {
+      form: {
+        setupId: '',
+        llmConfigId: '<%= preferredAnswerModelId || "" %>',
+        testset: '',
+        runSetId: '',
+        criteriaFilter: '',
+        questionId: '',
+      },
+      testsets: [...new Map(savedTestsets
+        .concat(allQuestions.map(q => ({ id: q.testset, name: q.testset })))
+        .filter(ts => ts && ts.id)
+        .map(ts => [ts.id, { id: ts.id, name: ts.name || ts.id }])
+      ).values()].sort((a, b) => (a.name || a.id).localeCompare(b.name || b.id)),
+      runSets: savedRunSets.length ? [...savedRunSets] : [{ id: 'legacy_existing_import', name: 'Bestandsdaten | vor Strukturierung importiert' }],
+      newRunSetName: '',
+      filteredQuestions: allQuestions,
+      running: false,
+      statusMessage: '',
+      result: null,
+      error: null,
+      runsPerQuestion: 1,
+      parallelCount: 3,
+      batchRunning: false,
+      batchProgress: 0,
+      batchTotal: 0,
+      batchResults: [],
+      modal: { open: false, loading: false, scoring: false, scoringModelId: '<%= preferredScoringModelId || "" %>', activeTab: 'single', activePanelId: null, data: null },
+      batchScoringModelId: '<%= preferredScoringModelId || "" %>',
+      batchScoring: false,
+      batchScoringMode: '',
+      batchScoreProgress: 0,
+      batchScoreTotal: 0,
+      searchedRuns: [],
+      runSearch: { runId: '', runNr: '', text: '', testset: '', runSetId: '', setupId: '', criteriaId: '', status: '', hasError: '', hasReview: '', hasSearch: '', hasAutoanswer: '', scoreFrom: '', scoreTo: '', singleScoreFrom: '', singleScoreTo: '', scoredFrom: '', scoredTo: '', diffFrom: '', diffTo: '', sortKey: 'id', sortDir: 'desc', limit: 25, offset: 0, total: 0 },
+
+      init() {
+        if (!this.form.runSetId && this.runSets.length) this.form.runSetId = this.runSets[0].id;
+        if (!this.modal.scoringModelId) this.modal.scoringModelId = '<%= preferredScoringModelId || "" %>';
+        if (!this.batchScoringModelId) this.batchScoringModelId = '<%= preferredScoringModelId || "" %>';
+        this.filterQuestions();
+        this.searchRuns(true);
+      },
+
+      busyLocked() {
+        return this.running || this.batchScoring;
+      },
+
+      batchDoneCount() {
+        return this.batchResults.filter(r => r.status === 'done').length;
+      },
+
+      batchSkippedCount() {
+        return this.batchResults.filter(r => r.status === 'skipped').length;
+      },
+
+      batchFailedCount() {
+        return this.batchResults.filter(r => r.status === 'error').length;
+      },
+
+      batchFinishedCount() {
+        return this.batchResults.filter(r => ['done', 'skipped', 'error'].includes(r.status)).length;
+      },
+
+      batchPercent() {
+        if (!this.batchResults.length) return 0;
+        return Math.round((this.batchFinishedCount() / this.batchResults.length) * 100);
+      },
+
+      batchTitle() {
+        const state = this.batchRunning ? 'Batch running' : 'Batch finished';
+        return `${state} — ${this.batchFinishedCount()}/${this.batchResults.length}`;
+      },
+
+      batchSummary() {
+        return `done ${this.batchDoneCount()} · exists ${this.batchSkippedCount()} · error ${this.batchFailedCount()}`;
+      },
+
+      filterQuestions() {
+        this.filteredQuestions = allQuestions.filter(q => {
+          const setupIsCe = String(this.form.setupId || '').startsWith('setup_ce_');
+          const questionIsCe = Number(q.computer_evaluable || 0) === 1;
+          if (this.form.setupId && setupIsCe !== questionIsCe) return false;
+          const allowedSetupIds = ['setup_flowreview2', 'setup_flowreview_same'].includes(this.form.setupId)
+            ? [this.form.setupId, 'setup_flowreview']
+            : [this.form.setupId];
+          if (this.form.setupId && q.setup_id && !allowedSetupIds.includes(q.setup_id)) return false;
+          if (this.form.testset && q.testset !== this.form.testset) return false;
+          if (this.form.criteriaFilter && q.criteria_id !== this.form.criteriaFilter) return false;
+          return true;
+        });
+        if (this.form.questionId && !this.filteredQuestions.find(q => q.id == this.form.questionId)) {
+          this.form.questionId = '';
+        }
+      },
+
+      selectedQuestionText() {
+        const q = allQuestions.find(q => q.id == this.form.questionId);
+        return q ? q.question_text : '';
+      },
+
+      formatJson(value) {
+        if (!value) return '(empty)';
+        try {
+          return JSON.stringify(JSON.parse(value), null, 2);
+        } catch (err) {
+          return String(value);
+        }
+      },
+
+      promptMessages(step) {
+        if (!step || !step.messages_json) return [];
+        try {
+          const parsed = JSON.parse(step.messages_json);
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (err) {
+          return [{ role: 'raw', content: String(step.messages_json) }];
+        }
+      },
+
+      safeJsonArray(value) {
+        if (!value) return [];
+        try {
+          const parsed = JSON.parse(value);
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (err) {
+          return [];
+        }
+      },
+
+      searchQueries(step) {
+        return this.safeJsonArray(step?.search_queries_json).map(item => String(item));
+      },
+
+      stepRole(setupId, formalStep) {
+        const step = Number(formalStep || 0);
+        if (setupId === 'setup_direct') return 'direct answer';
+        if (setupId === 'setup_ce_direct') return 'CE direct JSON';
+        if (setupId === 'setup_ce_promptoptimise' && step === 1) return 'CE prompt rewrite';
+        if (setupId === 'setup_ce_promptoptimise' && step === 2) return 'CE JSON answer';
+        if (setupId === 'setup_ce_flowmap' && step === 1) return 'CE map';
+        if (setupId === 'setup_ce_flowmap' && step === 2) return 'CE compute';
+        if (setupId === 'setup_ce_flowmap' && step === 3) return 'CE final JSON';
+        if (setupId === 'setup_ce_flowreview' && step === 1) return 'CE draft JSON';
+        if (setupId === 'setup_ce_flowreview' && step === 2) return 'CE review JSON';
+        if (setupId === 'setup_ce_flowreview_s4' && step === 1) return 'copied CE direct';
+        if (setupId === 'setup_ce_flowreview_s4' && step === 2) return 'CE verify/correct';
+        if (setupId === 'setup_wf_prompt_optimise' && step === 1) return 'prompt rewrite';
+        if (setupId === 'setup_wf_prompt_optimise' && step === 2) return 'answer optimized prompt';
+        if (setupId === 'setup_flowmap' && step === 1) return 'topic map';
+        if (setupId === 'setup_flowmap' && step === 2) return 'research/prep';
+        if (setupId === 'setup_flowmap' && step === 3) return 'final answer';
+        if (setupId === 'setup_flowreview' && step === 1) return 'draft answer';
+        if (setupId === 'setup_flowreview' && step === 2) return 'review/improve';
+        if (setupId === 'setup_flowreview2' && step === 1) return 'draft answer';
+        if (setupId === 'setup_flowreview2' && step === 2) return 'review/improve';
+        if (setupId === 'setup_flowreview2' && step === 3) return 'choose better';
+        if (setupId === 'setup_flowreview_same' && step === 1) return 'copied direct';
+        if (setupId === 'setup_flowreview_same' && step === 2) return 'review/improve';
+        if (setupId === 'setup_flowreview_same' && step === 3) return 'choose better';
+        return step > 1 ? 'workflow step' : 'answer';
+      },
+
+      hasTechnicalAnswerWrapper(value) {
+        const text = String(value || '').trim();
+        if (!text.startsWith('{')) return false;
+        try {
+          const parsed = JSON.parse(text);
+          if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return false;
+          const keys = Object.keys(parsed);
+          return typeof parsed.answer === 'string' &&
+            keys.every(key => ['answer', 'isfinished', 'internet_search_requests', 'optional_nextprompt'].includes(key));
+        } catch (err) {
+          return false;
+        }
+      },
+
+      isAutoanswerMessage(msg) {
+        return String(msg?.content || '').includes('[Autoanswer by checker because the previous clarification was unexpected]');
+      },
+
+      autoanswerMessages(step) {
+        return this.promptMessages(step).filter(msg => this.isAutoanswerMessage(msg));
+      },
+
+      cleanAutoanswerContent(value) {
+        return String(value || '').replace('[Autoanswer by checker because the previous clarification was unexpected]\n', '').trim();
+      },
+
+      messageRoleClass(role, isAutoanswer) {
+        if (isAutoanswer) return 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-200';
+        if (role === 'user') return 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-200';
+        if (role === 'assistant') return 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200';
+        return 'bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-200';
+      },
+
+      shortText(value, length) {
+        const text = value || '';
+        return text.length > length ? text.slice(0, length) + '...' : text;
+      },
+
+      testsetName(id) {
+        const item = this.testsets.find(ts => ts.id === id);
+        return item ? (item.name || item.id) : (id || '-');
+      },
+
+      async searchRuns(resetPage = false) {
+        if (resetPage) this.runSearch.offset = 0;
+        const params = this.runSearchParams(this.runSearch.limit, this.runSearch.offset);
+        const res = await fetch('/api/runs/search?' + params.toString());
+        const data = await res.json();
+        this.searchedRuns = data.runs || [];
+        this.runSearch.total = data.total || 0;
+        this.runSearch.limit = data.limit || this.runSearch.limit;
+        this.runSearch.offset = data.offset || 0;
+      },
+
+      runSearchParams(limit = 100, offset = 0) {
+        const params = new URLSearchParams();
+        for (const key of ['runId', 'runNr', 'text', 'testset', 'runSetId', 'setupId', 'criteriaId', 'status', 'hasError', 'hasReview', 'hasSearch', 'hasAutoanswer', 'scoreFrom', 'scoreTo', 'singleScoreFrom', 'singleScoreTo', 'scoredFrom', 'scoredTo', 'diffFrom', 'diffTo', 'sortKey', 'sortDir']) {
+          if (this.runSearch[key]) params.set(key, this.runSearch[key]);
+        }
+        params.set('limit', limit);
+        params.set('offset', offset);
+        return params;
+      },
+
+      async fetchAllFilteredRuns() {
+        const all = [];
+        let offset = 0;
+        const limit = 100;
+        while (true) {
+          const params = this.runSearchParams(limit, offset);
+          const res = await fetch('/api/runs/search?' + params.toString());
+          const data = await res.json();
+          const rows = data.runs || [];
+          all.push(...rows);
+          offset += rows.length;
+          if (rows.length === 0 || offset >= (data.total || 0)) break;
+        }
+        return all;
+      },
+
+      pairKey(run) {
+        return [
+          run.comparison_group_id || `run:${run.id}`,
+          run.question_id,
+          run.llm_config_id,
+          run.testset || '',
+          run.run_set_id || '',
+          run.run_nr || '',
+        ].join('|');
+      },
+
+      isDirectSetup(setupId) {
+        return setupId === 'setup_direct' || setupId === 'setup_ce_direct';
+      },
+
+      directSetupFor(setupId) {
+        return String(setupId || '').startsWith('setup_ce_') ? 'setup_ce_direct' : 'setup_direct';
+      },
+
+      isWorkflowForDirect(setupId, directSetupId) {
+        if (directSetupId === 'setup_ce_direct') return String(setupId || '').startsWith('setup_ce_') && setupId !== 'setup_ce_direct';
+        return setupId !== 'setup_direct' && !String(setupId || '').startsWith('setup_ce_');
+      },
+
+      rerunTargetsForMode(runs, mode) {
+        const groups = new Map();
+        for (const run of runs) {
+          const key = this.pairKey(run);
+          if (!groups.has(key)) groups.set(key, []);
+          groups.get(key).push(run);
+        }
+        const targets = [];
+        for (const group of groups.values()) {
+          const first = group[0] || {};
+          const directSetupId = this.isDirectSetup(first.setup_id)
+            ? first.setup_id
+            : this.directSetupFor(first.setup_id);
+          const direct = group.find(r => r.setup_id === directSetupId);
+          const workflows = group.filter(r => this.isWorkflowForDirect(r.setup_id, directSetupId));
+          if (mode === 'single') {
+            targets.push(direct || workflows[0]);
+          } else if (mode === 'workflow') {
+            if (workflows.length > 0) targets.push(...workflows);
+            else targets.push(direct);
+          } else {
+            if (workflows.length > 0) targets.push(...workflows);
+            else targets.push(direct);
+          }
+        }
+        return targets.filter(Boolean);
+      },
+
+      async rerunFilteredRuns(mode) {
+        this.running = true;
+        this.batchRunning = true;
+        this.batchProgress = 0;
+        this.batchTotal = 0;
+        this.batchResults = [];
+        this.error = null;
+        this.statusMessage = `Preparing rerun (${mode}) for filtered runs. Do not change the UI.`;
+        try {
+          const runs = await this.fetchAllFilteredRuns();
+          const targets = this.rerunTargetsForMode(runs, mode);
+          this.batchTotal = targets.length;
+          if (targets.length === 0) {
+            this.statusMessage = 'No runs matched the current filters.';
+            return;
+          }
+          const ok = window.confirm(`Force rerun ${targets.length} filtered pair group(s), mode: ${mode}? Existing selected run records will be archived and recreated.`);
+          if (!ok) {
+            this.statusMessage = 'Rerun cancelled.';
+            return;
+          }
+          this.batchResults = targets.map(run => ({
+            questionId: run.question_id,
+            questionText: run.question_text,
+            criteriaName: run.criteria_name,
+            runNr: run.run_nr || 1,
+            status: 'pending',
+            runId: run.id,
+            error: null,
+          }));
+          let nextIdx = 0;
+          const concurrency = Math.min(this.parallelCount || 1, targets.length);
+          this.statusMessage = `Rerunning ${targets.length} filtered pair group(s), mode ${mode}, with ${concurrency} workers. Do not change the UI.`;
+          const worker = async () => {
+            while (true) {
+              const i = nextIdx++;
+              if (i >= targets.length) break;
+              const run = targets[i];
+              this.batchResults[i].status = 'running';
+              try {
+                const res = await fetch(`/api/runs/${run.id}/rerun`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ mode }),
+                });
+                const data = await res.json();
+                if (!res.ok || data.error) throw new Error(data.error || `HTTP ${res.status}`);
+                this.batchResults[i].status = 'done';
+                this.batchResults[i].runId = (data.results || []).map(r => r.newRunId).join(', ');
+              } catch (err) {
+                this.batchResults[i].status = 'error';
+                this.batchResults[i].error = err.message || 'Unknown error';
+              }
+              this.batchProgress = this.batchResults.filter(r => ['done', 'error', 'skipped'].includes(r.status)).length;
+            }
+          };
+          await Promise.all(Array.from({ length: concurrency }, () => worker()));
+          this.statusMessage = `Rerun finished. ${this.batchDoneCount()} done, ${this.batchFailedCount()} errors.`;
+          this.searchRuns(false);
+        } finally {
+          this.running = false;
+          this.batchRunning = false;
+        }
+      },
+
+      clearRunSearch() {
+        this.runSearch = { runId: '', runNr: '', text: '', testset: '', runSetId: '', setupId: '', criteriaId: '', status: '', hasError: '', hasReview: '', hasSearch: '', hasAutoanswer: '', scoreFrom: '', scoreTo: '', singleScoreFrom: '', singleScoreTo: '', scoredFrom: '', scoredTo: '', diffFrom: '', diffTo: '', sortKey: 'id', sortDir: 'desc', limit: 25, offset: 0, total: 0 };
+        this.searchRuns(true);
+      },
+
+      sortRuns(key) {
+        if (this.runSearch.sortKey === key) {
+          this.runSearch.sortDir = this.runSearch.sortDir === 'asc' ? 'desc' : 'asc';
+        } else {
+          this.runSearch.sortKey = key;
+          this.runSearch.sortDir = ['id', 'date', 'scored', 'score', 'singleScore', 'diff', 'steps', 'internet', 'search', 'auto', 'repeat'].includes(key) ? 'desc' : 'asc';
+        }
+        this.searchRuns(true);
+      },
+
+      runSortMark(key) {
+        if (this.runSearch.sortKey !== key) return '';
+        return this.runSearch.sortDir === 'asc' ? '↑' : '↓';
+      },
+
+      async createRunSet() {
+        const name = this.newRunSetName.trim();
+        if (!name) return;
+        const res = await fetch('/api/run-sets', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name }),
+        });
+        const data = await res.json();
+        if (data.error) {
+          this.error = data.error;
+          return;
+        }
+        if (!this.runSets.some(rs => rs.id === data.id)) {
+          this.runSets.push({ id: data.id, name: data.name });
+        }
+        this.form.runSetId = data.id;
+        this.runSearch.runSetId = data.id;
+        this.newRunSetName = '';
+      },
+
+      nextRunPage() {
+        if (this.runSearch.offset + this.runSearch.limit >= this.runSearch.total) return;
+        this.runSearch.offset += this.runSearch.limit;
+        this.searchRuns(false);
+      },
+
+      prevRunPage() {
+        this.runSearch.offset = Math.max(0, this.runSearch.offset - this.runSearch.limit);
+        this.searchRuns(false);
+      },
+
+      async executeRun() {
+        this.running = true;
+        this.result = null;
+        this.error = null;
+        this.scoreResult = null;
+        this.batchResults = [];
+        this.statusMessage = 'Running paired Single + Workflow test. Do not change the UI until it finishes.';
+
+        try {
+          const res = await fetch('/api/runs', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              setupId: this.form.setupId,
+              llmConfigId: Number(this.form.llmConfigId),
+              questionId: Number(this.form.questionId),
+              testset: this.form.testset || 'basic_general_questions',
+              runSetId: this.form.runSetId || 'legacy_existing_import',
+            }),
+          });
+          const data = await res.json();
+          if (data.error) {
+            this.error = data.error;
+          } else {
+            this.result = data;
+          }
+        } catch (err) {
+          this.error = err.message || 'Unknown error';
+        } finally {
+          this.running = false;
+          this.statusMessage = '';
+        }
+      },
+
+      buildBatchTasks() {
+        const tasks = [];
+        for (const q of this.filteredQuestions) {
+          for (let r = 0; r < this.runsPerQuestion; r++) {
+            tasks.push({ question: q, runNr: r + 1 });
+          }
+        }
+        return tasks;
+      },
+
+      async existingCompletedRuns() {
+        const params = new URLSearchParams();
+        params.set('setupId', this.form.setupId);
+        if (this.form.testset) params.set('testset', this.form.testset);
+        if (this.form.runSetId) params.set('runSetId', this.form.runSetId);
+        const res = await fetch('/api/runs?' + params.toString());
+        const runs = await res.json();
+        return new Set(runs
+          .filter(r => r.status === 'completed' && r.llm_config_id === Number(this.form.llmConfigId))
+          .map(r => `${r.question_id}:${r.run_nr || 1}`));
+      },
+
+      async runMissing() {
+        if (!this.form.setupId || !this.form.llmConfigId || this.filteredQuestions.length === 0) return;
+        const existing = await this.existingCompletedRuns();
+        const allTasks = this.buildBatchTasks();
+        const missingTasks = allTasks.filter(t => !existing.has(`${t.question.id}:${t.runNr}`));
+        const skippedTasks = allTasks.filter(t => existing.has(`${t.question.id}:${t.runNr}`));
+        await this.runTaskList(missingTasks, skippedTasks);
+      },
+
+      async runAll() {
+        if (!this.form.setupId || !this.form.llmConfigId || this.filteredQuestions.length === 0) return;
+        await this.runTaskList(this.buildBatchTasks(), []);
+      },
+
+      async runTaskList(tasks, skippedTasks) {
+        this.running = true;
+        this.batchRunning = true;
+        this.result = null;
+        this.error = null;
+        this.scoreResult = null;
+        this.batchProgress = 0;
+        this.statusMessage = `Batch started. Do not change the UI. ${tasks.length} runs will execute, ${skippedTasks.length} already exist.`;
+
+        // Build task list: each question × runsPerQuestion
+        this.batchTotal = tasks.length;
+        this.batchResults = skippedTasks.map(t => ({
+          questionId: t.question.id,
+          questionText: t.question.question_text,
+          criteriaName: t.question.criteria_name,
+          runNr: t.runNr,
+          status: 'skipped',
+          runId: null,
+          error: null,
+        })).concat(tasks.map(t => ({
+          questionId: t.question.id,
+          questionText: t.question.question_text,
+          criteriaName: t.question.criteria_name,
+          runNr: t.runNr,
+          status: 'pending',
+          runId: null,
+          error: null,
+        })));
+
+        if (tasks.length === 0) {
+          this.batchRunning = false;
+          this.running = false;
+          this.statusMessage = 'Nothing missing for the selected filters.';
+          return;
+        }
+
+        // Worker pool — runs `parallelCount` tasks concurrently
+        let nextIdx = 0;
+        const resultOffset = skippedTasks.length;
+        const self = this;
+
+        const worker = async () => {
+          while (true) {
+            const i = nextIdx++;
+            if (i >= tasks.length) break;
+            const resultIndex = resultOffset + i;
+            self.batchResults[resultIndex].status = 'running';
+            try {
+              const res = await fetch('/api/runs', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  setupId: self.form.setupId,
+                  llmConfigId: Number(self.form.llmConfigId),
+                  questionId: tasks[i].question.id,
+                  testset: self.form.testset || tasks[i].question.testset || 'basic_general_questions',
+                  runSetId: self.form.runSetId || 'legacy_existing_import',
+                  runNr: tasks[i].runNr,
+                }),
+              });
+              const data = await res.json();
+              if (data.error) {
+                self.batchResults[resultIndex].status = 'error';
+                self.batchResults[resultIndex].error = data.error;
+              } else {
+                self.batchResults[resultIndex].status = data.existing ? 'skipped' : 'done';
+                self.batchResults[resultIndex].runId = data.runId;
+              }
+            } catch (err) {
+              self.batchResults[resultIndex].status = 'error';
+              self.batchResults[resultIndex].error = err.message || 'Unknown error';
+            }
+            self.batchProgress = self.batchResults.filter(r => r.status === 'done' || r.status === 'error' || r.status === 'skipped').length - skippedTasks.length;
+          }
+        };
+
+        await Promise.all(Array.from({ length: this.parallelCount }, () => worker()));
+
+        this.running = false;
+        this.batchRunning = false;
+        this.statusMessage = `Batch finished. ${this.batchDoneCount()} done, ${this.batchSkippedCount()} already existed, ${this.batchFailedCount()} errors.`;
+        this.searchRuns(false);
+      },
+
+      orderedPanels() {
+        if (!this.modal.data || !this.modal.data.primary) return [];
+        const panels = this.modal.data.paired
+          ? [this.modal.data.primary, this.modal.data.paired]
+          : [this.modal.data.primary];
+        // Direct baseline always left, workflow always right
+        return panels.slice().sort((a, b) => {
+          if (this.isDirectSetup(a.run.setup_id)) return -1;
+          if (this.isDirectSetup(b.run.setup_id)) return 1;
+          return 0;
+        });
+      },
+
+      modalTabs() {
+        const panels = this.orderedPanels();
+        const single = panels.find(panel => this.isDirectSetup(panel.run.setup_id)) || null;
+        const workflow = panels.find(panel => !this.isDirectSetup(panel.run.setup_id)) || null;
+        return [
+          { key: 'single', label: 'Single Prompt', panel: single },
+          { key: 'workflow', label: 'Workflow', panel: workflow },
+        ];
+      },
+
+      async updateRunFlags(run) {
+        try {
+          await fetch(`/api/runs/${run.id}/flags`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              excludeFromAnalysis: Number(run.exclude_from_analysis) === 1,
+              excludeReason: run.exclude_reason || '',
+            }),
+          });
+          this.searchRuns(false);
+        } catch (err) {
+          console.error('Flag update failed:', err);
+        }
+      },
+
+      async scorePanel(runId) {
+        if (!this.modal.scoringModelId) return;
+        const activePanelId = this.modal.activePanelId;
+        this.modal.scoring = true;
+        try {
+          await fetch(`/api/runs/${runId}/score`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ scoringModelId: Number(this.modal.scoringModelId) }),
+          });
+          // Reload modal data to show fresh score
+          const primaryId = this.modal.data.primary.run.id;
+          await this.openRunDetail(primaryId);
+          if (this.orderedPanels().some(panel => panel.run.id === activePanelId)) {
+            this.modal.activePanelId = activePanelId;
+          }
+          this.searchRuns(false);
+        } catch (err) {
+          console.error('Score failed:', err);
+        } finally {
+          this.modal.scoring = false;
+        }
+      },
+
+      async scoreAllUnscored() {
+        if (!this.batchScoringModelId) return;
+        this.batchScoring = true;
+        this.batchScoringMode = 'score';
+        this.batchScoreProgress = 0;
+        this.batchScoreTotal = 0;
+        this.statusMessage = 'Scoring unscored runs. Do not change the UI until it finishes.';
+        try {
+          // Fetch all completed runs
+          const res = await fetch('/api/runs');
+          const runs = await res.json();
+          const unscored = runs.filter(r => r.status === 'completed' && r.score_percent == null);
+          this.batchScoreTotal = unscored.length;
+          if (unscored.length === 0) { this.batchScoring = false; return; }
+          for (const run of unscored) {
+            try {
+              await fetch(`/api/runs/${run.id}/score`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ scoringModelId: Number(this.batchScoringModelId) }),
+              });
+            } catch (e) {
+              console.error('Score failed for run', run.id, e);
+            }
+            this.batchScoreProgress++;
+          }
+        } finally {
+          this.statusMessage = `Scoring finished. ${this.batchScoreProgress}/${this.batchScoreTotal} runs processed.`;
+          this.batchScoring = false;
+          this.batchScoringMode = '';
+        }
+      },
+
+      async revalidateFilteredRuns() {
+        if (!this.batchScoringModelId) return;
+        this.batchScoring = true;
+        this.batchScoringMode = 'revalidate';
+        this.batchScoreProgress = 0;
+        this.batchScoreTotal = 0;
+        this.statusMessage = 'Preparing revalidation for filtered runs. Do not change the UI.';
+        try {
+          const runs = await this.fetchAllFilteredRuns();
+          const completed = runs.filter(r => r.status === 'completed');
+          this.batchScoreTotal = completed.length;
+          if (completed.length === 0) {
+            this.statusMessage = 'No completed runs matched the current filters.';
+            return;
+          }
+          const ok = window.confirm(`Revalidate ${completed.length} completed runs using the selected scoring model?`);
+          if (!ok) {
+            this.statusMessage = 'Revalidation cancelled.';
+            return;
+          }
+          const concurrency = 5;
+          let nextIdx = 0;
+          let failed = 0;
+          this.statusMessage = `Revalidating ${completed.length} completed runs with ${concurrency} parallel workers. Do not change the UI.`;
+
+          const worker = async () => {
+            while (true) {
+              const i = nextIdx++;
+              if (i >= completed.length) break;
+              const run = completed[i];
+              try {
+                const res = await fetch(`/api/runs/${run.id}/score`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ scoringModelId: Number(this.batchScoringModelId) }),
+                });
+                if (!res.ok) {
+                  const data = await res.json().catch(() => ({}));
+                  throw new Error(data.error || `HTTP ${res.status}`);
+                }
+              } catch (e) {
+                failed++;
+                console.error('Revalidate failed for run', run.id, e);
+              }
+              this.batchScoreProgress++;
+            }
+          };
+
+          await Promise.all(Array.from({ length: Math.min(concurrency, completed.length) }, () => worker()));
+          if (failed > 0) {
+            this.statusMessage = `Revalidation finished with ${failed} failed requests. ${this.batchScoreProgress}/${this.batchScoreTotal} runs processed.`;
+          }
+          this.searchRuns(false);
+        } finally {
+          if (this.batchScoreTotal > 0 && this.batchScoreProgress > 0 && !this.statusMessage.includes('failed requests')) {
+            this.statusMessage = `Revalidation finished. ${this.batchScoreProgress}/${this.batchScoreTotal} runs processed.`;
+          }
+          this.batchScoring = false;
+          this.batchScoringMode = '';
+        }
+      },
+
+      async openRunDetail(runId) {
+        this.modal.open = true;
+        this.modal.loading = true;
+        this.modal.activeTab = 'single';
+        this.modal.activePanelId = null;
+        this.modal.data = null;
+        try {
+          // Load the clicked run
+          const res = await fetch(`/api/runs/${runId}`);
+          const data = await res.json();
+
+          // Load the paired run with the same strict pair key used by the analysis.
+          let paired = null;
+          if (data.run && data.run.comparison_group_id) {
+            const pairParams = new URLSearchParams({
+              comparisonGroupId: data.run.comparison_group_id,
+              questionId: data.run.question_id,
+              llmConfigId: data.run.llm_config_id,
+              runNr: data.run.run_nr ?? '',
+              testset: data.run.testset || '',
+              runSetId: data.run.run_set_id || '',
+              excludeRunId: String(runId),
+            });
+            const pRes = await fetch(`/api/runs?${pairParams.toString()}`);
+            const pData = await pRes.json();
+            if (pData.length > 0) {
+              const sameRunNr = pData.filter(r => Number(r.run_nr ?? -1) === Number(data.run.run_nr ?? -1));
+              const sameModel = sameRunNr.filter(r => Number(r.llm_config_id) === Number(data.run.llm_config_id));
+              const directSetupId = this.isDirectSetup(data.run.setup_id)
+                ? data.run.setup_id
+                : this.directSetupFor(data.run.setup_id);
+              const candidates = sameModel.filter(r =>
+                (this.isDirectSetup(data.run.setup_id) && this.isWorkflowForDirect(r.setup_id, directSetupId)) ||
+                (!this.isDirectSetup(data.run.setup_id) && r.setup_id === directSetupId)
+              );
+              const preferred = this.isDirectSetup(data.run.setup_id)
+                ? candidates.find(r => this.isWorkflowForDirect(r.setup_id, directSetupId))
+                : candidates.find(r => r.setup_id === directSetupId);
+              const pairedSummary = preferred || null;
+
+              if (pairedSummary) {
+                const pDetailRes = await fetch(`/api/runs/${pairedSummary.id}`);
+                paired = await pDetailRes.json();
+              }
+            }
+          }
+          this.modal.data = { primary: data, paired };
+          this.modal.activeTab = this.isDirectSetup(data.run.setup_id) ? 'single' : 'workflow';
+          this.modal.activePanelId = data.run.id;
+        } catch (err) {
+          this.modal.data = { error: err.message };
+        } finally {
+          this.modal.loading = false;
+        }
+      },
+
+    };
+
+  }
+</script>
+
+<%- include('partials/footer') %>

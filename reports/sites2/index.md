@@ -26,3 +26,4 @@ Verwendete Systemprompts und Bewertungs-/Review-Schritte.
 - [Systemprompts: Hauptworkflows](../anhang_prompts/system_prompts_hauptworkflows.md)
 - [Systemprompts: ISO Picker](../anhang_prompts/system_prompts_iso_picker.md)
 - [Systemprompts: Reviewer- und Scorer-Schritte](../anhang_prompts/system_prompts_reviewer_steps.md)
+- [Systemprompts: Engine Instructions](../anhang_prompts/system_prompts_engine_instructions.md)

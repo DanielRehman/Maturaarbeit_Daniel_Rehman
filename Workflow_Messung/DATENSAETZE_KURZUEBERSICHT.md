@@ -1,0 +1,79 @@
+# Datensaetze Kurzuebersicht
+
+## Fragensets
+
+- `ce_calc_easy_questions` - CE: berechenbare Aufgaben, Schwierigkeit 1; leichte computer-auswertbare Fragen.
+- `ce_calc_medium_questions` - CE: berechenbare Aufgaben, Schwierigkeit 2; mittlere computer-auswertbare Fragen.
+- `ce_calc_hard_questions` - CE: berechenbare Aufgaben, Schwierigkeit 3; schwerere computer-auswertbare Fragen.
+- `ce_calc_final_questions` - finales CE-Fragenset fuer berechenbare Aufgaben.
+- `ce_main_structured_questions` - Hauptset fuer CE-Pruefung mit strukturierten erwarteten Antworten.
+- `ce_intermediate_v2_questions` - Zwischenstand des CE-Fragensets.
+- `ce_main_final_questions` - finales CE-Hauptset ohne Schwierigkeits-Aufteilung.
+- `basic_general_questions` - Basis-Fragenset fuer allgemeine Tests.
+- `example_questions` - kleines Beispiel-Fragenset.
+- `flowmap_parallel7_questions` - Fragenset 7 fuer Flowmap-Ablauf; mindestens sieben gleichzeitige Probleme/Anforderungen, hoher Schwierigkeitsgrad.
+- `flowreview_parallel7_questions` - Fragenset 7 fuer Flowreview-Ablauf; mindestens sieben gleichzeitige Probleme/Anforderungen, hoher Schwierigkeitsgrad.
+- `ai_edge_case_questions` - Grenzfaelle, absichtlich schwer oder kaum loesbar.
+- `weak_prompt_questions` - Fragen fuer absichtlich schwache Prompt-Ausgangslage.
+- `prompt_optimisation_hard_questions` - schwierige Fragen fuer Prompt-Optimierung.
+- `basic_evaluation_questions` - erstes Basis-Fragenset.
+- `prompt_optimisation_questions` - Fragenset fuer Prompt-Optimierung.
+- `flowmap_basic_questions` - Fragenset fuer Flowmap.
+- `flowreview_basic_questions` - Fragenset fuer Flowreview.
+- `prompt_optimisation_extended_questions` - erweitertes Fragenset fuer Prompt-Optimierung.
+
+## Run-Sets
+
+- `ce_calc_reason_d1_initial_20260523` - CE Reason auf Schwierigkeit 1; erster Vergleichslauf.
+- `ce_calc_reason_d2_initial_20260523` - CE Reason auf Schwierigkeit 2; erster Vergleichslauf.
+- `ce_calc_reason_d3_initial_20260523` - CE Reason auf Schwierigkeit 3; erster Vergleichslauf.
+- `ce_calc_reason_d1_expanded_20260523` - CE Reason Schwierigkeit 1; erweiterte Laufmenge.
+- `ce_calc_reason_d2_expanded_20260523` - CE Reason Schwierigkeit 2; erweiterte Laufmenge.
+- `ce_calc_reason_d3_expanded_20260523` - CE Reason Schwierigkeit 3; erweiterte Laufmenge.
+- `ce_calc_reason_pick_d1_20260523` - CE Reason + Pick auf Schwierigkeit 1; Picker-Ablauf ergaenzt.
+- `ce_calc_reason_pick_d2_20260523` - CE Reason + Pick auf Schwierigkeit 2; Picker-Ablauf ergaenzt.
+- `ce_calc_reason_pick_d3_20260523` - CE Reason + Pick auf Schwierigkeit 3; Picker-Ablauf ergaenzt.
+- `ce_calc_reason_pick_d1_expanded_20260523` - CE Reason + Pick Schwierigkeit 1; erweiterte Laufmenge.
+- `ce_calc_reason_pick_d2_expanded_20260523` - CE Reason + Pick Schwierigkeit 2; erweiterte Laufmenge.
+- `ce_calc_reason_pick_v2_d1_expanded_20260523` - CE Reason + Pick v2 Schwierigkeit 1; angepasster Pick-Ablauf.
+- `ce_calc_reason_pick_v2_d2_expanded_20260523` - CE Reason + Pick v2 Schwierigkeit 2; angepasster Pick-Ablauf.
+- `ce_calc_reason_pick_v2_d3_expanded_20260523` - CE Reason + Pick v2 Schwierigkeit 3; angepasster Pick-Ablauf.
+- `ce_calc_s4_d1_expanded_20260523` - CE S4 Schwierigkeit 1; erweiterter S4-Ablauf.
+- `ce_calc_s4_d2_expanded_20260523` - CE S4 Schwierigkeit 2; erweiterter S4-Ablauf.
+- `ce_calc_s4_d3_expanded_20260523` - CE S4 Schwierigkeit 3; erweiterter S4-Ablauf.
+- `ce_calc_probe_d1_20260523` - Probe fuer Schwierigkeit 1; technischer Testlauf.
+- `ce_calc_probe_d2_20260523` - Probe fuer Schwierigkeit 2; technischer Testlauf.
+- `ce_calc_probe_d3_20260523` - Probe fuer Schwierigkeit 3; technischer Testlauf.
+- `ce_additive_completion_10_per_metric_20260526` - CE Additive Completion; 10 Fragen pro Metrik, zweite Stufe darf nur ergaenzen.
+- `ce_calc_s4_final_20260522` - finaler CE-S4-Lauf fuer berechenbare Aufgaben.
+- `ce_reason_pick_10_per_metric_20260524` - CE Reason + Pick; 10 Fragen pro Metrik, gepruefter Lauf.
+- `ce_reason_iso_pick_10_per_metric_20260524` - CE Reason + ISO Pick; Picker-Variante fuer gleichen Umfang.
+- `ce_reason_protocol_probe_20260524` - kleine Probe fuer Reason-Protokoll.
+- `ce_same_start_reason_pick_100_per_metric_part1_20260524` - Same-Start Reason + Pick; 100 pro Metrik, Teil 1.
+- `ce_same_start_reason_pick_100_per_metric_part2_20260524` - Same-Start Reason + Pick; 100 pro Metrik, Teil 2.
+- `ce_same_start_reason_pick_100_per_metric_part3_20260524` - Same-Start Reason + Pick; 100 pro Metrik, Teil 3.
+- `ce_same_start_reason_pick_100_per_metric_part4_20260524` - Same-Start Reason + Pick; 100 pro Metrik, Teil 4.
+- `ce_same_start_reason_pick_eval_d1_d2_d3_20260524` - Same-Start Reason + Pick; Evaluation ueber Schwierigkeit 1 bis 3.
+- `ce_same_start_reason_pick_fix_d2_picker41_20260524` - Korrekturlauf fuer Schwierigkeit 2; Picker-Fix angewendet.
+- `ce_same_start_reason_pick_fix_probe_20260524` - Probe fuer Korrektur des Same-Start-Pick-Ablaufs.
+- `ce_same_start_reason_pick_fix_probe_picker41_20260524` - Probe fuer Picker-Korrektur mit 41-Picker-Fall.
+- `ce_same_start_reason_probe_small_20260524` - kleine Probe fuer Same-Start Reason.
+- `ce_s4_main_final_20260522` - finaler CE-S4-Lauf auf finalem Haupt-Fragenset.
+- `flowmap_parallel7_20260516` - Flowmap auf Fragenset 7; Test mit mindestens sieben gleichzeitigen Problemen.
+- `flowreview_pick_same_start_20260520` - PICK Flowreview2 mit gleicher Ausgangslage fuer Direkt und Workflow.
+- `flowreview_same_start_all_sets_20260521` - Same-Start Flowreview ueber alle Flow-Fragensets.
+- `direct_prompt_hard_gpt35_20260516` - direkter/Prompt-Lauf mit schwierigen Fragen auf GPT-3.5.
+- `direct_prompt_edge_cases_prompt_optimisation_20260517` - Einzel-Lauf fuer Grenzfaelle, Set 2.
+- `direct_prompt_edge_cases_flowmap_20260517` - Einzel-Lauf fuer Grenzfaelle, Set 3.
+- `direct_prompt_weak_gpt35_20260516` - direkter/Prompt-Lauf mit absichtlich schwacher Prompt-Ausgangslage.
+- `flowreview_parallel7_20260517` - Flowreview auf Fragenset 7; Test mit mindestens sieben gleichzeitigen Problemen.
+- `direct_prompt_optimisation_10runs_20260516` - frueher 10er-Lauf fuer Prompt-Fragenset 2.
+- `legacy_existing_import` - Bestandsdaten vor spaeterer Strukturierung.
+- `direct_prompt_optimisation_run5_20260517` - weiterer Lauf fuer Fragenset 2, Lauf 5.
+- `direct_prompt_optimisation_expanded_20260517` - Erweiterung fuer Fragenset 2.
+- `flowreview_prompt_optimisation_20260517` - Flowreview auf Fragenset 2.
+- `direct_prompt_flowmap_basic_run3_20260517` - weiterer Lauf fuer Fragenset 3, Lauf 3.
+- `flowmap_basic_questions_20260517` - Flowmap auf Fragenset 3.
+- `direct_prompt_flowmap_basic_expanded_20260517` - Erweiterung fuer Fragenset 3.
+- `flowreview_basic_questions_20260517` - Flowreview auf Fragenset 4.
+- `archive_ce_probe_intermediate` - Archiv fuer CE-Proben, Debug- und Zwischenlaeufe; nicht als Hauptauswertung gedacht.

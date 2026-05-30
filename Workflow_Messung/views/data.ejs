@@ -1,0 +1,3370 @@
+<%- include('partials/header', {title, activePage}) %>
+
+<div x-data="dataPage()" x-init="init()">
+  <div class="flex flex-col gap-1 mb-5">
+    <h1 class="text-xl font-semibold text-slate-900 dark:text-slate-100">Datenauswertung</h1>
+    <p class="text-sm text-slate-500 dark:text-slate-400">Auswertung für die Diplomarbeit: ausgewählte Fragensets und Run-Sets, ein Kriterium oder alle Kriterien, gepaarter Vergleich von direktem Aufruf und Workflow.</p>
+  </div>
+
+  <div class="grid grid-cols-1 xl:grid-cols-[320px_1fr] gap-6">
+    <aside class="space-y-4">
+      <section class="border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-800 p-4">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-sm font-semibold text-slate-800 dark:text-slate-200">Auswahl</h2>
+          <div class="flex items-center gap-2">
+            <button @click="selectOutputLastDefaults()" class="text-xs text-blue-600 dark:text-blue-400 hover:underline">selectDefault</button>
+            <button @click="selectAll(); markSelectionChanged()" class="text-xs text-blue-600 dark:text-blue-400 hover:underline">Alle Daten</button>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Kriterium</label>
+            <select x-model="filters.criteriaId"
+                    @change="reloadOptionsForCriteria()"
+                    class="w-full text-sm border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+              <option value="">Alle Kriterien</option>
+              <template x-for="c in options.criteria" :key="c.id">
+                <option :value="c.id" x-text="c.name_de"></option>
+              </template>
+            </select>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-xs font-medium text-slate-500 dark:text-slate-400">Fragensets</label>
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-slate-400" x-text="filters.testsets.length + '/' + options.testsets.length"></span>
+                <button @click="filters.testsets = []; markSelectionChanged()" class="text-xs text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">leeren</button>
+                <button @click="filters.testsets = options.testsets.map(t => t.id); markSelectionChanged()" class="text-xs text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">alle</button>
+              </div>
+            </div>
+            <div class="space-y-1 max-h-36 overflow-y-auto pr-1">
+              <template x-for="t in options.testsets" :key="t.id">
+                <label class="flex items-center justify-between gap-2 text-sm px-2 py-1.5 rounded hover:bg-white dark:hover:bg-slate-700 cursor-pointer">
+                  <span class="flex items-center gap-2 min-w-0">
+                    <input type="checkbox" :value="t.id" x-model="filters.testsets" @change="markSelectionChanged()" class="rounded border-slate-300">
+                    <span class="truncate text-slate-700 dark:text-slate-200" x-text="t.name || '(empty)'"></span>
+                  </span>
+                  <span class="text-[11px] text-slate-400 whitespace-nowrap"
+                        x-text="optionCountLabel(t, true)"></span>
+                </label>
+              </template>
+            </div>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-xs font-medium text-slate-500 dark:text-slate-400">Run-Sets</label>
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-slate-400" x-text="filters.runSetIds.length + '/' + options.runSets.length"></span>
+                <button @click="filters.runSetIds = []; markSelectionChanged()" class="text-xs text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">leeren</button>
+                <button @click="filters.runSetIds = options.runSets.map(rs => rs.id); markSelectionChanged()" class="text-xs text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">alle</button>
+              </div>
+            </div>
+            <div class="space-y-1 max-h-36 overflow-y-auto pr-1">
+              <template x-for="rs in options.runSets" :key="rs.id">
+                <label class="flex items-center justify-between gap-2 text-sm px-2 py-1.5 rounded hover:bg-white dark:hover:bg-slate-700 cursor-pointer">
+                  <span class="flex items-center gap-2 min-w-0">
+                    <input type="checkbox" :value="rs.id" x-model="filters.runSetIds" @change="markSelectionChanged()" class="rounded border-slate-300">
+                    <span class="truncate text-slate-700 dark:text-slate-200" x-text="rs.name || rs.id"></span>
+                  </span>
+                  <span class="text-[11px] text-slate-400 whitespace-nowrap"
+                        x-text="optionCountLabel(rs, false)"></span>
+                </label>
+              </template>
+            </div>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-xs font-medium text-slate-500 dark:text-slate-400">Workflow-Setups</label>
+              <button @click="filters.workflowSetupIds = workflowOptions().map(s => s.id); markSelectionChanged()" class="text-xs text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">alle wählen</button>
+            </div>
+            <div class="space-y-1 max-h-40 overflow-y-auto pr-1">
+              <template x-for="s in workflowOptions()" :key="s.id">
+                <label class="flex items-center justify-between gap-2 text-sm px-2 py-1.5 rounded hover:bg-white dark:hover:bg-slate-700 cursor-pointer">
+                  <span class="flex items-center gap-2 min-w-0">
+                    <input type="checkbox" :value="s.id" x-model="filters.workflowSetupIds" @change="markSelectionChanged()" class="rounded border-slate-300">
+                    <span class="truncate text-slate-700 dark:text-slate-200" x-text="s.name"></span>
+                  </span>
+                  <span class="text-xs text-slate-400" x-text="s.run_count || 0"></span>
+                </label>
+              </template>
+            </div>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-xs font-medium text-slate-500 dark:text-slate-400">Modelle</label>
+              <button @click="filters.modelIds = options.models.map(m => String(m.id)); markSelectionChanged()" class="text-xs text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">alle wählen</button>
+            </div>
+            <div class="space-y-1 max-h-32 overflow-y-auto pr-1">
+              <template x-for="m in options.models" :key="m.id">
+                <label class="flex items-center justify-between gap-2 text-sm px-2 py-1.5 rounded hover:bg-white dark:hover:bg-slate-700 cursor-pointer">
+                  <span class="flex items-center gap-2 min-w-0">
+                    <input type="checkbox" :value="String(m.id)" x-model="filters.modelIds" @change="markSelectionChanged()" class="rounded border-slate-300">
+                    <span class="truncate text-slate-700 dark:text-slate-200" x-text="m.label"></span>
+                  </span>
+                  <span class="text-xs text-slate-400" x-text="m.run_count || 0"></span>
+                </label>
+              </template>
+            </div>
+          </div>
+
+          <div class="space-y-2 border-t border-slate-200 dark:border-slate-700 pt-3">
+            <label class="block text-sm text-slate-700 dark:text-slate-200">
+              <span class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Max Paare pro Kriterium</span>
+              <input type="number"
+                     min="1"
+                     step="1"
+                     x-model="filters.maxPairsPerCriteria"
+                     @input="markSelectionChanged()"
+                     placeholder="leer = alle"
+                     class="w-full text-sm border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+              <span class="block text-xs text-slate-400 dark:text-slate-500 mt-1">Optional: begrenzt die tatsächlich verwendeten gültigen Paare je Kriterium, z.B. 100.</span>
+            </label>
+            <label class="block text-sm text-slate-700 dark:text-slate-200">
+              <span class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Skip Paare pro Kriterium</span>
+              <input type="number"
+                     min="0"
+                     step="1"
+                     x-model="filters.skipPairsPerCriteria"
+                     @input="markSelectionChanged()"
+                     placeholder="0"
+                     class="w-full text-sm border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+              <span class="block text-xs text-slate-400 dark:text-slate-500 mt-1">Optional: überspringt zuerst N ausgewählte Paare je Kriterium. Beispiel: Max 100 + Skip 100 = zweite 100.</span>
+            </label>
+            <div class="block text-sm text-slate-700 dark:text-slate-200">
+              <span class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Direkt-Score behalten (%)</span>
+              <div class="grid grid-cols-2 gap-2">
+                <label>
+                  <span class="sr-only">Von</span>
+                  <input type="number"
+                         min="0"
+                         max="100"
+                         step="1"
+                         x-model="filters.skipCeilingSingleScore"
+                         @input="markSelectionChanged()"
+                         placeholder="von"
+                         class="w-full text-sm border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+                </label>
+                <label>
+                  <span class="sr-only">Bis</span>
+                  <input type="number"
+                         min="0"
+                         max="100"
+                         step="1"
+                         x-model="filters.skipCeilingSingleScoreMax"
+                         @input="markSelectionChanged()"
+                         placeholder="bis"
+                         class="w-full text-sm border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+                </label>
+              </div>
+              <span class="block text-xs text-slate-400 dark:text-slate-500 mt-1">Optional: behält nur Paare innerhalb des Bereichs. Beispiel: Von 20 bis 80 lässt <=20 und >=80 weg. Leer = nichts auslassen.</span>
+            </div>
+            <label class="flex items-start gap-2 text-sm text-slate-700 dark:text-slate-200 cursor-pointer">
+              <input type="checkbox" x-model="filters.includeReview" @change="markSelectionChanged()" class="mt-0.5 rounded border-slate-300">
+              <span>
+                Review-Antworten einschließen
+                <span class="block text-xs text-slate-400 dark:text-slate-500">Standard: Antworten mit Review-Markierung werden ausgeschlossen.</span>
+              </span>
+            </label>
+            <label class="flex items-start gap-2 text-sm text-slate-700 dark:text-slate-200 cursor-pointer">
+              <input type="checkbox" x-model="filters.includeExcluded" @change="markSelectionChanged()" class="mt-0.5 rounded border-slate-300">
+              <span>
+                Manuell ausgeschlossene einschließen
+                <span class="block text-xs text-slate-400 dark:text-slate-500">Standard: manuell ausgeschlossene Antworten werden weggelassen.</span>
+              </span>
+            </label>
+          </div>
+
+          <button @click="loadAnalysis()"
+                  :disabled="loading"
+                  class="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 dark:disabled:bg-slate-600 text-white text-sm font-medium rounded transition-colors flex items-center justify-center gap-2">
+            <svg x-show="loading" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+            </svg>
+            <span x-text="loading ? 'Lädt...' : 'Analyse aktualisieren'"></span>
+          </button>
+        </div>
+      </section>
+
+      <section class="border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+        <h2 class="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-2">Datenbereinigung</h2>
+        <ul class="text-xs text-slate-500 dark:text-slate-400 space-y-1">
+          <li>Es werden nur abgeschlossene Antworten mit Score verwendet.</li>
+          <li>Fehlende Scores, Fehler und unfertige Antworten werden ausgeschlossen.</li>
+          <li>Review-Markierungen und manuell ausgeschlossene Antworten werden standardmäßig ausgeschlossen.</li>
+          <li>Optional kann ein Behalten-Bereich für den direkten Score gesetzt werden; außerhalb dieses Bereichs liegende Paare werden ausgeschlossen.</li>
+          <li>Paare benötigen dieselbe Frage, dasselbe Modell, Fragenset, Run-Set und dieselbe Run-Nummer.</li>
+          <li>Differenz = Workflow-Score minus Score des direkten Aufrufs.</li>
+          <li>Übersprungene Batch-Einträge werden nicht als neue Antworten gespeichert; sie bedeuten, dass eine bestehende Antwort wiederverwendet wurde.</li>
+        </ul>
+      </section>
+    </aside>
+
+    <main class="min-w-0 space-y-5">
+      <div x-show="error" class="border border-red-200 dark:border-red-700 bg-red-50 dark:bg-red-900/20 rounded-lg p-4 text-sm text-red-700 dark:text-red-300" x-text="error"></div>
+
+      <div x-show="!analysis && loading" class="text-center py-16 text-slate-400 dark:text-slate-500 text-sm">Analyse wird geladen...</div>
+
+      <template x-if="analysis">
+        <div class="space-y-5">
+          <div class="border-b border-slate-200 dark:border-slate-700">
+            <nav class="flex gap-1 -mb-px">
+              <button @click="activeDataTab = 'analysis'"
+                      :class="activeDataTab === 'analysis' ? 'border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'"
+                      class="px-4 py-2 text-sm font-medium border-b-2 transition-colors">Analyse</button>
+              <button @click="activeDataTab = 'overview'"
+                      :class="activeDataTab === 'overview' ? 'border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'"
+                      class="px-4 py-2 text-sm font-medium border-b-2 transition-colors">Übersicht</button>
+              <button @click="activeDataTab = 'ceilingCalc'"
+                      :class="activeDataTab === 'ceilingCalc' ? 'border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'"
+                      class="px-4 py-2 text-sm font-medium border-b-2 transition-colors">Deckeneffekt-Rechner</button>
+            </nav>
+          </div>
+
+          <div x-show="exportStatus" x-text="exportStatus"
+               class="border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20 rounded-lg px-3 py-2 text-xs text-blue-700 dark:text-blue-300"></div>
+
+          <section x-show="activeDataTab === 'ceilingCalc'" x-cloak class="space-y-4">
+            <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+              <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-3 mb-4">
+                <div>
+                  <h2 class="text-sm font-semibold text-slate-800 dark:text-slate-200">Deckeneffekt-Rechner</h2>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Unabhängiger Erwartungsrechner: Wie viel Verbesserung ist sichtbar, wenn ein Teil der direkten Antworten bereits perfekt ist?</p>
+                </div>
+                <div class="text-xs text-slate-500 dark:text-slate-400" x-text="'Basis: ' + ceilingCalc.base + ' Fragen'"></div>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4">
+                <label class="block text-sm text-slate-700 dark:text-slate-200">
+                  <span class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Fragen-Basis</span>
+                  <input type="number" min="1" step="1" x-model.number="ceilingCalc.base"
+                         class="w-full text-sm border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+                </label>
+                <label class="block text-sm text-slate-700 dark:text-slate-200">
+                  <span class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Direkt: Fehler pro Basis</span>
+                  <input type="number" min="0" step="0.1" x-model.number="ceilingCalc.directErrors"
+                         class="w-full text-sm border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+                </label>
+                <label class="block text-sm text-slate-700 dark:text-slate-200">
+                  <span class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Workflow: Fehler pro Basis</span>
+                  <input type="number" min="0" step="0.1" x-model.number="ceilingCalc.workflowErrors"
+                         class="w-full text-sm border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+                </label>
+                <label class="block text-sm text-slate-700 dark:text-slate-200">
+                  <span class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Beispiel-Paare</span>
+                  <input type="number" min="1" step="1" x-model.number="ceilingCalc.pairs"
+                         class="w-full text-sm border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+                </label>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+                <label class="block text-sm text-slate-700 dark:text-slate-200">
+                  <span class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">100% links (%)</span>
+                  <input type="number" min="0" max="100" step="1" x-model.number="ceilingCalc.ceilingSharePct"
+                         class="w-full text-sm border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+                </label>
+                <div class="block text-sm text-slate-700 dark:text-slate-200">
+                  <span class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Steigerung Deckel-Paare</span>
+                  <div class="w-full text-sm border border-slate-200 dark:border-slate-700 rounded px-2 py-1.5 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200"
+                       x-text="formatSignedPercent(ceilingCalcResult().gainCeilingPct)"></div>
+                </div>
+                <div class="block text-sm text-slate-700 dark:text-slate-200">
+                  <span class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Steigerung nicht gedeckelt</span>
+                  <div class="w-full text-sm border border-slate-200 dark:border-slate-700 rounded px-2 py-1.5 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200"
+                       x-text="formatSignedPercent(ceilingCalcResult().gainNonCeilingPct)"></div>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
+                <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4 bg-slate-50 dark:bg-slate-800">
+                  <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Erwartete 100% links</p>
+                  <p class="text-2xl font-semibold text-slate-900 dark:text-slate-100" x-text="formatPercent(ceilingCalcResult().ceilingSharePct)"></p>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" x-text="ceilingCalcResult().ceilingPairs + ' von ' + ceilingCalcResult().pairs + ' Paaren'"></p>
+                </div>
+                <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4 bg-slate-50 dark:bg-slate-800">
+                  <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Erwartete Steigerung in allen Paaren</p>
+                  <p class="text-2xl font-semibold text-green-600 dark:text-green-400" x-text="formatSignedPercent(ceilingCalcResult().gainAllPct)"></p>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Workflow minus direkter Aufruf</p>
+                </div>
+                <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4 bg-slate-50 dark:bg-slate-800">
+                  <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Steigerung nur nicht gedeckelte Paare</p>
+                  <p class="text-2xl font-semibold text-blue-600 dark:text-blue-400" x-text="formatSignedPercent(ceilingCalcResult().gainNonCeilingPct)"></p>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" x-text="ceilingCalcResult().nonCeilingPairs + ' nicht gedeckelte Paare'"></p>
+                </div>
+                <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4 bg-slate-50 dark:bg-slate-800">
+                  <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Steigerung der restlichen Deckel-Paare</p>
+                  <p class="text-2xl font-semibold text-slate-900 dark:text-slate-100" x-text="formatSignedPercent(ceilingCalcResult().gainCeilingPct)"></p>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Direkt ist dort 100%; Workflow-Fehler wirken nur nach unten.</p>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
+                <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+                  <h3 class="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-2">Formel</h3>
+                  <div class="space-y-1 text-xs text-slate-600 dark:text-slate-300 font-mono leading-relaxed">
+                    <p x-text="'p_Direkt_Fehler = ' + ceilingCalc.directErrors + ' / ' + ceilingCalc.base + ' = ' + formatPercent(ceilingCalcResult().directErrorPct)"></p>
+                    <p x-text="'p_Workflow_Fehler = ' + ceilingCalc.workflowErrors + ' / ' + ceilingCalc.base + ' = ' + formatPercent(ceilingCalcResult().workflowErrorPct)"></p>
+                    <p x-text="'Anteil_Deckel = ' + formatPercent(ceilingCalcResult().ceilingSharePct)"></p>
+                    <p x-text="'Anteil_nicht_Deckel = 100% - Anteil_Deckel = ' + formatPercent(ceilingCalcResult().nonCeilingSharePct)"></p>
+                    <p x-text="'Steigerung_Deckel = Workflow_bei_Deckel - Direkt_bei_Deckel'"></p>
+                    <p x-text="'= (100% - p_Workflow_Fehler) - 100% = -' + formatPercent(ceilingCalcResult().workflowErrorPct) + ' = ' + formatSignedPercent(ceilingCalcResult().gainCeilingPct)"></p>
+                    <p x-text="'Steigerung_nicht_Deckel = Workflow_bei_nicht_Deckel - Direkt_bei_nicht_Deckel'"></p>
+                    <p x-text="'= (100% - p_Workflow_Fehler) - 0% = ' + formatSignedPercent(ceilingCalcResult().gainNonCeilingPct)"></p>
+                    <p x-text="'Steigerung alle = Anteil_Deckel * Steigerung_Deckel + Anteil_nicht_Deckel * Steigerung_nicht_Deckel'"></p>
+                    <p x-text="'= ' + formatPercent(ceilingCalcResult().ceilingSharePct) + ' * ' + formatSignedPercent(ceilingCalcResult().gainCeilingPct) + ' + ' + formatPercent(ceilingCalcResult().nonCeilingSharePct) + ' * ' + formatSignedPercent(ceilingCalcResult().gainNonCeilingPct) + ' = ' + formatSignedPercent(ceilingCalcResult().gainAllPct)"></p>
+                  </div>
+                </div>
+                <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+                  <h3 class="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-2">Lesart</h3>
+                  <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed" x-text="ceilingCalcExplanation()"></p>
+                </div>
+                <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+                  <h3 class="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-2">Rückwärts-Crosscheck</h3>
+                  <div class="space-y-1 text-xs text-slate-600 dark:text-slate-300 font-mono leading-relaxed">
+                    <p x-text="'Gesamt gegeben = ' + formatSignedPercent(ceilingCalcResult().gainAllPct)"></p>
+                    <p x-text="'Nicht-Deckel nötig = (Gesamt - Anteil_Deckel * Steigerung_Deckel) / Anteil_nicht_Deckel'"></p>
+                    <p x-text="'= ' + formatSignedPercent(ceilingCalcResult().reverseGainNonCeilingPct)"></p>
+                    <p x-text="'Abweichung zur Eingabe = ' + formatSignedPercent(ceilingCalcResult().reverseCheckDeltaPct)"></p>
+                  </div>
+                  <p class="text-xs mt-3"
+                     :class="Math.abs(ceilingCalcResult().reverseCheckDeltaPct) < 0.05 ? 'text-green-600 dark:text-green-400' : 'text-orange-600 dark:text-orange-300'"
+                     x-text="Math.abs(ceilingCalcResult().reverseCheckDeltaPct) < 0.05 ? 'Crosscheck stimmt: Vorwärts- und Rückwärtsrechnung passen zusammen.' : 'Crosscheck weicht ab: Eingaben oder Rundung prüfen.'"></p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section x-show="activeDataTab === 'overview'" x-cloak class="border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+            <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-3 mb-4">
+              <div>
+                <h2 class="text-sm font-semibold text-slate-800 dark:text-slate-200">Übersicht nach Kriterium</h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Gleiche ausgewählte Fragensets, Run-Sets, Workflow-Setups und Modelle; der Kriteriumsfilter wird hier ignoriert.</p>
+              </div>
+              <div class="flex flex-col items-start md:items-end gap-2">
+                <div class="text-xs text-slate-500 dark:text-slate-400" x-text="overviewLabel()"></div>
+                <label class="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+                  Export-Unterordner
+                  <input type="text"
+                         x-model="exportFolder"
+                         placeholder="z.B. FB"
+                         class="w-28 text-xs border border-slate-300 dark:border-slate-600 rounded px-2 py-1 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+                </label>
+                <div class="flex flex-wrap justify-start md:justify-end gap-2">
+                  <button @click="exportCurrentData('overview')"
+                          :disabled="exporting"
+                          class="text-xs px-3 py-1.5 rounded bg-slate-800 hover:bg-slate-700 disabled:bg-slate-300 text-white dark:bg-slate-700 dark:hover:bg-slate-600">
+                    <span x-text="exporting ? 'Exportiert...' : 'Übersicht exportieren'"></span>
+                  </button>
+                  <button @click="exportOverviewWithDetails()"
+                          :disabled="exporting || !hasAnalysisSelection()"
+                          class="text-xs px-3 py-1.5 rounded bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 text-white dark:bg-blue-700 dark:hover:bg-blue-600">
+                    <span x-text="exporting ? 'Exportiert...' : 'Übersicht + Details exportieren'"></span>
+                  </button>
+                  <button @click="exportAllSetupReports()"
+                          :disabled="exporting || !hasExportBaseSelection()"
+                          class="text-xs px-3 py-1.5 rounded bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 text-white dark:bg-emerald-700 dark:hover:bg-emerald-600">
+                    <span x-text="exporting ? 'Exportiert...' : 'Export All'"></span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead class="bg-slate-50 dark:bg-slate-800">
+                  <tr>
+                    <th class="text-left px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Kriterium</th>
+                    <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Gesamt</th>
+                    <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Gültig</th>
+                    <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Ausgewählt</th>
+                    <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Ausgelassen</th>
+                    <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Fehler</th>
+                    <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Review</th>
+                    <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Manuell ausgeschlossen</th>
+                    <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Unvollständig</th>
+                    <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Mittel Direkter Aufruf</th>
+                    <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Fehler Direkt</th>
+                    <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">100% links</th>
+                    <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Mittel Workflow</th>
+                    <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Mittlere Diff.</th>
+                    <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">t</th>
+                    <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">t critical</th>
+                    <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">p</th>
+                    <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Ergebnis</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template x-for="row in overviewRows()" :key="row.criteriaId">
+                    <tr class="border-t border-slate-100 dark:border-slate-800">
+                      <td class="px-3 py-2 text-slate-700 dark:text-slate-300">
+                        <span x-text="row.criteriaName"></span>
+                        <span class="block text-[11px] text-slate-400 font-mono" x-text="'#' + row.criteriaId"></span>
+                      </td>
+                      <td class="px-3 py-2 text-center text-slate-700 dark:text-slate-300" x-text="row.totalPairs"></td>
+                      <td class="px-3 py-2 text-center text-slate-700 dark:text-slate-300" x-text="row.validPairs"></td>
+                      <td class="px-3 py-2 text-center font-medium text-slate-900 dark:text-slate-100" x-text="row.selectedPairs"></td>
+                      <td class="px-3 py-2 text-center text-orange-600 dark:text-orange-300" x-text="row.ceilingSkippedPairs || 0"></td>
+                      <td class="px-3 py-2 text-center text-red-600 dark:text-red-300" x-text="row.errorPairs"></td>
+                      <td class="px-3 py-2 text-center text-yellow-600 dark:text-yellow-300" x-text="row.reviewPairs"></td>
+                      <td class="px-3 py-2 text-center text-slate-600 dark:text-slate-400" x-text="row.skippedPairs"></td>
+                      <td class="px-3 py-2 text-center text-blue-600 dark:text-blue-300" x-text="row.uncompletePairs"></td>
+                      <td class="px-3 py-2 text-center text-slate-700 dark:text-slate-300" x-text="formatPercent(row.singleMean)"></td>
+                      <td class="px-3 py-2 text-center text-orange-600 dark:text-orange-300" x-text="formatPercent(row.singleErrorRate)"></td>
+                      <td class="px-3 py-2 text-center text-slate-700 dark:text-slate-300" x-text="formatPercent(row.singlePerfectRate)"></td>
+                      <td class="px-3 py-2 text-center text-slate-700 dark:text-slate-300" x-text="formatPercent(row.workflowMean)"></td>
+                      <td class="px-3 py-2 text-center font-medium"
+                          :class="row.meanDiff >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'"
+                          x-text="formatSignedPercent(row.meanDiff)"></td>
+                      <td class="px-3 py-2 text-center text-slate-600 dark:text-slate-400" x-text="row.test ? row.test.t.toFixed(3) : 'n/a'"></td>
+                      <td class="px-3 py-2 text-center text-slate-600 dark:text-slate-400" x-text="row.test ? '±' + row.test.critical.toFixed(3) : (row.fallback ? '±' + row.fallback.critical.toFixed(3) : 'n/a')"></td>
+                      <td class="px-3 py-2 text-center text-slate-600 dark:text-slate-400" x-text="row.test ? formatP(row.test.p) : 'n/a'"></td>
+                      <td class="px-3 py-2 text-center">
+                        <span class="text-xs px-2 py-1 rounded"
+                              :class="row.test && row.test.significant ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'"
+                              x-text="row.test ? (row.test.significant ? 'signifikant' : 'nicht sign.') : (row.fallback ? 'keine Streuung' : 'zu wenig')"></span>
+                      </td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </div>
+            <p x-show="overviewRows().length === 0" class="text-center py-8 text-sm text-slate-400 dark:text-slate-500">Keine Übersichtszeilen für die ausgewählten Daten.</p>
+            <div x-show="overviewCeilingRows().length > 0" class="mt-6">
+              <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-2 mb-3">
+                <div>
+                  <h3 class="text-sm font-semibold text-slate-800 dark:text-slate-200">Deckeneffekt-Rechnung nach Kriterium</h3>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Verbesserung = Workflow minus Direkt. REAL zeigt gemessene Verbesserung fuer alle / Deckel / Rest. FORMEL zeigt dieselben drei Verbesserungen im vereinfachten 0/100-Modell.</p>
+                </div>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                  <thead class="bg-slate-50 dark:bg-slate-800">
+                    <tr>
+                      <th class="text-left px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400" rowspan="2">Kriterium</th>
+                      <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400" rowspan="2">N</th>
+                      <th class="text-center px-3 py-1 text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700" colspan="8">REAL gemessen</th>
+                      <th class="text-center px-3 py-1 text-xs font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/40" colspan="7">FORMEL Modell</th>
+                    </tr>
+                    <tr>
+                      <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Deckel Score-Verbesserung</th>
+                      <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">alle Score-Verbesserung</th>
+                      <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Rest Score-Verbesserung</th>
+                      <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Deckel Anzahl Paare</th>
+                      <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Deckel Anteil Paare</th>
+                      <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Rest Anzahl Paare</th>
+                      <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Rest Direkt Score</th>
+                      <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Rest Workflow Score</th>
+                      <th class="text-center px-3 py-2 text-xs font-medium text-blue-700 dark:text-blue-300">Direkt Fehler-Score</th>
+                      <th class="text-center px-3 py-2 text-xs font-medium text-blue-700 dark:text-blue-300">Workflow Fehler-Score</th>
+                      <th class="text-center px-3 py-2 text-xs font-medium text-blue-700 dark:text-blue-300">Deckel Score-Verbesserung</th>
+                      <th class="text-center px-3 py-2 text-xs font-medium text-blue-700 dark:text-blue-300">alle Score-Verbesserung</th>
+                      <th class="text-center px-3 py-2 text-xs font-medium text-blue-700 dark:text-blue-300">Rest Score-Verbesserung</th>
+                      <th class="text-center px-3 py-2 text-xs font-medium text-blue-700 dark:text-blue-300">erwartete Deckel Anzahl Paare</th>
+                      <th class="text-center px-3 py-2 text-xs font-medium text-blue-700 dark:text-blue-300">erwarteter Deckel Anteil Paare</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <template x-for="row in overviewCeilingRows()" :key="row.criteriaId">
+                      <tr class="border-t border-slate-100 dark:border-slate-800">
+                        <td class="px-3 py-2 text-slate-700 dark:text-slate-300">
+                          <span class="font-medium" x-text="row.criteriaName"></span>
+                          <span x-show="row.criteriaId !== 'all'" class="block text-[11px] text-slate-400 font-mono" x-text="'#' + row.criteriaId"></span>
+                        </td>
+                        <td class="px-3 py-2 text-center text-slate-700 dark:text-slate-300" x-text="row.n"></td>
+                        <td class="px-3 py-2 text-center font-medium"
+                            :class="row.ceilingRealGain >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'"
+                            x-text="formatSignedPercent(row.ceilingRealGain)"></td>
+                        <td class="px-3 py-2 text-center font-medium"
+                            :class="row.realAllGain >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'"
+                            x-text="formatSignedPercent(row.realAllGain)"></td>
+                        <td class="px-3 py-2 text-center font-medium"
+                            :class="row.nonCeilingRealGain >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'"
+                            x-text="formatSignedPercent(row.nonCeilingRealGain)"></td>
+                        <td class="px-3 py-2 text-center text-slate-700 dark:text-slate-300" x-text="row.ceilingN"></td>
+                        <td class="px-3 py-2 text-center text-slate-700 dark:text-slate-300" x-text="formatPercent(row.ceilingPct)"></td>
+                        <td class="px-3 py-2 text-center text-slate-700 dark:text-slate-300" x-text="row.nonCeilingN"></td>
+                        <td class="px-3 py-2 text-center text-slate-700 dark:text-slate-300" x-text="formatPercent(row.nonCeilingDirectMean)"></td>
+                        <td class="px-3 py-2 text-center text-slate-700 dark:text-slate-300" x-text="formatPercent(row.nonCeilingWorkflowMean)"></td>
+                        <td class="px-3 py-2 text-center text-blue-700 dark:text-blue-300" x-text="formatPercent(row.directErrorRate)"></td>
+                        <td class="px-3 py-2 text-center text-blue-700 dark:text-blue-300" x-text="formatPercent(row.workflowErrorRate)"></td>
+                        <td class="px-3 py-2 text-center text-red-500 dark:text-red-400" x-text="formatSignedPercent(row.expectedCeilingGain)"></td>
+                        <td class="px-3 py-2 text-center font-medium"
+                            :class="row.expectedAllGain >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'"
+                            x-text="formatSignedPercent(row.expectedAllGain)"></td>
+                        <td class="px-3 py-2 text-center text-green-600 dark:text-green-400" x-text="formatSignedPercent(row.expectedNonCeilingGain)"></td>
+                        <td class="px-3 py-2 text-center text-blue-700 dark:text-blue-300" x-text="formatOneDecimal(row.expectedModelCeilingN)"></td>
+                        <td class="px-3 py-2 text-center text-blue-700 dark:text-blue-300" x-text="formatPercent(row.expectedModelCeilingPct)"></td>
+                      </tr>
+                    </template>
+                  </tbody>
+                </table>
+              </div>
+              <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">REAL: Anzahl Paare = echte Paarmenge; Anteil Paare = Anteil an N; Score = Bewertungswert; Score-Verbesserung = Workflow-Score minus Direkt-Score. FORMEL: erwartete Deckel Anzahl Paare = N mal erwarteter Deckel-Anteil; der erwartete Deckel ist Modellrechnung, nicht gemessener Deckel.</p>
+            </div>
+            <div x-show="overviewRows().length > 0" class="grid grid-cols-1 xl:grid-cols-2 gap-4 mt-5">
+              <template x-for="chart in overviewChartSvgs()" :key="chart.title">
+                <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-3 bg-white dark:bg-slate-950 overflow-x-auto">
+                  <h3 class="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2" x-text="chart.title"></h3>
+                  <div class="min-w-[620px]" x-html="chart.svg"></div>
+                </div>
+              </template>
+            </div>
+          </section>
+
+          <div x-show="activeDataTab === 'analysis'" class="space-y-5">
+          <section class="grid grid-cols-2 lg:grid-cols-7 gap-3">
+            <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+              <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Für Analyse ausgewählt</p>
+              <p class="text-2xl font-semibold text-slate-900 dark:text-slate-100" x-text="diagnostics().selectedPairs"></p>
+            </div>
+            <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+              <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Gültig vor Auswahl</p>
+              <p class="text-2xl font-semibold text-yellow-600 dark:text-yellow-300" x-text="diagnostics().validPairs"></p>
+            </div>
+            <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+              <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Mittel Direkter Aufruf</p>
+              <p class="text-2xl font-semibold text-slate-900 dark:text-slate-100" x-text="formatPercent(pairSummary().singleMean)"></p>
+            </div>
+            <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+              <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Fehlerquote Direkt</p>
+              <p class="text-2xl font-semibold text-orange-600 dark:text-orange-300" x-text="formatPercent(singleErrorRate())"></p>
+            </div>
+            <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+              <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">100% links</p>
+              <p class="text-2xl font-semibold text-slate-900 dark:text-slate-100" x-text="formatPercent(singlePerfectRate())"></p>
+            </div>
+            <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+              <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Mittel Workflow</p>
+              <p class="text-2xl font-semibold text-slate-900 dark:text-slate-100" x-text="formatPercent(pairSummary().workflowMean)"></p>
+            </div>
+            <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+              <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Mittlere Diff.</p>
+              <p class="text-2xl font-semibold"
+                 :class="pairSummary().meanDiff >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'"
+                 x-text="formatSignedPercent(pairSummary().meanDiff)"></p>
+            </div>
+          </section>
+
+          <section class="border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+            <div class="flex items-center justify-between gap-3 mb-3">
+              <h2 class="text-sm font-semibold text-slate-800 dark:text-slate-200">Paar-Zählung der Auswahl</h2>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Innerhalb einer Gruppe gilt ODER, zwischen Gruppen gilt UND</p>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2 text-center">
+              <div class="bg-slate-50 dark:bg-slate-800 rounded p-2">
+                <p class="text-lg font-semibold text-slate-900 dark:text-slate-100" x-text="diagnostics().totalPairs"></p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Paare gesamt</p>
+              </div>
+              <div class="bg-slate-50 dark:bg-slate-800 rounded p-2">
+                <p class="text-lg font-semibold text-green-600 dark:text-green-300" x-text="diagnostics().validPairs"></p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">gültige Paare</p>
+              </div>
+              <div class="bg-slate-50 dark:bg-slate-800 rounded p-2">
+                <p class="text-lg font-semibold text-green-600 dark:text-green-300" x-text="diagnostics().selectedPairs"></p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">ausgewählte Paare</p>
+              </div>
+              <div class="bg-slate-50 dark:bg-slate-800 rounded p-2">
+                <p class="text-lg font-semibold text-orange-600 dark:text-orange-300" x-text="diagnostics().ceilingSkippedPairs || 0"></p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">außerhalb Direkt-Score-Bereich</p>
+              </div>
+              <div class="bg-slate-50 dark:bg-slate-800 rounded p-2">
+                <p class="text-lg font-semibold text-red-600 dark:text-red-300" x-text="diagnostics().errorPairs"></p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Fehler-Paare</p>
+              </div>
+              <div class="bg-slate-50 dark:bg-slate-800 rounded p-2">
+                <p class="text-lg font-semibold text-yellow-600 dark:text-yellow-300" x-text="diagnostics().skippedPairs"></p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">manuell ausgeschlossen</p>
+              </div>
+              <div class="bg-slate-50 dark:bg-slate-800 rounded p-2">
+                <p class="text-lg font-semibold text-slate-900 dark:text-slate-100" x-text="diagnostics().reviewPairs"></p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Review-Paare</p>
+              </div>
+              <div class="bg-slate-50 dark:bg-slate-800 rounded p-2">
+                <p class="text-lg font-semibold text-blue-600 dark:text-blue-300" x-text="diagnostics().uncompletePairs"></p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">unvollständig / unbewertet</p>
+              </div>
+            </div>
+            <p class="mt-2 text-xs text-slate-500 dark:text-slate-400"
+               x-text="countExplanation()"></p>
+          </section>
+
+          <section class="border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+            <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-3 mb-4">
+              <div>
+                <h2 class="text-sm font-semibold text-slate-800 dark:text-slate-200">Statistische Auswertung</h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Hauptmethode: gepaarter t-Test auf den paarweisen Score-Differenzen.</p>
+              </div>
+              <div class="flex flex-col items-start md:items-end gap-2">
+                <div class="text-xs text-slate-500 dark:text-slate-400" x-text="selectedLabel()"></div>
+                <label class="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+                  Export-Unterordner
+                  <input type="text"
+                         x-model="exportFolder"
+                         placeholder="z.B. FB"
+                         class="w-28 text-xs border border-slate-300 dark:border-slate-600 rounded px-2 py-1 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+                </label>
+                <button @click="exportCurrentData('analysis')"
+                        :disabled="exporting"
+                        class="text-xs px-3 py-1.5 rounded bg-slate-800 hover:bg-slate-700 disabled:bg-slate-300 text-white dark:bg-slate-700 dark:hover:bg-slate-600">
+                  <span x-text="exporting ? 'Exportiert...' : 'Analyse exportieren'"></span>
+                </button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 lg:grid-cols-7 gap-3 text-center">
+              <template x-if="tTestResult()">
+                <div class="contents">
+                  <div class="bg-slate-50 dark:bg-slate-800 rounded p-3">
+                    <p class="text-lg font-bold text-slate-900 dark:text-slate-100" x-text="tTestResult().n"></p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">vollständige Daten</p>
+                  </div>
+                  <div class="bg-slate-50 dark:bg-slate-800 rounded p-3">
+                    <p class="text-lg font-bold text-slate-900 dark:text-slate-100" x-text="tTestResult().t.toFixed(3)"></p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">t</p>
+                  </div>
+                  <div class="bg-slate-50 dark:bg-slate-800 rounded p-3">
+                    <p class="text-lg font-bold text-slate-900 dark:text-slate-100" x-text="tTestResult().df"></p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">df</p>
+                  </div>
+                  <div class="bg-slate-50 dark:bg-slate-800 rounded p-3">
+                    <p class="text-lg font-bold text-slate-900 dark:text-slate-100" x-text="'±' + tTestResult().critical.toFixed(3)"></p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">t critical</p>
+                  </div>
+                  <div class="bg-slate-50 dark:bg-slate-800 rounded p-3">
+                    <p class="text-lg font-bold text-slate-900 dark:text-slate-100" x-text="formatP(tTestResult().p)"></p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">p</p>
+                  </div>
+                  <div class="bg-slate-50 dark:bg-slate-800 rounded p-3">
+                    <p class="text-lg font-bold text-slate-900 dark:text-slate-100" x-text="tTestResult().dz.toFixed(2)"></p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Cohen dz</p>
+                  </div>
+                  <div class="bg-slate-50 dark:bg-slate-800 rounded p-3">
+                    <p class="text-lg font-bold"
+                       :class="tTestResult().significant ? 'text-green-600 dark:text-green-400' : 'text-slate-500 dark:text-slate-400'"
+                       x-text="tTestResult().significant ? 'signifikant' : 'nicht sign.'"></p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">alpha 0.05</p>
+                  </div>
+                </div>
+              </template>
+              <template x-if="!tTestResult() && tTestFallback()">
+                <div class="contents">
+                  <div class="bg-slate-50 dark:bg-slate-800 rounded p-3">
+                    <p class="text-lg font-bold text-slate-900 dark:text-slate-100" x-text="tTestFallback().n"></p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">vollständige Daten</p>
+                  </div>
+                  <div class="bg-slate-50 dark:bg-slate-800 rounded p-3">
+                    <p class="text-lg font-bold text-slate-900 dark:text-slate-100">n/a</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">t</p>
+                  </div>
+                  <div class="bg-slate-50 dark:bg-slate-800 rounded p-3">
+                    <p class="text-lg font-bold text-slate-900 dark:text-slate-100" x-text="tTestFallback().df"></p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">df</p>
+                  </div>
+                  <div class="bg-slate-50 dark:bg-slate-800 rounded p-3">
+                    <p class="text-lg font-bold text-slate-900 dark:text-slate-100" x-text="'±' + tTestFallback().critical.toFixed(3)"></p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">t critical</p>
+                  </div>
+                  <div class="bg-slate-50 dark:bg-slate-800 rounded p-3">
+                    <p class="text-lg font-bold text-slate-900 dark:text-slate-100">n/a</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">p</p>
+                  </div>
+                  <div class="bg-slate-50 dark:bg-slate-800 rounded p-3">
+                    <p class="text-lg font-bold text-slate-900 dark:text-slate-100">0.00</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Cohen dz</p>
+                  </div>
+                  <div class="bg-slate-50 dark:bg-slate-800 rounded p-3">
+                    <p class="text-lg font-bold text-slate-500 dark:text-slate-400">not appl.</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">keine Streuung</p>
+                  </div>
+                </div>
+              </template>
+            </div>
+
+            <div class="mt-4 text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+              <p x-text="interpretationText()"></p>
+              <p x-show="tTestResult()" class="text-xs text-slate-500 dark:text-slate-400 mt-2">
+                95% CI for mean difference:
+                <span x-text="tTestResult() ? formatSignedPercent(tTestResult().ciLow) : ''"></span>
+                to
+                <span x-text="tTestResult() ? formatSignedPercent(tTestResult().ciHigh) : ''"></span>.
+              </p>
+              <p x-show="!tTestResult() && tTestFallback()" class="text-xs text-slate-500 dark:text-slate-400 mt-2">
+                Mittlere Differenz:
+                <span x-text="formatSignedPercent(tTestFallback().meanDiff)"></span>.
+                Der gepaarte t-Test ist nicht anwendbar, weil die Paardifferenzen keine Streuung haben.
+              </p>
+            </div>
+          </section>
+
+          <section class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+              <h3 class="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-3">Average score by setup</h3>
+              <div class="relative h-44 md:h-52 max-h-52">
+                <canvas id="chart-setup-average"></canvas>
+              </div>
+            </div>
+            <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+              <h3 class="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-3">Paarweise Differenzen nach Frage</h3>
+              <div class="relative h-44 md:h-52 max-h-52">
+                <canvas id="chart-differences"></canvas>
+              </div>
+            </div>
+            <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+              <h3 class="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-3">Difference distribution</h3>
+              <div class="relative h-44 md:h-52 max-h-52">
+                <canvas id="chart-histogram"></canvas>
+              </div>
+            </div>
+            <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+              <h3 class="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-3">Direkter Aufruf vs Workflow</h3>
+              <div class="relative h-44 md:h-52 max-h-52">
+                <canvas id="chart-scatter"></canvas>
+              </div>
+            </div>
+          </section>
+
+          <section class="border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+            <h2 class="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-3">Descriptive statistics</h2>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead class="bg-slate-50 dark:bg-slate-800">
+                  <tr>
+                    <th class="text-left px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Setup</th>
+                    <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">N</th>
+                    <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Mean</th>
+                    <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Median</th>
+                    <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Std. dev.</th>
+                    <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Min</th>
+                    <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Max</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template x-for="row in descriptiveRows()" :key="row.setupId">
+                    <tr class="border-t border-slate-100 dark:border-slate-800">
+                      <td class="px-3 py-2 text-slate-700 dark:text-slate-300" x-text="row.setupName"></td>
+                      <td class="px-3 py-2 text-center text-slate-500 dark:text-slate-400" x-text="row.n"></td>
+                      <td class="px-3 py-2 text-center text-slate-700 dark:text-slate-300" x-text="formatPercent(row.mean)"></td>
+                      <td class="px-3 py-2 text-center text-slate-700 dark:text-slate-300" x-text="formatPercent(row.median)"></td>
+                      <td class="px-3 py-2 text-center text-slate-500 dark:text-slate-400" x-text="formatNumber(row.sd)"></td>
+                      <td class="px-3 py-2 text-center text-slate-500 dark:text-slate-400" x-text="formatPercent(row.min)"></td>
+                      <td class="px-3 py-2 text-center text-slate-500 dark:text-slate-400" x-text="formatPercent(row.max)"></td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+            <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-3 mb-3">
+              <div>
+                <h2 class="text-sm font-semibold text-slate-800 dark:text-slate-200">Tabelle der Antwortpaare</h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" x-text="pairTableSummary()"></p>
+              </div>
+              <div class="flex flex-col sm:flex-row gap-2">
+                <label class="text-xs text-slate-500 dark:text-slate-400">
+                  Suche
+                  <input type="search"
+                         x-model="pairTable.search"
+                         @input="pairTable.page = 1"
+                         placeholder="Frage, Set, Workflow..."
+                         class="block w-64 max-w-full text-sm border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+                </label>
+                <label class="text-xs text-slate-500 dark:text-slate-400">
+                  Pro Seite
+                  <select x-model.number="pairTable.pageSize"
+                          @change="pairTable.page = 1"
+                          class="block text-sm border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+                    <option :value="25">25</option>
+                    <option :value="50">50</option>
+                    <option :value="100">100</option>
+                    <option :value="250">250</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead class="bg-slate-50 dark:bg-slate-800">
+                  <tr>
+                    <th class="text-left px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400"><button @click="sortPairTable('testset')" class="hover:text-slate-800 dark:hover:text-slate-200">Fragenset <span x-text="pairSortMark('testset')"></span></button></th>
+                    <th class="text-left px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400"><button @click="sortPairTable('runSet')" class="hover:text-slate-800 dark:hover:text-slate-200">Run-Set <span x-text="pairSortMark('runSet')"></span></button></th>
+                    <th class="text-left px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400"><button @click="sortPairTable('question')" class="hover:text-slate-800 dark:hover:text-slate-200">Frage <span x-text="pairSortMark('question')"></span></button></th>
+                    <th class="text-left px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400"><button @click="sortPairTable('workflow')" class="hover:text-slate-800 dark:hover:text-slate-200">Workflow <span x-text="pairSortMark('workflow')"></span></button></th>
+                    <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400"><button @click="sortPairTable('singleScore')" class="hover:text-slate-800 dark:hover:text-slate-200">Direkter Aufruf <span x-text="pairSortMark('singleScore')"></span></button></th>
+                    <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400"><button @click="sortPairTable('workflowScore')" class="hover:text-slate-800 dark:hover:text-slate-200">Workflow <span x-text="pairSortMark('workflowScore')"></span></button></th>
+                    <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400"><button @click="sortPairTable('diff')" class="hover:text-slate-800 dark:hover:text-slate-200">Diff <span x-text="pairSortMark('diff')"></span></button></th>
+                    <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400"><button @click="sortPairTable('points')" class="hover:text-slate-800 dark:hover:text-slate-200">Points <span x-text="pairSortMark('points')"></span></button></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template x-for="p in pagedPairRows()" :key="p.single_run_id + '-' + p.workflow_run_id">
+                    <tr class="border-t border-slate-100 dark:border-slate-800 align-top hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer"
+                        @click="openPairDetail(p)">
+                      <td class="px-3 py-2 text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap" x-text="p.testset + ' #' + (p.run_nr || '-')"></td>
+                      <td class="px-3 py-2 text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap" x-text="p.run_set_name || p.run_set_id || '-'"></td>
+                      <td class="px-3 py-2 text-xs text-slate-700 dark:text-slate-300 max-w-md">
+                        <span class="font-mono text-slate-400" x-text="'Q' + p.question_id"></span>
+                        <span x-text="' ' + shorten(p.question_text, 90)"></span>
+                      </td>
+                      <td class="px-3 py-2 text-xs text-slate-600 dark:text-slate-400" x-text="p.workflow_setup_name"></td>
+                      <td class="px-3 py-2 text-center" x-text="formatPercent(p.single_score)"></td>
+                      <td class="px-3 py-2 text-center" x-text="formatPercent(p.workflow_score)"></td>
+                      <td class="px-3 py-2 text-center font-medium"
+                          :class="p.diff >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'"
+                          x-text="formatSignedPercent(p.diff)"></td>
+                      <td class="px-3 py-2 text-center text-xs text-slate-500 dark:text-slate-400"
+                          x-text="p.single_points + '/' + p.single_max_points + ' -> ' + p.workflow_points + '/' + p.workflow_max_points"></td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </div>
+            <div x-show="filteredPairRows().length > 0" class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mt-3 text-xs text-slate-500 dark:text-slate-400">
+              <div x-text="pairTableSummary()"></div>
+              <div class="flex items-center gap-2">
+                <button @click="pairTable.page = Math.max(1, pairTable.page - 1)"
+                        :disabled="pairTable.page <= 1"
+                        class="px-2 py-1 rounded border border-slate-300 dark:border-slate-600 disabled:opacity-40">Zurück</button>
+                <span x-text="'Seite ' + pairTable.page + ' / ' + pairTablePageCount()"></span>
+                <button @click="pairTable.page = Math.min(pairTablePageCount(), pairTable.page + 1)"
+                        :disabled="pairTable.page >= pairTablePageCount()"
+                        class="px-2 py-1 rounded border border-slate-300 dark:border-slate-600 disabled:opacity-40">Weiter</button>
+              </div>
+            </div>
+            <p x-show="filteredPairRows().length === 0" class="text-center py-8 text-sm text-slate-400 dark:text-slate-500">Keine Antwortpaare für Suche und Auswahl.</p>
+          </section>
+
+          <section class="border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+            <h2 class="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-3">Bewertete Antwortdatensätze</h2>
+            <div class="overflow-x-auto max-h-96">
+              <table class="w-full text-xs">
+                <thead class="bg-slate-50 dark:bg-slate-800 sticky top-0">
+                  <tr>
+                    <th class="text-left px-3 py-2 font-medium text-slate-500 dark:text-slate-400">Run</th>
+                    <th class="text-left px-3 py-2 font-medium text-slate-500 dark:text-slate-400">Fragenset</th>
+                    <th class="text-left px-3 py-2 font-medium text-slate-500 dark:text-slate-400">Run-Set</th>
+                    <th class="text-left px-3 py-2 font-medium text-slate-500 dark:text-slate-400">Criteria</th>
+                    <th class="text-left px-3 py-2 font-medium text-slate-500 dark:text-slate-400">Setup</th>
+                    <th class="text-left px-3 py-2 font-medium text-slate-500 dark:text-slate-400">Frage</th>
+                    <th class="text-center px-3 py-2 font-medium text-slate-500 dark:text-slate-400">Punkte</th>
+                    <th class="text-center px-3 py-2 font-medium text-slate-500 dark:text-slate-400">Points</th>
+                    <th class="text-center px-3 py-2 font-medium text-slate-500 dark:text-slate-400">Review</th>
+                    <th class="text-center px-3 py-2 font-medium text-slate-500 dark:text-slate-400">Excluded</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template x-for="r in analysis.rawScores" :key="r.run_id">
+                    <tr class="border-t border-slate-100 dark:border-slate-800">
+                      <td class="px-3 py-2 text-slate-400 font-mono" x-text="r.run_id"></td>
+                      <td class="px-3 py-2 text-slate-500 dark:text-slate-400" x-text="r.testset"></td>
+                      <td class="px-3 py-2 text-slate-500 dark:text-slate-400" x-text="r.run_set_name || r.run_set_id || '-'"></td>
+                      <td class="px-3 py-2 text-slate-500 dark:text-slate-400" x-text="r.criteria_name"></td>
+                      <td class="px-3 py-2 text-slate-700 dark:text-slate-300" x-text="r.setup_name"></td>
+                      <td class="px-3 py-2 text-slate-600 dark:text-slate-400" x-text="shorten(r.question_text, 80)"></td>
+                      <td class="px-3 py-2 text-center text-slate-700 dark:text-slate-300" x-text="formatPercent(r.score_percent)"></td>
+                      <td class="px-3 py-2 text-center text-slate-500 dark:text-slate-400" x-text="r.passed_checkpoints + '/' + r.total_checkpoints"></td>
+                      <td class="px-3 py-2 text-center">
+                        <span class="text-xs px-1.5 py-0.5 rounded" :class="Number(r.review_required) === 1 ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'" x-text="Number(r.review_required) === 1 ? 'yes' : 'no'"></span>
+                      </td>
+                      <td class="px-3 py-2 text-center">
+                        <span class="text-xs px-1.5 py-0.5 rounded" :class="Number(r.exclude_from_analysis) === 1 ? 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'" x-text="Number(r.exclude_from_analysis) === 1 ? 'yes' : 'no'"></span>
+                      </td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </div>
+          </section>
+          </div>
+        </div>
+      </template>
+    </main>
+  </div>
+
+  <!-- Pair Detail Modal -->
+  <div x-show="pairModal.open" x-cloak
+       class="fixed inset-0 z-50 flex items-start justify-center p-4 overflow-y-auto"
+       @keydown.escape.window="pairModal.open = false">
+    <div class="fixed inset-0 bg-black/50" @click="pairModal.open = false"></div>
+
+    <div class="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl w-full max-w-7xl my-6 flex flex-col">
+      <div class="flex items-start justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+        <div class="min-w-0">
+          <p class="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">Details zum Antwortpaar</p>
+          <p class="text-sm font-medium text-slate-800 dark:text-slate-200 leading-snug mt-1"
+             x-text="pairModal.pair ? pairModal.pair.question_text : 'Lädt...'"></p>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1"
+             x-text="pairModal.pair ? ((pairModal.pair.testset || '-') + ' #' + (pairModal.pair.run_nr || '-') + ' | ' + (pairModal.pair.run_set_name || pairModal.pair.run_set_id || '-')) : ''"></p>
+        </div>
+        <button @click="pairModal.open = false" class="ml-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="px-6 py-6">
+        <div x-show="pairModal.loading" class="text-center text-slate-400 py-16 text-sm">Lädt...</div>
+        <div x-show="pairModal.error && !pairModal.loading" class="text-red-500 text-sm py-8 text-center" x-text="pairModal.error"></div>
+
+        <template x-if="!pairModal.loading && !pairModal.error">
+          <div class="space-y-5">
+            <section class="grid grid-cols-1 md:grid-cols-4 gap-3">
+              <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-3">
+                <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Direkter Aufruf</p>
+                <p class="text-xl font-semibold text-slate-900 dark:text-slate-100" x-text="formatPercent(pairModal.pair?.single_score)"></p>
+              </div>
+              <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-3">
+                <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Workflow</p>
+                <p class="text-xl font-semibold text-slate-900 dark:text-slate-100" x-text="formatPercent(pairModal.pair?.workflow_score)"></p>
+              </div>
+              <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-3">
+                <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Diff</p>
+                <p class="text-xl font-semibold"
+                   :class="Number(pairModal.pair?.diff || 0) >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'"
+                   x-text="formatSignedPercent(pairModal.pair?.diff)"></p>
+              </div>
+              <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-3">
+                <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Criteria</p>
+                <p class="text-sm font-medium text-slate-900 dark:text-slate-100" x-text="pairModal.pair?.criteria_name || '-'"></p>
+              </div>
+            </section>
+
+            <section class="grid grid-cols-1 xl:grid-cols-2 gap-5">
+              <template x-for="panel in pairDetailPanels()" :key="panel.kind">
+                <div class="border rounded-lg overflow-hidden"
+                     :class="panel.kind === 'single' ? 'border-slate-300 dark:border-slate-700' : 'border-blue-300 dark:border-blue-700'">
+                  <div class="px-4 py-3 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 flex items-center justify-between gap-3">
+                    <div>
+                      <p class="text-sm font-semibold"
+                         :class="panel.kind === 'single' ? 'text-slate-800 dark:text-slate-100' : 'text-blue-700 dark:text-blue-300'"
+                         x-text="panel.title"></p>
+                      <p class="text-xs text-slate-500 dark:text-slate-400" x-text="panel.data ? ('Run #' + panel.data.run.id + ' | ' + panel.data.run.setup_name) : 'fehlt'"></p>
+                    </div>
+                    <div class="text-right">
+                      <p class="text-lg font-semibold" x-text="panel.data && panel.data.score ? formatPercent(panel.data.score.score_percent) : '-'"></p>
+                      <p class="text-xs text-slate-500 dark:text-slate-400" x-text="panel.data && panel.data.score ? (panel.data.score.passed_checkpoints + '/' + panel.data.score.total_checkpoints + ' points') : 'not scored'"></p>
+                    </div>
+                  </div>
+
+                  <template x-if="panel.data">
+                    <div class="p-4 space-y-4">
+                      <div class="grid grid-cols-2 gap-2 text-xs">
+                        <div>
+                          <span class="text-slate-400 dark:text-slate-500">Status</span>
+                          <span class="ml-2 text-slate-700 dark:text-slate-300" x-text="panel.data.run.status"></span>
+                        </div>
+                        <div>
+                          <span class="text-slate-400 dark:text-slate-500">Model</span>
+                          <span class="ml-2 text-slate-700 dark:text-slate-300" x-text="panel.data.run.model_label"></span>
+                        </div>
+                        <div>
+                          <span class="text-slate-400 dark:text-slate-500">Review</span>
+                          <span class="ml-2" :class="panel.data.score && Number(panel.data.score.review_required) === 1 ? 'text-yellow-600 dark:text-yellow-300' : 'text-slate-500 dark:text-slate-400'"
+                                x-text="panel.data.score && Number(panel.data.score.review_required) === 1 ? 'yes' : 'no'"></span>
+                        </div>
+                        <div>
+                          <span class="text-slate-400 dark:text-slate-500">Excluded</span>
+                          <span class="ml-2" :class="Number(panel.data.run.exclude_from_analysis) === 1 ? 'text-red-600 dark:text-red-300' : 'text-slate-500 dark:text-slate-400'"
+                                x-text="Number(panel.data.run.exclude_from_analysis) === 1 ? 'yes' : 'no'"></span>
+                        </div>
+                      </div>
+
+                      <template x-if="panel.data.score && Number(panel.data.score.review_required) === 1">
+                        <div class="border border-yellow-200 dark:border-yellow-700 bg-yellow-50 dark:bg-yellow-900/20 rounded p-3">
+                          <p class="text-xs font-semibold text-yellow-700 dark:text-yellow-300 uppercase tracking-wide mb-1">Review erforderlich</p>
+                          <p class="text-xs text-yellow-700 dark:text-yellow-200" x-text="panel.data.score.review_reason || 'Der Scorer hat diesen Run für manuelle Prüfung markiert.'"></p>
+                        </div>
+                      </template>
+
+                      <div>
+                        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-2">Final answer</p>
+                        <div class="text-xs text-slate-700 dark:text-slate-300 whitespace-pre-wrap bg-white dark:bg-slate-950 border border-slate-100 dark:border-slate-700 rounded p-3 max-h-64 overflow-y-auto leading-relaxed"
+                             x-text="finalStep(panel.data)?.final_answer || '(no answer)'"></div>
+                      </div>
+
+                      <div>
+                        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-2">Checkpoint-Ergebnisse</p>
+                        <template x-if="panel.data.checkpointResults && panel.data.checkpointResults.length > 0">
+                          <div class="border border-slate-200 dark:border-slate-700 rounded overflow-hidden max-h-72 overflow-y-auto">
+                            <table class="w-full text-xs">
+                              <tbody>
+                                <template x-for="cp in panel.data.checkpointResults" :key="cp.id">
+                                  <tr class="border-t border-slate-100 dark:border-slate-800 align-top" :class="cp.passed ? '' : 'bg-red-50 dark:bg-red-900/20'">
+                                    <td class="px-2 py-1.5 w-8 text-center" x-text="cp.passed ? '1' : '0'"></td>
+                                    <td class="px-2 py-1.5 text-slate-700 dark:text-slate-300" x-text="cp.item_text"></td>
+                                    <td class="px-2 py-1.5 text-slate-500 dark:text-slate-400" x-text="cp.explanation"></td>
+                                  </tr>
+                                </template>
+                              </tbody>
+                            </table>
+                          </div>
+                        </template>
+                        <p x-show="!panel.data.checkpointResults || panel.data.checkpointResults.length === 0" class="text-xs text-slate-400 italic">Keine Checkpoint-Ergebnisse.</p>
+                      </div>
+
+                      <div>
+                        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-2">Steps</p>
+                        <div class="space-y-2">
+                          <template x-for="step in panel.data.steps" :key="step.id || step.step">
+                            <details class="border border-slate-200 dark:border-slate-700 rounded bg-white dark:bg-slate-950">
+                              <summary class="cursor-pointer px-3 py-2 text-xs font-medium text-slate-600 dark:text-slate-300">
+                                <span x-text="'Step ' + step.step + (step.formal_step && step.formal_step !== step.step ? ' (formal ' + step.formal_step + ')' : '')"></span>
+                                <span class="ml-2 text-blue-600 dark:text-blue-300" x-show="parseListJson(step.search_queries_json).length" x-text="'search ' + parseListJson(step.search_queries_json).length"></span>
+                              </summary>
+                              <div class="px-3 pb-3 space-y-2">
+                                <div class="text-xs text-slate-700 dark:text-slate-300 whitespace-pre-wrap" x-text="step.final_answer || '(no answer)'"></div>
+                                <template x-if="parseListJson(step.search_queries_json).length">
+                                  <div class="flex flex-wrap gap-1">
+                                    <template x-for="query in parseListJson(step.search_queries_json)" :key="query">
+                                      <span class="text-[11px] bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 px-1.5 py-0.5 rounded" x-text="query"></span>
+                                    </template>
+                                  </div>
+                                </template>
+                              </div>
+                            </details>
+                          </template>
+                        </div>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+              </template>
+            </section>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let chartSetupAverage = null;
+  let chartDifferences = null;
+  let chartHistogram = null;
+  let chartScatter = null;
+
+  function dataPage() {
+    return {
+      options: { criteria: [], testsets: [], runSets: [], setups: [], models: [] },
+      criteriaOrder: [
+        'richtigkeit',
+        'rueckfragefaehigkeit',
+        'internet_quellenqualitaet',
+        'pruefung_verifikation',
+        'unsicherheit',
+        'vollstaendigkeit_moeglichkeit',
+        'vollstaendigkeit_frage',
+        'klarheit',
+        'relevanz',
+      ],
+      filters: { criteriaId: '', testsets: [], runSetIds: [], workflowSetupIds: [], modelIds: [], includeReview: false, includeExcluded: false, maxPairsPerCriteria: '', skipPairsPerCriteria: '', skipCeilingSingleScore: '', skipCeilingSingleScoreMax: '' },
+      ceilingCalc: { base: 10, directErrors: 2, workflowErrors: 1, pairs: 100, ceilingSharePct: 80 },
+      analysis: null,
+      overviewAnalysis: null,
+      activeDataTab: 'analysis',
+      pairTable: { search: '', sortKey: 'question', sortDir: 'asc', page: 1, pageSize: 50 },
+      pairModal: { open: false, loading: false, error: null, pair: null, single: null, workflow: null },
+      loading: false,
+      exporting: false,
+      exportStatus: '',
+      exportFolder: '',
+      needsUpdate: false,
+      error: null,
+
+      async init() {
+        await this.loadOptions();
+        this.filters.testsets = [];
+        this.filters.runSetIds = [];
+        this.filters.workflowSetupIds = [];
+        this.filters.modelIds = this.options.models.map(m => String(m.id));
+        this.analysis = this.emptyAnalysis();
+        this.overviewAnalysis = this.emptyAnalysis();
+        this.needsUpdate = false;
+      },
+
+      async loadOptions() {
+        const params = new URLSearchParams();
+        if (this.filters.criteriaId) params.set('criteriaId', this.filters.criteriaId);
+        const res = await fetch('/api/analysis/options' + (params.toString() ? '?' + params.toString() : ''));
+        this.options = await res.json();
+        this.options.criteria = this.sortCriteria(this.options.criteria || []);
+      },
+
+      async reloadOptionsForCriteria() {
+        const selectedQuestionSets = new Set(this.filters.testsets);
+        const selectedRunSets = new Set(this.filters.runSetIds);
+        const selectedWorkflowSetups = new Set(this.filters.workflowSetupIds);
+        const selectedModels = new Set(this.filters.modelIds);
+
+        await this.loadOptions();
+
+        this.filters.testsets = this.options.testsets
+          .map(t => t.id)
+          .filter(id => selectedQuestionSets.has(id));
+        this.filters.runSetIds = (this.options.runSets || [])
+          .map(rs => rs.id)
+          .filter(id => selectedRunSets.has(id));
+        this.filters.workflowSetupIds = this.workflowOptions()
+          .map(s => s.id)
+          .filter(id => selectedWorkflowSetups.has(id));
+        this.filters.modelIds = this.options.models
+          .map(m => String(m.id))
+          .filter(id => selectedModels.has(id));
+
+        this.markSelectionChanged();
+      },
+
+      selectAll() {
+        this.filters.testsets = this.options.testsets.map(t => t.id);
+        this.filters.runSetIds = (this.options.runSets || []).map(rs => rs.id);
+        this.filters.workflowSetupIds = this.workflowOptions().map(s => s.id);
+        this.filters.modelIds = this.options.models.map(m => String(m.id));
+      },
+
+      selectOutputLastDefaults() {
+        const outputLastTestsets = [
+          'basic_general_questions',
+          'example_questions',
+          'flowmap_parallel7_questions',
+          'flowreview_parallel7_questions',
+          'ai_edge_case_questions',
+          'weak_prompt_questions',
+          'prompt_optimisation_hard_questions',
+          'basic_evaluation_questions',
+          'prompt_optimisation_questions',
+          'flowmap_basic_questions',
+          'flowreview_basic_questions',
+          'prompt_optimisation_extended_questions',
+        ];
+        const outputLastRunSets = [
+          'legacy_existing_import',
+          'direct_prompt_optimisation_10runs_20260516',
+          'direct_prompt_hard_gpt35_20260516',
+          'direct_prompt_weak_gpt35_20260516',
+          'flowmap_parallel7_20260516',
+          'flowreview_parallel7_20260517',
+          'flowreview_prompt_optimisation_20260517',
+          'direct_prompt_optimisation_expanded_20260517',
+          'direct_prompt_optimisation_run5_20260517',
+          'flowmap_basic_questions_20260517',
+          'flowreview_basic_questions_20260517',
+          'direct_prompt_flowmap_basic_expanded_20260517',
+          'direct_prompt_flowmap_basic_run3_20260517',
+          'direct_prompt_edge_cases_prompt_optimisation_20260517',
+          'direct_prompt_edge_cases_flowmap_20260517',
+        ];
+        const outputLastSetups = [
+          'setup_wf_prompt_optimise',
+          'setup_flowmap',
+          'setup_flowreview',
+        ];
+        const outputLastModels = ['1', '2', '3', '4', '5', '6'];
+
+        this.filters.criteriaId = '';
+        this.filters.testsets = this.existingIds(outputLastTestsets, this.options.testsets);
+        this.filters.runSetIds = this.existingIds(outputLastRunSets, this.options.runSets || []);
+        this.filters.workflowSetupIds = this.existingIds(outputLastSetups, this.workflowOptions());
+        this.filters.modelIds = this.existingIds(outputLastModels, this.options.models, true);
+        this.filters.includeReview = false;
+        this.filters.includeExcluded = false;
+        this.filters.maxPairsPerCriteria = '';
+        this.filters.skipPairsPerCriteria = '';
+        this.filters.skipCeilingSingleScore = '';
+        this.filters.skipCeilingSingleScoreMax = '';
+        this.exportFolder = '';
+        this.markSelectionChanged();
+      },
+
+      existingIds(ids, items, stringify = false) {
+        const available = new Set((items || []).map(item => String(item.id)));
+        return ids
+          .map(id => String(id))
+          .filter(id => available.has(id))
+          .map(id => stringify ? id : id);
+      },
+
+      markSelectionChanged() {
+        this.needsUpdate = true;
+        this.error = null;
+      },
+
+      workflowOptions() {
+        return (this.options.setups || []).filter(s => !['setup_direct', 'setup_ce_direct'].includes(s.id) && (s.run_count || 0) > 0);
+      },
+
+      optionCountLabel(item, includeQuestions) {
+        if (!includeQuestions) return '';
+        return `Q${item.question_count || 0} · Antworten ${item.run_count || 0}`;
+      },
+
+      diagnostics() {
+        return this.analysis?.diagnostics || this.emptyDiagnostics();
+      },
+
+      ceilingCalcResult() {
+        const base = Math.max(1, Number(this.ceilingCalc.base) || 10);
+        const pairs = Math.max(1, Math.round(Number(this.ceilingCalc.pairs) || 100));
+        const directErrors = Math.max(0, Math.min(base, Number(this.ceilingCalc.directErrors) || 0));
+        const workflowErrors = Math.max(0, Math.min(base, Number(this.ceilingCalc.workflowErrors) || 0));
+        const directErrorRate = directErrors / base;
+        const workflowErrorRate = workflowErrors / base;
+        const ceilingShare = Math.max(0, Math.min(100, Number(this.ceilingCalc.ceilingSharePct) || 0)) / 100;
+        const nonCeilingShare = Math.max(0, 1 - ceilingShare);
+        const gainCeiling = -workflowErrorRate;
+        const gainNonCeiling = 1 - workflowErrorRate;
+        const gainAll = ceilingShare * gainCeiling + nonCeilingShare * gainNonCeiling;
+        const reverseGainNonCeiling = nonCeilingShare > 0
+          ? (gainAll - ceilingShare * gainCeiling) / nonCeilingShare
+          : 0;
+        const reverseCheckDelta = reverseGainNonCeiling - gainNonCeiling;
+        return {
+          base,
+          pairs,
+          directErrors,
+          workflowErrors,
+          directErrorPct: directErrorRate * 100,
+          workflowErrorPct: workflowErrorRate * 100,
+          directScorePct: (1 - directErrorRate) * 100,
+          workflowScorePct: (1 - workflowErrorRate) * 100,
+          ceilingSharePct: ceilingShare * 100,
+          nonCeilingSharePct: nonCeilingShare * 100,
+          gainAllPct: gainAll * 100,
+          gainNonCeilingPct: gainNonCeiling * 100,
+          gainCeilingPct: gainCeiling * 100,
+          reverseGainNonCeilingPct: reverseGainNonCeiling * 100,
+          reverseCheckDeltaPct: reverseCheckDelta * 100,
+          ceilingPairs: Math.round(ceilingShare * pairs),
+          nonCeilingPairs: Math.round(nonCeilingShare * pairs),
+        };
+      },
+
+      ceilingCalcExplanation() {
+        const r = this.ceilingCalcResult();
+        return `Vorwärts gerechnet: ${this.formatPercent(r.ceilingSharePct)} Deckel-Paare tragen ${this.formatSignedPercent(r.gainCeilingPct)} bei, ${this.formatPercent(r.nonCeilingSharePct)} nicht gedeckelte Paare tragen ${this.formatSignedPercent(r.gainNonCeilingPct)} bei. Gewichtet ergibt das insgesamt ${this.formatSignedPercent(r.gainAllPct)}.`;
+      },
+
+      emptyDiagnostics() {
+        return {
+          totalRuns: 0,
+          completedRuns: 0,
+          scoredRuns: 0,
+          completedUnscoredRuns: 0,
+          errorRuns: 0,
+          runningRuns: 0,
+          otherStatusRuns: 0,
+          reviewRuns: 0,
+          excludedRuns: 0,
+          analysisRuns: 0,
+          validPairs: 0,
+          cleanPairs: 0,
+          selectedPairs: 0,
+          errorPairs: 0,
+          skippedPairs: 0,
+          reviewPairs: 0,
+          uncompletePairs: 0,
+          unfinishedPairs: 0,
+          totalPairs: 0,
+          availableSelectedPairs: 0,
+          ceilingSkippedPairs: 0,
+          skipCeilingSingleScore: null,
+          skipCeilingSingleScoreMax: null,
+        };
+      },
+
+      emptyAnalysis() {
+        return {
+          rawScores: [],
+          pairs: [],
+          criteriaDiagnostics: [],
+          diagnostics: this.emptyDiagnostics(),
+        };
+      },
+
+      criteriaOrderIndex(criteriaId) {
+        const index = this.criteriaOrder.indexOf(criteriaId);
+        return index === -1 ? this.criteriaOrder.length : index;
+      },
+
+      sortCriteria(items) {
+        return [...(items || [])].sort((a, b) => {
+          const aId = a.id || a.criteriaId || a.criteria_id || '';
+          const bId = b.id || b.criteriaId || b.criteria_id || '';
+          const order = this.criteriaOrderIndex(aId) - this.criteriaOrderIndex(bId);
+          return order || String(a.name_de || a.criteriaName || aId).localeCompare(String(b.name_de || b.criteriaName || bId));
+        });
+      },
+
+      invalidPairTotal() {
+        const d = this.diagnostics();
+        return (d.totalPairs || 0) - (d.selectedPairs || 0);
+      },
+
+      hasAnalysisSelection() {
+        return this.filters.testsets.length > 0 &&
+          this.filters.runSetIds.length > 0 &&
+          this.filters.workflowSetupIds.length > 0 &&
+          this.filters.modelIds.length > 0;
+      },
+
+      hasExportBaseSelection() {
+        return this.filters.testsets.length > 0 &&
+          this.filters.runSetIds.length > 0 &&
+          this.filters.modelIds.length > 0;
+      },
+
+      countExplanation() {
+        const d = this.diagnostics();
+        const reviewOut = this.filters.includeReview ? 0 : (d.reviewPairs || 0);
+        const skipOut = this.filters.includeExcluded ? 0 : (d.skippedPairs || 0);
+        const max = this.maxPairsValue();
+        const skip = this.skipPairsValue();
+        const ceiling = this.skipCeilingRange();
+        const ceilingActive = ceiling.min !== null || ceiling.max !== null;
+        const ceilingText = !ceilingActive ? '' : ` - außerhalb Direkt-Score-Bereich ${d.ceilingSkippedPairs || 0}`;
+        const base = `Gesamt ${d.totalPairs || 0}. Gültig = Gesamt - unvollständig - Fehler = ${d.validPairs || 0}. Für Analyse auswählbar = gültig - nicht eingeschlossene Review-Paare - manuell ausgeschlossene Paare${!ceilingActive ? '' : ' - Paare außerhalb Direkt-Score-Bereich'} = ${d.validPairs || 0} - ${reviewOut} - ${skipOut}${ceilingText} = ${d.availableSelectedPairs ?? d.selectedPairs ?? 0}.`;
+        return max || skip
+          ? `${base} Auswahlfenster aktiv: Skip ${skip}, Max ${max || 'alle'} pro Kriterium. Verwendet werden ${d.selectedPairs || 0} Paare.`
+          : `${base} Verwendet werden ${d.selectedPairs || 0} Paare.`;
+      },
+
+      async openPairDetail(pair) {
+        this.pairModal = { open: true, loading: true, error: null, pair, single: null, workflow: null };
+        try {
+          const [singleRes, workflowRes] = await Promise.all([
+            fetch(`/api/runs/${pair.single_run_id}`),
+            fetch(`/api/runs/${pair.workflow_run_id}`),
+          ]);
+          const [single, workflow] = await Promise.all([singleRes.json(), workflowRes.json()]);
+          if (single.error) throw new Error(single.error);
+          if (workflow.error) throw new Error(workflow.error);
+          this.pairModal.single = single;
+          this.pairModal.workflow = workflow;
+        } catch (err) {
+          this.pairModal.error = err.message || 'Paardetails konnten nicht geladen werden';
+        } finally {
+          this.pairModal.loading = false;
+        }
+      },
+
+      pairDetailPanels() {
+        return [
+          { kind: 'single', title: 'Direkter Aufruf', data: this.pairModal.single },
+          { kind: 'workflow', title: 'Workflow', data: this.pairModal.workflow },
+        ];
+      },
+
+      pairRowValue(pair, key) {
+        const values = {
+          testset: `${pair.testset || ''} ${pair.run_nr || ''}`,
+          runSet: pair.run_set_name || pair.run_set_id || '',
+          question: `${Number(pair.question_id) || 0} ${pair.question_text || ''}`,
+          workflow: pair.workflow_setup_name || pair.workflow_setup_id || '',
+          singleScore: Number(pair.single_score),
+          workflowScore: Number(pair.workflow_score),
+          diff: Number(pair.diff),
+          points: Number(pair.workflow_points) - Number(pair.single_points),
+        };
+        return values[key] ?? '';
+      },
+
+      pairSearchText(pair) {
+        return [
+          pair.testset,
+          pair.run_set_name,
+          pair.run_set_id,
+          pair.question_id,
+          pair.question_text,
+          pair.workflow_setup_name,
+          pair.workflow_setup_id,
+          pair.single_score,
+          pair.workflow_score,
+          pair.diff,
+          `${pair.single_points}/${pair.single_max_points}`,
+          `${pair.workflow_points}/${pair.workflow_max_points}`,
+        ].join(' ').toLowerCase();
+      },
+
+      filteredPairRows() {
+        const rows = [...(this.analysis?.pairs || [])];
+        const query = String(this.pairTable.search || '').trim().toLowerCase();
+        const filtered = query ? rows.filter(pair => this.pairSearchText(pair).includes(query)) : rows;
+        const dir = this.pairTable.sortDir === 'desc' ? -1 : 1;
+        const key = this.pairTable.sortKey;
+        return filtered.sort((a, b) => {
+          const av = this.pairRowValue(a, key);
+          const bv = this.pairRowValue(b, key);
+          if (Number.isFinite(av) && Number.isFinite(bv)) return (av - bv) * dir;
+          return String(av).localeCompare(String(bv), undefined, { numeric: true, sensitivity: 'base' }) * dir;
+        });
+      },
+
+      pairTablePageCount() {
+        return Math.max(1, Math.ceil(this.filteredPairRows().length / Number(this.pairTable.pageSize || 50)));
+      },
+
+      pagedPairRows() {
+        const pageCount = this.pairTablePageCount();
+        if (this.pairTable.page > pageCount) this.pairTable.page = pageCount;
+        if (this.pairTable.page < 1) this.pairTable.page = 1;
+        const size = Number(this.pairTable.pageSize || 50);
+        const start = (this.pairTable.page - 1) * size;
+        return this.filteredPairRows().slice(start, start + size);
+      },
+
+      sortPairTable(key) {
+        if (this.pairTable.sortKey === key) {
+          this.pairTable.sortDir = this.pairTable.sortDir === 'asc' ? 'desc' : 'asc';
+        } else {
+          this.pairTable.sortKey = key;
+          this.pairTable.sortDir = ['singleScore', 'workflowScore', 'diff', 'points'].includes(key) ? 'desc' : 'asc';
+        }
+        this.pairTable.page = 1;
+      },
+
+      pairSortMark(key) {
+        if (this.pairTable.sortKey !== key) return '';
+        return this.pairTable.sortDir === 'asc' ? '↑' : '↓';
+      },
+
+      pairTableSummary() {
+        const total = this.analysis?.pairs?.length || 0;
+        const filtered = this.filteredPairRows().length;
+        if (!total) return '0 Paare';
+        const size = Number(this.pairTable.pageSize || 50);
+        const start = filtered ? (this.pairTable.page - 1) * size + 1 : 0;
+        const end = Math.min(filtered, this.pairTable.page * size);
+        return `${start}-${end} von ${filtered} Paaren${filtered === total ? '' : `, gefiltert aus ${total}`}`;
+      },
+
+      finalStep(runDetail) {
+        const steps = runDetail?.steps || [];
+        return steps.length ? steps[steps.length - 1] : null;
+      },
+
+      parseListJson(value) {
+        if (!value) return [];
+        try {
+          const parsed = JSON.parse(value);
+          return Array.isArray(parsed) ? parsed : [];
+        } catch {
+          return [];
+        }
+      },
+
+      async loadAnalysis() {
+        if (!this.hasAnalysisSelection()) {
+          this.error = null;
+          this.analysis = this.emptyAnalysis();
+          this.overviewAnalysis = this.emptyAnalysis();
+          await this.$nextTick();
+          this.renderCharts();
+          return;
+        }
+
+        this.loading = true;
+        this.error = null;
+        try {
+          const [analysisRes, overviewRes] = await Promise.all([
+            fetch('/api/analysis/workbench?' + this.analysisParams(false).toString()),
+            fetch('/api/analysis/workbench?' + this.analysisParams(true).toString()),
+          ]);
+          const analysisData = await analysisRes.json();
+          const overviewData = await overviewRes.json();
+          if (analysisData.error) throw new Error(analysisData.error);
+          if (overviewData.error) throw new Error(overviewData.error);
+          this.analysis = analysisData;
+          this.overviewAnalysis = overviewData;
+          this.needsUpdate = false;
+          await this.$nextTick();
+          this.renderCharts();
+        } catch (err) {
+          this.error = err.message || 'Analyse konnte nicht geladen werden';
+        } finally {
+          this.loading = false;
+        }
+      },
+
+      analysisParams(ignoreCriteria = false, criteriaIdOverride = undefined) {
+        const params = new URLSearchParams();
+        const criteriaId = criteriaIdOverride !== undefined ? criteriaIdOverride : this.filters.criteriaId;
+        if (!ignoreCriteria && criteriaId) params.set('criteriaId', criteriaId);
+        params.set('testsets', this.filters.testsets.join(','));
+        params.set('runSetIds', this.filters.runSetIds.join(','));
+        params.set('workflowSetupIds', this.filters.workflowSetupIds.join(','));
+        params.set('modelIds', this.filters.modelIds.join(','));
+        if (this.filters.includeReview) params.set('includeReview', 'true');
+        if (this.filters.includeExcluded) params.set('includeExcluded', 'true');
+        const max = this.maxPairsValue();
+        if (max) params.set('maxPairsPerCriteria', String(max));
+        const skip = this.skipPairsValue();
+        if (skip) params.set('skipPairsPerCriteria', String(skip));
+        const ceiling = this.skipCeilingRange();
+        if (ceiling.min !== null) params.set('skipCeilingSingleScore', String(ceiling.min));
+        if (ceiling.max !== null) params.set('skipCeilingSingleScoreMax', String(ceiling.max));
+        return params;
+      },
+
+      maxPairsValue() {
+        const value = Number.parseInt(String(this.filters.maxPairsPerCriteria || ''), 10);
+        return Number.isFinite(value) && value > 0 ? value : null;
+      },
+
+      skipPairsValue() {
+        const value = Number.parseInt(String(this.filters.skipPairsPerCriteria || ''), 10);
+        return Number.isFinite(value) && value > 0 ? value : 0;
+      },
+
+      skipCeilingValue() {
+        const raw = String(this.filters.skipCeilingSingleScore || '').trim();
+        if (!raw) return null;
+        const value = Number.parseFloat(raw);
+        return Number.isFinite(value) && value >= 0 && value <= 100 ? value : null;
+      },
+
+      skipCeilingMaxValue() {
+        const raw = String(this.filters.skipCeilingSingleScoreMax || '').trim();
+        if (!raw) return null;
+        const value = Number.parseFloat(raw);
+        return Number.isFinite(value) && value >= 0 && value <= 100 ? value : null;
+      },
+
+      skipCeilingRange() {
+        let min = this.skipCeilingValue();
+        let max = this.skipCeilingMaxValue();
+        if (min !== null && max !== null && min > max) {
+          const tmp = min;
+          min = max;
+          max = tmp;
+        }
+        return { min, max };
+      },
+
+      skipCeilingLabel() {
+        const { min, max } = this.skipCeilingRange();
+        if (min === null && max === null) return 'aus, nichts ausgeschlossen';
+        if (min !== null && max !== null) return `behalte Direkt > ${min}% und < ${max}%`;
+        if (min !== null) return `behalte Direkt > ${min}%`;
+        return `behalte Direkt < ${max}%`;
+      },
+
+      selectedLabel() {
+        const c = this.options.criteria.find(item => item.id === this.filters.criteriaId);
+        const criteria = c ? c.name_de : 'alle Kriterien';
+        const questionSets = this.filters.testsets.length ? this.selectedNames(this.options.testsets, this.filters.testsets) : 'alle Fragensets';
+        const runSets = this.filters.runSetIds.length ? this.selectedNames(this.options.runSets, this.filters.runSetIds) : 'alle Run-Sets';
+        return `${criteria} | ${questionSets} | ${runSets}`;
+      },
+
+      overviewLabel() {
+        const questionSets = this.filters.testsets.length ? this.selectedNames(this.options.testsets, this.filters.testsets) : 'alle Fragensets';
+        const runSets = this.filters.runSetIds.length ? this.selectedNames(this.options.runSets, this.filters.runSetIds) : 'alle Run-Sets';
+        return `${questionSets} | ${runSets}`;
+      },
+
+      selectionSummaryLines(kind) {
+        const criteria = kind === 'overview'
+          ? 'Alle Kriterien'
+          : (this.options.criteria.find(item => item.id === this.filters.criteriaId)?.name_de || this.filters.criteriaId || 'Alle Kriterien');
+        const questionSets = this.filters.testsets.length
+          ? this.selectedNames(this.options.testsets, this.filters.testsets)
+          : 'Alle Fragensets (kein Fragenset-Filter)';
+        const runSets = this.filters.runSetIds.length
+          ? this.selectedNames(this.options.runSets, this.filters.runSetIds)
+          : 'Alle Run-Sets (kein Run-Set-Filter)';
+        const workflowSetups = this.filters.workflowSetupIds.length
+          ? this.selectedNames(this.workflowOptions(), this.filters.workflowSetupIds)
+          : 'Alle Workflow-Setups (kein Workflow-Filter)';
+        const models = this.filters.modelIds.length
+          ? this.selectedNames(this.options.models, this.filters.modelIds, 'label')
+          : 'Alle Modelle (kein Modell-Filter)';
+        const exportFolder = this.exportFolderPrefix() || 'kein Unterordner';
+
+        return [
+          '## Auswahl',
+          '',
+          `- Kriterien: ${criteria}`,
+          `- Fragensets: ${questionSets}`,
+          `- Run-Sets: ${runSets}`,
+          `- Workflow-Setups: ${workflowSetups}`,
+          `- Modelle: ${models}`,
+          `- Max Paare pro Kriterium: ${this.maxPairsValue() || 'kein Limit'}`,
+          `- Skip Paare pro Kriterium: ${this.skipPairsValue()}`,
+          `- Direkt-Score behalten: ${this.skipCeilingLabel()}`,
+          `- Stabiler Exportordner / Asset-Prefix: ${exportFolder}`,
+          '',
+        ];
+      },
+
+      selectedNames(options, ids, labelKey = 'name') {
+        const byId = new Map((options || []).map(item => [String(item.id), item]));
+        return ids.map(id => {
+          const item = byId.get(String(id));
+          return item ? (item[labelKey] || item.name || item.id) : id;
+        }).join(', ');
+      },
+
+      descriptiveRows() {
+        if (!this.analysis) return [];
+        const groups = new Map();
+        for (const row of this.analysis.rawScores) {
+          if (!groups.has(row.setup_id)) {
+            groups.set(row.setup_id, { setupId: row.setup_id, setupName: row.setup_name, scores: [] });
+          }
+          groups.get(row.setup_id).scores.push(Number(row.score_percent));
+        }
+        return [...groups.values()].map(group => ({
+          setupId: group.setupId,
+          setupName: group.setupName,
+          n: group.scores.length,
+          mean: this.mean(group.scores),
+          median: this.median(group.scores),
+          sd: this.sampleSd(group.scores),
+          min: Math.min(...group.scores),
+          max: Math.max(...group.scores),
+        }));
+      },
+
+      pairSummary() {
+        const pairs = this.analysis?.pairs || [];
+        const single = pairs.map(p => Number(p.single_score));
+        const workflow = pairs.map(p => Number(p.workflow_score));
+        const diffs = pairs.map(p => Number(p.diff));
+        return {
+          singleMean: this.mean(single),
+          workflowMean: this.mean(workflow),
+          meanDiff: this.mean(diffs),
+        };
+      },
+
+      singleErrorRate() {
+        const mean = this.pairSummary().singleMean;
+        return Number.isFinite(Number(mean)) ? Math.max(0, 100 - Number(mean)) : null;
+      },
+
+      singlePerfectRate() {
+        const pairs = this.analysis?.pairs || [];
+        if (!pairs.length) return null;
+        const ceiling = this.singleCeilingBuckets(pairs);
+        return ceiling.perfect / pairs.length * 100;
+      },
+
+      tTestResult() {
+        const pairs = this.analysis?.pairs || [];
+        return this.tTestForPairs(pairs);
+      },
+
+      tTestForPairs(pairs) {
+        const diffs = pairs.map(p => Number(p.diff)).filter(v => Number.isFinite(v));
+        const n = diffs.length;
+        if (n < 2) return null;
+        const meanDiff = this.mean(diffs);
+        const sd = this.sampleSd(diffs);
+        if (!sd) return null;
+        const se = sd / Math.sqrt(n);
+        const t = meanDiff / se;
+        const df = n - 1;
+        const p = 2 * (1 - this.studentTCdf(Math.abs(t), df));
+        const critical = this.tCritical95(df);
+        return {
+          n,
+          df,
+          meanDiff,
+          sd,
+          se,
+          t,
+          critical,
+          p: Math.max(0, Math.min(1, p)),
+          dz: meanDiff / sd,
+          ciLow: meanDiff - critical * se,
+          ciHigh: meanDiff + critical * se,
+          significant: p < 0.05,
+        };
+      },
+
+      tTestFallback() {
+        const pairs = this.analysis?.pairs || [];
+        return this.tTestFallbackForPairs(pairs);
+      },
+
+      tTestFallbackForPairs(pairs) {
+        const diffs = pairs.map(p => Number(p.diff)).filter(v => Number.isFinite(v));
+        const n = diffs.length;
+        if (n < 2) return null;
+        const meanDiff = this.mean(diffs);
+        const sd = this.sampleSd(diffs);
+        if (sd && sd > 0) return null;
+        const df = n - 1;
+        return {
+          n,
+          df,
+          meanDiff,
+          critical: this.tCritical95(df),
+        };
+      },
+
+      overviewRows() {
+        const pairs = this.overviewAnalysis?.pairs || [];
+        const groups = new Map();
+        const diagnostics = new Map((this.overviewAnalysis?.criteriaDiagnostics || []).map(row => [row.criteriaId, row]));
+        for (const row of diagnostics.values()) {
+          groups.set(row.criteriaId, {
+            criteriaId: row.criteriaId,
+            criteriaName: row.criteriaName || row.criteriaId,
+            pairs: [],
+            counts: row,
+          });
+        }
+        for (const pair of pairs) {
+          const key = pair.criteria_id || 'unknown';
+          if (!groups.has(key)) {
+            groups.set(key, {
+              criteriaId: key,
+              criteriaName: pair.criteria_name || key,
+              pairs: [],
+            });
+          }
+          groups.get(key).pairs.push(pair);
+        }
+
+        return [...groups.values()].map(group => {
+          const single = group.pairs.map(p => Number(p.single_score));
+          const workflow = group.pairs.map(p => Number(p.workflow_score));
+          const diffs = group.pairs.map(p => Number(p.diff));
+          const counts = group.counts || {};
+          const ceiling = this.singleCeilingBuckets(group.pairs);
+          const singleMean = this.mean(single);
+          return {
+            criteriaId: group.criteriaId,
+            criteriaName: group.criteriaName,
+            n: group.pairs.length,
+            totalPairs: counts.totalPairs || 0,
+            validPairs: counts.validPairs || 0,
+            selectedPairs: counts.selectedPairs ?? group.pairs.length,
+            ceilingSkippedPairs: counts.ceilingSkippedPairs || 0,
+            errorPairs: counts.errorPairs || 0,
+            reviewPairs: counts.reviewPairs || 0,
+            skippedPairs: counts.skippedPairs || 0,
+            uncompletePairs: counts.uncompletePairs || 0,
+            singleMean,
+            singleErrorRate: Number.isFinite(Number(singleMean)) ? Math.max(0, 100 - Number(singleMean)) : null,
+            workflowMean: this.mean(workflow),
+            meanDiff: this.mean(diffs),
+            singlePerfect: ceiling.perfect,
+            singleNear: ceiling.near,
+            singleBelow: ceiling.below,
+            singlePerfectRate: group.pairs.length ? ceiling.perfect / group.pairs.length * 100 : null,
+            test: this.tTestForPairs(group.pairs),
+          fallback: this.tTestFallbackForPairs(group.pairs),
+        };
+      }).sort((a, b) => this.criteriaOrderIndex(a.criteriaId) - this.criteriaOrderIndex(b.criteriaId));
+      },
+
+      overviewCeilingRows() {
+        const pairs = this.overviewAnalysis?.pairs || [];
+        if (!pairs.length) return [];
+        const groups = new Map();
+        const addPair = (key, name, pair) => {
+          if (!groups.has(key)) {
+            groups.set(key, { criteriaId: key, criteriaName: name || key, pairs: [] });
+          }
+          groups.get(key).pairs.push(pair);
+        };
+        for (const pair of pairs) {
+          addPair('all', 'Gesamt', pair);
+          addPair(pair.criteria_id || 'unknown', pair.criteria_name || pair.criteria_id || 'unknown', pair);
+        }
+        const buildRow = group => {
+          const validPairs = group.pairs
+            .map(pair => ({
+              single: Number(pair.single_score),
+              workflow: Number(pair.workflow_score),
+              diff: Number(pair.diff),
+            }))
+            .filter(pair => Number.isFinite(pair.single) && Number.isFinite(pair.workflow));
+          const n = validPairs.length;
+          const ceilingPairs = validPairs.filter(pair => pair.single >= 100);
+          const nonCeilingPairs = validPairs.filter(pair => pair.single < 100);
+          const singleMean = this.mean(validPairs.map(pair => pair.single));
+          const workflowMean = this.mean(validPairs.map(pair => pair.workflow));
+          const directErrorRate = Number.isFinite(Number(singleMean)) ? Math.max(0, 100 - Number(singleMean)) : null;
+          const workflowErrorRate = Number.isFinite(Number(workflowMean)) ? Math.max(0, 100 - Number(workflowMean)) : null;
+          const ceilingPct = n ? ceilingPairs.length / n * 100 : null;
+          const nonCeilingPct = n ? nonCeilingPairs.length / n * 100 : null;
+          const realAllGain = this.mean(validPairs.map(pair => pair.diff));
+          const expectedModelCeilingPct = Number.isFinite(Number(directErrorRate)) ? Math.max(0, 100 - Number(directErrorRate)) : null;
+          const expectedModelNonCeilingPct = Number.isFinite(Number(directErrorRate)) ? Number(directErrorRate) : null;
+          const expectedModelCeilingN = n && Number.isFinite(Number(expectedModelCeilingPct)) ? n * Number(expectedModelCeilingPct) / 100 : null;
+          const expectedCeilingGain = Number.isFinite(Number(workflowErrorRate)) ? -Number(workflowErrorRate) : null;
+          const expectedNonCeilingGain = Number.isFinite(Number(workflowErrorRate)) ? 100 - Number(workflowErrorRate) : null;
+          const ceilingRealGain = this.mean(ceilingPairs.map(pair => pair.diff));
+          const expectedAllGain = Number.isFinite(Number(expectedModelCeilingPct)) && Number.isFinite(Number(expectedModelNonCeilingPct)) && Number.isFinite(Number(expectedCeilingGain)) && Number.isFinite(Number(expectedNonCeilingGain))
+            ? Number(expectedModelCeilingPct) / 100 * Number(expectedCeilingGain) + Number(expectedModelNonCeilingPct) / 100 * Number(expectedNonCeilingGain)
+            : null;
+          return {
+            criteriaId: group.criteriaId,
+            criteriaName: group.criteriaName,
+            n,
+            directErrorRate,
+            workflowErrorRate,
+            realAllGain,
+            ceilingN: ceilingPairs.length,
+            ceilingPct,
+            ceilingRealGain,
+            expectedModelCeilingPct,
+            expectedModelCeilingN,
+            expectedModelNonCeilingPct,
+            nonCeilingN: nonCeilingPairs.length,
+            nonCeilingDirectMean: this.mean(nonCeilingPairs.map(pair => pair.single)),
+            nonCeilingWorkflowMean: this.mean(nonCeilingPairs.map(pair => pair.workflow)),
+            nonCeilingRealGain: this.mean(nonCeilingPairs.map(pair => pair.diff)),
+            expectedCeilingGain,
+            expectedNonCeilingGain,
+            expectedAllGain,
+          };
+        };
+        return [...groups.values()]
+          .map(buildRow)
+          .filter(row => row.n > 0)
+          .sort((a, b) => {
+            if (a.criteriaId === 'all') return -1;
+            if (b.criteriaId === 'all') return 1;
+            return this.criteriaOrderIndex(a.criteriaId) - this.criteriaOrderIndex(b.criteriaId);
+          });
+      },
+
+      overviewChartSvgs() {
+        const rows = this.overviewRows();
+        if (!rows.length) return [];
+        return [
+          {
+            title: 'Mittlere Differenz nach Kriterium',
+            svg: this.svgBarChart('Mittlere Differenz nach Kriterium', rows.map(r => ({
+              label: r.criteriaName,
+              value: Number(r.meanDiff || 0),
+              color: Number(r.meanDiff || 0) >= 0 ? '#16a34a' : '#dc2626',
+            })), { yLabel: 'Workflow minus Direkt', showValues: true, valueDigits: 1, gridLines: true }),
+          },
+          {
+            title: 'Mittelwert Direkter Aufruf vs Workflow',
+            svg: this.svgGroupedBarChart('Mittelwert Direkter Aufruf vs Workflow', rows.map(r => ({
+              label: r.criteriaName,
+              a: Number(r.singleMean || 0),
+              b: Number(r.workflowMean || 0),
+            })), { yLabel: 'Score (%)', max: 100, aLabel: 'Direkt', bLabel: 'Workflow', showValues: true, valueDigits: 1, gridLines: true, legendPosition: 'bottom' }),
+          },
+          {
+            title: 'Datenqualität nach Kriterium',
+            svg: this.svgDataQualityChart('Datenqualitaet nach Kriterium', rows),
+          },
+          {
+            title: 'Verbesserungspotenzial des direkten Aufrufs',
+            svg: this.svgStackedBarChart('Verbesserungspotenzial des direkten Aufrufs', rows.map(r => ({
+              label: r.criteriaName,
+              a: Number(r.singlePerfect || 0),
+              b: Number(r.singleNear || 0),
+              c: Number(r.singleBelow || 0),
+            })), { yLabel: 'Paare', aLabel: '100%', bLabel: '80-99%', cLabel: '<80%' }),
+          },
+        ];
+      },
+
+      interpretationText() {
+        const result = this.tTestResult();
+        const pairs = this.analysis?.pairs || [];
+        if (pairs.length < 2) return 'Es gibt zu wenige vollständige Datenpaare für einen gepaarten t-Test. Tabellen und Diagramme können trotzdem deskriptiv verwendet werden.';
+        if (!result) return 'Alle Paardifferenzen sind identisch. In dieser Auswahl wurde keine Differenz beobachtet; ein gepaarter t-Test ist wegen fehlender Streuung nicht anwendbar.';
+        const directionDe = result.meanDiff >= 0 ? 'höher' : 'tiefer';
+        const significance = result.significant ? 'statistisch signifikant bei Alpha = 0,05' : 'nicht statistisch signifikant bei Alpha = 0,05';
+        return `Vollständige Daten: ${result.n} gepaarte Vergleiche. Der Workflow-Score liegt im Mittel ${Math.abs(result.meanDiff).toFixed(2)} Prozentpunkte ${directionDe} als die Basislinie des direkten Aufrufs. Der gepaarte t-Test ist ${significance}.`;
+      },
+
+      renderCharts() {
+        if (!this.analysis) return;
+        const isDark = document.documentElement.classList.contains('dark');
+        const textColor = isDark ? '#94a3b8' : '#64748b';
+        const gridColor = isDark ? '#1e293b' : '#e2e8f0';
+
+        this.renderSetupChart(textColor, gridColor);
+        this.renderDifferenceChart(textColor, gridColor);
+        this.renderHistogramChart(textColor, gridColor);
+        this.renderScatterChart(textColor, gridColor);
+      },
+
+      renderSetupChart(textColor, gridColor) {
+        const canvas = document.getElementById('chart-setup-average');
+        if (!canvas) return;
+        if (chartSetupAverage) chartSetupAverage.destroy();
+        const rows = this.descriptiveRows();
+        chartSetupAverage = new Chart(canvas, {
+          type: 'bar',
+          data: {
+            labels: rows.map(r => r.setupName),
+            datasets: [{
+              label: 'Mittlerer Score',
+              data: rows.map(r => Number(r.mean.toFixed(2))),
+              backgroundColor: rows.map(r => ['setup_direct', 'setup_ce_direct'].includes(r.setupId) ? 'rgba(100, 116, 139, 0.75)' : 'rgba(37, 99, 235, 0.75)'),
+              borderColor: rows.map(r => ['setup_direct', 'setup_ce_direct'].includes(r.setupId) ? '#64748b' : '#2563eb'),
+              borderWidth: 1,
+            }]
+          },
+          options: this.chartOptions(textColor, gridColor, 0, 100)
+        });
+      },
+
+      renderDifferenceChart(textColor, gridColor) {
+        const canvas = document.getElementById('chart-differences');
+        if (!canvas) return;
+        if (chartDifferences) chartDifferences.destroy();
+        const pairs = (this.analysis.pairs || []).slice(0, 60);
+        chartDifferences = new Chart(canvas, {
+          type: 'bar',
+          data: {
+            labels: pairs.map(p => `Q${p.question_id} #${p.run_nr || '-'}`),
+            datasets: [{
+              label: 'Workflow - Direkter Aufruf',
+              data: pairs.map(p => Number(Number(p.diff).toFixed(2))),
+              backgroundColor: pairs.map(p => p.diff >= 0 ? 'rgba(22, 163, 74, 0.7)' : 'rgba(239, 68, 68, 0.7)'),
+              borderWidth: 0,
+            }]
+          },
+          options: this.chartOptions(textColor, gridColor)
+        });
+      },
+
+      renderHistogramChart(textColor, gridColor) {
+        const canvas = document.getElementById('chart-histogram');
+        if (!canvas) return;
+        if (chartHistogram) chartHistogram.destroy();
+        const diffs = (this.analysis.pairs || []).map(p => Number(p.diff));
+        const bins = this.histogramBins(diffs, 10);
+        chartHistogram = new Chart(canvas, {
+          type: 'bar',
+          data: {
+            labels: bins.map(b => b.label),
+            datasets: [{
+              label: 'Anzahl',
+              data: bins.map(b => b.count),
+              backgroundColor: 'rgba(15, 118, 110, 0.7)',
+              borderColor: '#0f766e',
+              borderWidth: 1,
+            }]
+          },
+          options: this.chartOptions(textColor, gridColor)
+        });
+      },
+
+      renderScatterChart(textColor, gridColor) {
+        const canvas = document.getElementById('chart-scatter');
+        if (!canvas) return;
+        if (chartScatter) chartScatter.destroy();
+        const points = (this.analysis.pairs || []).map(p => ({
+          x: Number(p.single_score),
+          y: Number(p.workflow_score),
+          question: `Q${p.question_id}`,
+        }));
+        chartScatter = new Chart(canvas, {
+          type: 'scatter',
+          data: {
+            datasets: [
+              {
+                label: 'Paare',
+                data: points,
+                backgroundColor: 'rgba(37, 99, 235, 0.75)',
+              },
+              {
+                label: 'Gleicher Score',
+                data: [{ x: 0, y: 0 }, { x: 100, y: 100 }],
+                type: 'line',
+                borderColor: '#94a3b8',
+                borderDash: [4, 4],
+                pointRadius: 0,
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            resizeDelay: 100,
+            plugins: { legend: { labels: { color: textColor } } },
+            scales: {
+              x: { min: 0, max: 100, title: { display: true, text: 'Direkter Aufruf', color: textColor }, ticks: { color: textColor }, grid: { color: gridColor } },
+              y: { min: 0, max: 100, title: { display: true, text: 'Workflow', color: textColor }, ticks: { color: textColor }, grid: { color: gridColor } },
+            },
+          },
+        });
+      },
+
+      chartOptions(textColor, gridColor, min = undefined, max = undefined) {
+        return {
+          responsive: true,
+          maintainAspectRatio: false,
+          resizeDelay: 100,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: textColor, maxRotation: 45, minRotation: 0 }, grid: { color: gridColor } },
+            y: { min, max, ticks: { color: textColor }, grid: { color: gridColor } },
+          },
+        };
+      },
+
+      histogramBins(values, binCount) {
+        if (!values.length) return [{ label: 'keine Daten', count: 0 }];
+        const min = Math.min(...values);
+        const max = Math.max(...values);
+        if (min === max) return [{ label: min.toFixed(1), count: values.length }];
+        const width = (max - min) / binCount;
+        return Array.from({ length: binCount }, (_, i) => {
+          const low = min + i * width;
+          const high = i === binCount - 1 ? max : low + width;
+          return {
+            label: `${low.toFixed(0)} bis ${high.toFixed(0)}`,
+            center: (low + high) / 2,
+            count: values.filter(v => i === binCount - 1 ? v >= low && v <= high : v >= low && v < high).length,
+          };
+        });
+      },
+
+      singleCeilingBuckets(pairs) {
+        const scores = (pairs || []).map(p => Number(p.single_score)).filter(Number.isFinite);
+        return {
+          perfect: scores.filter(v => v >= 99.999).length,
+          near: scores.filter(v => v >= 75 && v < 99.999).length,
+          below: scores.filter(v => v < 75).length,
+        };
+      },
+
+      singleScorePotentialBins(pairs) {
+        const scores = (pairs || []).map(p => Number(p.single_score)).filter(Number.isFinite);
+        return [
+          { label: '<50', count: scores.filter(v => v < 50).length, color: '#16a34a' },
+          { label: '50-74', count: scores.filter(v => v >= 50 && v < 75).length, color: '#84cc16' },
+          { label: '75-99', count: scores.filter(v => v >= 75 && v < 99.999).length, color: '#f59e0b' },
+          { label: '100', count: scores.filter(v => v >= 99.999).length, color: '#dc2626' },
+        ];
+      },
+
+      async exportCurrentData(kind) {
+        this.exporting = true;
+        this.exportStatus = '';
+        try {
+          const bundle = this.buildExportBundle(kind);
+          const res = await fetch('/api/analysis/export', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(bundle),
+          });
+          const data = await res.json();
+          if (!res.ok || data.error) throw new Error(data.error || 'Export fehlgeschlagen');
+          const warnings = Array.isArray(data.warnings) && data.warnings.length ? `; LaTeX-SVG-Warnungen: ${data.warnings.length}` : '';
+          this.exportStatus = `Export gespeichert: ${data.outputDir}${warnings}`;
+        } catch (err) {
+          this.exportStatus = err.message || 'Export fehlgeschlagen';
+        } finally {
+          this.exporting = false;
+        }
+      },
+
+      async exportOverviewWithDetails() {
+        if (!this.hasAnalysisSelection()) {
+          this.exportStatus = 'Bitte zuerst mindestens ein Fragenset oder Run-Set, ein Workflow-Setup und ein Modell auswählen.';
+          return;
+        }
+
+        this.exporting = true;
+        this.exportStatus = 'Übersicht und Kriteriumsdetails werden vorbereitet...';
+        try {
+          const saved = await this.runOverviewWithDetailsExport();
+          const warnings = Array.isArray(saved.warnings) && saved.warnings.length ? `; LaTeX-SVG-Warnungen: ${saved.warnings.length}` : '';
+          this.exportStatus = `Export gespeichert: ${saved.outputDir}${warnings}`;
+        } catch (err) {
+          this.exportStatus = err.message || 'Export fehlgeschlagen';
+        } finally {
+          this.exporting = false;
+        }
+      },
+
+      async exportAllSetupReports() {
+        if (!this.hasExportBaseSelection()) {
+          this.exportStatus = 'Bitte zuerst mindestens ein Fragenset oder Run-Set und ein Modell auswählen. Der Setup-Typ wird für Export All automatisch gesetzt.';
+          return;
+        }
+
+        const originalWorkflowSetupIds = [...this.filters.workflowSetupIds];
+        const originalExportFolder = this.exportFolder;
+        const targets = [
+          { label: 'Prompt-Optimierung', folder: 'PO', setupIds: ['setup_wf_prompt_optimise'] },
+          { label: 'Flowmap', folder: 'FM', setupIds: ['setup_flowmap'] },
+          { label: 'FlowReview', folder: 'FR', setupIds: ['setup_flowreview'] },
+          { label: 'Alle drei Hauptworkflows', folder: 'ALL', setupIds: ['setup_wf_prompt_optimise', 'setup_flowmap', 'setup_flowreview'] },
+        ];
+        const availableSetupIds = new Set((this.options.setups || []).filter(s => !['setup_direct', 'setup_ce_direct'].includes(s.id)).map(s => s.id));
+        const savedOutputs = [];
+
+        this.exporting = true;
+        try {
+          let index = 1;
+          for (const target of targets) {
+            const setupIds = target.setupIds.filter(id => availableSetupIds.has(id));
+            if (!setupIds.length) {
+              savedOutputs.push(`${target.folder}: übersprungen, Setup nicht verfügbar`);
+              index += 1;
+              continue;
+            }
+
+            this.filters.workflowSetupIds = setupIds;
+            this.exportFolder = target.folder;
+            this.exportStatus = `Export All ${index}/${targets.length}: ${target.label} (${target.folder}) wird erstellt...`;
+            const saved = await this.runOverviewWithDetailsExport(`Export All ${index}/${targets.length}: ${target.label}`);
+            const warnings = Array.isArray(saved.warnings) && saved.warnings.length ? `, ${saved.warnings.length} LaTeX-SVG-Warnungen` : '';
+            savedOutputs.push(`${target.folder}: ${saved.outputDir}${warnings}`);
+            index += 1;
+          }
+
+          this.exportStatus = `Export All fertig: ${savedOutputs.join(' | ')}`;
+        } catch (err) {
+          this.exportStatus = err.message || 'Export All fehlgeschlagen';
+        } finally {
+          this.filters.workflowSetupIds = originalWorkflowSetupIds;
+          this.exportFolder = originalExportFolder;
+          this.exporting = false;
+        }
+      },
+
+      async runOverviewWithDetailsExport(statusPrefix = '') {
+        const originalCriteriaId = this.filters.criteriaId;
+        const originalAnalysis = this.analysis;
+        const originalOverviewAnalysis = this.overviewAnalysis;
+
+        try {
+          const files = [];
+          const overviewRes = await fetch('/api/analysis/workbench?' + this.analysisParams(true).toString());
+          const overviewData = await overviewRes.json();
+          if (!overviewRes.ok || overviewData.error) throw new Error(overviewData.error || 'Übersicht konnte nicht geladen werden');
+          this.overviewAnalysis = overviewData;
+
+          const overviewBundle = this.buildExportBundle('overview', '00_overview');
+          files.push(...this.exportUsesStableFolder() ? overviewBundle.files : this.filesInFolder(overviewBundle.files, '00_overview'));
+
+          const criteria = this.options.criteria || [];
+          let index = 1;
+          for (const criterion of criteria) {
+            const prefixText = statusPrefix ? `${statusPrefix}: ` : '';
+            this.exportStatus = `${prefixText}Detail ${index}/${criteria.length} wird exportiert: ${criterion.name_de}`;
+            const params = this.analysisParams(false, criterion.id);
+            const res = await fetch('/api/analysis/workbench?' + params.toString());
+            const data = await res.json();
+            if (!res.ok || data.error) throw new Error(data.error || `${criterion.name_de} konnte nicht geladen werden`);
+
+            this.filters.criteriaId = criterion.id;
+            this.analysis = data;
+            const prefix = `${String(index).padStart(2, '0')}_${this.slug(criterion.name_de || criterion.id)}`;
+            const detailBundle = this.buildExportBundle('analysis', prefix);
+            files.push(...this.exportUsesStableFolder() ? detailBundle.files : this.filesInFolder(detailBundle.files, prefix));
+            index += 1;
+          }
+
+          files.push({
+            name: 'INDEX.md',
+            content: this.allCriteriaExportIndex(files, criteria),
+          });
+
+          const res = await fetch('/api/analysis/export', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              label: 'overview_details',
+              folder: this.exportFolderPrefix() || undefined,
+              files,
+            }),
+          });
+          const saved = await res.json();
+          if (!res.ok || saved.error) throw new Error(saved.error || 'Export fehlgeschlagen');
+          return saved;
+        } finally {
+          this.filters.criteriaId = originalCriteriaId;
+          this.analysis = originalAnalysis;
+          this.overviewAnalysis = originalOverviewAnalysis;
+        }
+      },
+
+      filesInFolder(files, folder) {
+        return (files || []).map(file => ({
+          name: `${folder}/${file.name}`,
+          content: file.content,
+        }));
+      },
+
+      exportFolderPrefix() {
+        return String(this.exportFolder || '')
+          .split(/[\\/]+/)
+          .map(part => part.trim()
+            .replace(/[^A-Za-z0-9._-]+/g, '_')
+            .replace(/^_+|_+$/g, '')
+            .slice(0, 80))
+          .filter(Boolean)
+          .join('/');
+      },
+
+      exportAssetDir(base, reportId) {
+        const prefix = this.exportFolderPrefix();
+        return prefix
+          ? [prefix, base, reportId].filter(Boolean).join('/')
+          : [base, reportId].filter(Boolean).join('/');
+      },
+
+      exportUsesStableFolder() {
+        return Boolean(this.exportFolderPrefix());
+      },
+
+      allCriteriaExportIndex(files, criteria) {
+        const stable = this.exportUsesStableFolder();
+        const lines = [
+          '# Übersicht mit Detailauswertungen',
+          '',
+          ...this.selectionSummaryLines('overview'),
+          `Review-Antworten eingeschlossen: ${this.filters.includeReview ? 'ja' : 'nein'}`,
+          `Manuell ausgeschlossene Antworten eingeschlossen: ${this.filters.includeExcluded ? 'ja' : 'nein'}`,
+          '',
+          '## Inhalt',
+          '',
+          stable ? '- `report_00_overview.md`: Uebersicht ueber alle Kriterien.' : '- `00_overview/report_00_overview.md`: Uebersicht ueber alle Kriterien.',
+          ...criteria.map((criterion, index) => {
+            const prefix = `${String(index + 1).padStart(2, '0')}_${this.slug(criterion.name_de || criterion.id)}`;
+            return stable
+              ? `- \`report_${prefix}.md\`: Detailauswertung fuer ${criterion.name_de}.`
+              : `- \`${prefix}/report_${prefix}.md\`: Detailauswertung fuer ${criterion.name_de}.`;
+          }),
+          '',
+          '## Dateien',
+          '',
+          ...files.map(file => `- \`${file.name}\``),
+          '',
+        ];
+        return lines.join('\n');
+      },
+
+      buildExportBundle(kind, reportId = undefined) {
+        const rows = kind === 'overview' ? this.overviewRows() : this.exportAnalysisRows();
+        const title = kind === 'overview' ? 'Übersicht nach Kriterium' : 'Ausgewählte Analyse';
+        const label = kind === 'overview' ? 'overview' : 'analysis';
+        const id = reportId || this.defaultReportId(kind);
+        const imageDir = this.exportAssetDir('images', id);
+        const tableDir = this.exportAssetDir('tables', id);
+        const tableSvgFiles = {
+          short: 'short_results_table.svg',
+          full: 'full_results_table.svg',
+          quality: 'data_quality_table.svg',
+        };
+        const tableSvgLinks = {
+          short: `${tableDir}/${tableSvgFiles.short}`,
+          full: `${tableDir}/${tableSvgFiles.full}`,
+          quality: `${tableDir}/${tableSvgFiles.quality}`,
+        };
+        const files = [
+          { name: `${tableDir}/short_results_table.tex`, content: this.shortResultsLatex(rows, title) },
+          { name: `${tableDir}/full_results_table.tex`, content: this.fullResultsLatex(rows, title) },
+          { name: `${tableDir}/data_quality_table.tex`, content: this.dataQualityLatex(rows, title) },
+          { name: `${tableDir}/tables.md`, content: this.resultsMarkdown(rows, title, tableSvgFiles) },
+        ];
+
+        const charts = this.exportCharts(kind, rows);
+        const chartDescriptions = this.exportChartDescriptions(kind)
+          .map(([file, chartTitle, description]) => [`${imageDir}/${file}`, chartTitle, description]);
+        for (const chart of charts) {
+          files.push({ name: `${imageDir}/${chart.name}`, content: chart.svg });
+        }
+
+        files.push({ name: `report_${id}.md`, content: this.exportReportMarkdown(kind, title, rows, chartDescriptions, tableSvgLinks) });
+        files.push({ name: `README_${id}.md`, content: this.exportReadme(kind, title, rows, chartDescriptions, id, tableDir) });
+        return { label, folder: this.exportFolderPrefix() || undefined, files };
+      },
+
+      defaultReportId(kind) {
+        if (kind === 'overview') return '00_overview';
+        if (this.filters.criteriaId) {
+          const c = this.options.criteria.find(item => item.id === this.filters.criteriaId);
+          return `01_${this.slug(c ? c.name_de : this.filters.criteriaId)}`;
+        }
+        return '01_selected_analysis';
+      },
+
+      exportAnalysisRows() {
+        if (this.filters.criteriaId) {
+          const c = this.options.criteria.find(item => item.id === this.filters.criteriaId);
+          const pairs = this.analysis?.pairs || [];
+          const single = pairs.map(p => Number(p.single_score));
+          const workflow = pairs.map(p => Number(p.workflow_score));
+          const diffs = pairs.map(p => Number(p.diff));
+          const ceiling = this.singleCeilingBuckets(pairs);
+          const d = this.diagnostics();
+          return [{
+            criteriaId: this.filters.criteriaId,
+            criteriaName: c ? c.name_de : this.filters.criteriaId,
+            n: pairs.length,
+            totalPairs: d.totalPairs || 0,
+            validPairs: d.validPairs || 0,
+            selectedPairs: d.selectedPairs || 0,
+            ceilingSkippedPairs: d.ceilingSkippedPairs || 0,
+            errorPairs: d.errorPairs || 0,
+            reviewPairs: d.reviewPairs || 0,
+            skippedPairs: d.skippedPairs || 0,
+            uncompletePairs: d.uncompletePairs || 0,
+            singleMean: this.mean(single),
+            workflowMean: this.mean(workflow),
+            meanDiff: this.mean(diffs),
+            singlePerfect: ceiling.perfect,
+            singleNear: ceiling.near,
+            singleBelow: ceiling.below,
+            test: this.tTestForPairs(pairs),
+            fallback: this.tTestFallbackForPairs(pairs),
+          }];
+        }
+        return this.overviewRows();
+      },
+
+      exportCharts(kind, rows) {
+        if (kind === 'overview') {
+          return [
+            {
+              name: 'chart_mean_difference_by_criterion.svg',
+              svg: this.svgBarChart('Mittlere Differenz nach Kriterium', rows.map(r => ({
+                label: r.criteriaName,
+                value: Number(r.meanDiff || 0),
+              })), { yLabel: 'Workflow - Direkter Aufruf (Prozentpunkte)', diverging: true, showValues: true, gridLines: true, valueDigits: 1 }),
+            },
+            {
+              name: 'chart_mean_direkter_aufruf_vs_workflow.svg',
+            svg: this.svgGroupedBarChart('Mittelwert Direkter Aufruf vs Workflow', rows.map(r => ({
+              label: r.criteriaName,
+              a: Number(r.singleMean || 0),
+              b: Number(r.workflowMean || 0),
+            })), { aLabel: 'Direkt', bLabel: 'Workflow', yLabel: 'Mittlerer Score (%)', min: 0, max: 100, showValues: true, gridLines: true, valueDigits: 1, legendPosition: 'bottom' }),
+            },
+            {
+              name: 'chart_data_quality_by_criterion.svg',
+              svg: this.svgDataQualityChart('Datenqualitaet nach Kriterium', rows),
+            },
+            {
+              name: 'chart_ceiling_effect_by_criterion.svg',
+              svg: this.svgStackedBarChart('Verbesserungspotenzial des direkten Aufrufs', rows.map(r => ({
+                label: r.criteriaName,
+                a: Number(r.singlePerfect || 0),
+                b: Number(r.singleNear || 0),
+                c: Number(r.singleBelow || 0),
+              })), {
+                aLabel: 'Direkter Aufruf 100',
+                bLabel: 'Direkter Aufruf 75-99',
+                cLabel: 'Direkter Aufruf <75',
+                yLabel: 'Anzahl Paare',
+              }),
+            },
+          ];
+        }
+
+        const pairs = this.analysis?.pairs || [];
+        const diffs = pairs.map(p => Number(p.diff)).filter(Number.isFinite);
+        const singleScoreBins = this.singleScorePotentialBins(pairs);
+        const diffRows = pairs.map(p => ({
+          label: `Q${p.question_id} #${p.run_nr || '-'}`,
+          value: Number(p.diff),
+        }));
+        const diffSampleRows = pairs.slice(0, 120).map(p => ({
+          label: `Q${p.question_id} #${p.run_nr || '-'}`,
+          value: Number(p.diff),
+        }));
+        const diffPartSize = 100;
+        const diffPartCharts = [];
+        for (let start = 0; start < pairs.length; start += diffPartSize) {
+          const partPairs = pairs.slice(start, start + diffPartSize);
+          const partNumber = Math.floor(start / diffPartSize) + 1;
+          const totalParts = Math.max(1, Math.ceil(pairs.length / diffPartSize));
+          const partRows = partPairs.map(p => ({
+            label: `Q${p.question_id} #${p.run_nr || '-'}`,
+            value: Number(p.diff),
+          }));
+          diffPartCharts.push({
+            name: `chart_paired_differences_part_${String(partNumber).padStart(3, '0')}.svg`,
+            svg: this.svgBarChart(`Paarweise Differenzen Teil ${partNumber}/${totalParts}`, partRows, {
+              yLabel: 'Workflow - Direkter Aufruf (Prozentpunkte)',
+              xLabel: `Antwortpaare ${start + 1}-${start + partPairs.length} von ${pairs.length}`,
+              diverging: true,
+              showXLabels: false,
+              showValues: partRows.length <= 60,
+              gridLines: true,
+              valueDigits: 1,
+            }),
+          });
+        }
+        return [
+          {
+            name: 'chart_paired_differences.svg',
+            svg: this.svgBarChart('Paarweise Differenzen', diffRows, {
+              yLabel: 'Workflow - Direkter Aufruf (Prozentpunkte)',
+              xLabel: 'Antwortpaare, geordnet nach Frage/Run',
+              diverging: true,
+              dynamicWidth: true,
+              showXLabels: false,
+              showValues: diffRows.length <= 160,
+              gridLines: true,
+              valueDigits: 1,
+            }),
+          },
+          {
+            name: 'chart_paired_differences_sample.svg',
+            svg: this.svgBarChart('Paarweise Differenzen (Sample)', diffSampleRows, {
+              yLabel: 'Workflow - Direkter Aufruf (Prozentpunkte)',
+              xLabel: 'Erste 120 Antwortpaare, geordnet nach Frage/Run',
+              diverging: true,
+              showXLabels: false,
+              showValues: true,
+              gridLines: true,
+              valueDigits: 1,
+            }),
+          },
+          ...diffPartCharts,
+          {
+            name: 'chart_difference_distribution.svg',
+            svg: this.svgHistogram('Verteilung der Paardifferenzen', diffs, 10, { separateZero: true }),
+          },
+          {
+            name: 'chart_scoreverteilung_direkter_aufruf.svg',
+            svg: this.svgBarChart('Verteilung der Scores des direkten Aufrufs', singleScoreBins.map(b => ({
+              label: b.label,
+              value: b.count,
+              color: b.color,
+            })), {
+              yLabel: 'Anzahl Paare',
+              xLabel: 'Score des direkten Aufrufs',
+              min: 0,
+              showValues: true,
+              gridLines: true,
+              valueDigits: 0,
+            }),
+          },
+          {
+            name: 'chart_direkter_aufruf_vs_workflow_scatter.svg',
+            svg: this.svgScatter('Scorevergleich Direkter Aufruf vs Workflow', pairs.map(p => ({
+              x: Number(p.single_score),
+              y: Number(p.workflow_score),
+            }))),
+          },
+        ];
+      },
+
+      exportChartDescriptions(kind) {
+        if (kind === 'overview') {
+          return [
+            ['chart_mean_difference_by_criterion.svg', 'Mittlere Differenz nach Kriterium', 'Einheit: Prozentpunkte. Bedeutung: Workflow minus Direkter Aufruf. Positive Werte bedeuten Verbesserung durch den Workflow, negative Werte Verschlechterung.'],
+            ['chart_mean_direkter_aufruf_vs_workflow.svg', 'Mittelwert Direkter Aufruf vs Workflow', 'Zeigt die durchschnittlichen Scores pro Kriterium und macht mögliche Deckeneffekte sichtbar.'],
+            ['chart_data_quality_by_criterion.svg', 'Datenqualitaet nach Kriterium', 'Zeigt die exklusiven Zaehlkategorien pro Kriterium: ausgewaehlt, ausgelassen, Review, manuell ausgeschlossen, Fehler und unvollstaendig. Gezaehlt wird ohne Doppelzaehlung nach Prioritaet: unvollstaendig vor Fehler vor manuell ausgeschlossen vor Review.'],
+            ['chart_ceiling_effect_by_criterion.svg', 'Verbesserungspotenzial des direkten Aufrufs', 'Zeigt pro Kriterium, wie viele Antworten des direkten Aufrufs bereits 100%, nahe 100% oder deutlich darunter lagen. Viele 100%-Werte bedeuten Deckeneffekt: Der Workflow kann kaum noch verbessern, aber verschlechtern.'],
+          ];
+        }
+        return [
+          ['chart_paired_differences.svg', 'Paarweise Differenzen', 'Zeigt für jedes Paar die Differenz Workflow minus Direkter Aufruf.'],
+          ['chart_paired_differences_sample.svg', 'Paarweise Differenzen (Sample)', 'Zeigt dieselbe Darstellung fuer die ersten 120 Paare. Diese Version ist besser lesbar, aber nicht vollstaendig.'],
+          ['chart_paired_differences_part_001.svg usw.', 'Paarweise Differenzen in Teilen', 'Zusaetzliche mehrteilige Version mit bis zu 100 Paaren pro SVG. Diese Dateien sind besser lesbar als der vollstaendige Chart und decken zusammen alle Paare ab.'],
+          ['chart_difference_distribution.svg', 'Verteilung der Paardifferenzen', 'Zeigt, ob der Workflow-Effekt stabil ist oder stark streut.'],
+          ['chart_scoreverteilung_direkter_aufruf.svg', 'Verteilung der Scores des direkten Aufrufs', 'Zeigt, wie viele Antworten des direkten Aufrufs bereits nahe oder genau bei 100% lagen. Das macht den Deckeneffekt sichtbar.'],
+          ['chart_direkter_aufruf_vs_workflow_scatter.svg', 'Scorevergleich Direkter Aufruf vs Workflow', 'Punkte oberhalb der Diagonale bedeuten, dass der Workflow höher bewertet wurde als der direkte Aufruf. Gleiche Score-Kombinationen werden leicht versetzt und mit ihrer Anzahl beschriftet.'],
+        ];
+      },
+
+      exportReadme(kind, title, rows, chartDescriptions, reportId, tableDir) {
+        const lines = [
+          `# ${title}`,
+          '',
+          `Exporttyp: ${kind === 'overview' ? 'Übersicht' : 'Detailanalyse'}`,
+          ...this.selectionSummaryLines(kind),
+          `Review-Antworten eingeschlossen: ${this.filters.includeReview ? 'ja' : 'nein'}`,
+          `Manuell ausgeschlossene Antworten eingeschlossen: ${this.filters.includeExcluded ? 'ja' : 'nein'}`,
+          '',
+          '## Dateien',
+          '',
+          `- \`report_${reportId}.md\`: Markdown-Report mit eingebundenen Chart-Links.`,
+          `- \`${tableDir}/short_results_table.tex\`: kompakte LaTeX-Ergebnistabelle für den Haupttext.`,
+          `- \`${tableDir}/full_results_table.tex\`: ausführliche LaTeX-Tabelle für Anhang oder Querformatseite.`,
+          `- \`${tableDir}/data_quality_table.tex\`: Tabelle zur Datengrundlage und Bereinigung.`,
+          `- \`${tableDir}/short_results_table.svg\`: gerenderte LaTeX-Ergebnistabelle als SVG.`,
+          `- \`${tableDir}/full_results_table.svg\`: gerenderte ausfuehrliche LaTeX-Tabelle als SVG.`,
+          `- \`${tableDir}/data_quality_table.svg\`: gerenderte Tabelle zur Datengrundlage als SVG.`,
+          `- \`${tableDir}/tables.md\`: Markdown-Kopie der Ergebnistabellen.`,
+          '',
+          '## Diagramme',
+          '',
+          ...chartDescriptions.map(([file, chartTitle, description]) => `- \`${file}\`: ${chartTitle}. ${description}`),
+          '',
+          '## Übersicht zu den Charts',
+          '',
+          ...chartDescriptions.flatMap(([file, chartTitle, description]) => [
+            `### ${chartTitle}`,
+            '',
+            `| Feld | Wert |`,
+            `|---|---|`,
+            `| Datei | \`${file}\` |`,
+            `| Bedeutung | ${description} |`,
+            '',
+            this.markdownChartFields(file),
+            '',
+          ]),
+          '## Kurzergebnisse',
+          '',
+          this.markdownShortTable(rows),
+          '',
+          this.latexTableSvgBlock(`${tableDir}/short_results_table.svg`, 'Kurze Ergebnistabelle'),
+          '',
+          this.markdownTableFields('short'),
+          '',
+        ];
+        return lines.join('\n');
+      },
+
+      exportReportMarkdown(kind, title, rows, chartDescriptions, tableSvgs) {
+        return [
+          `# ${title}`,
+          '',
+          ...this.selectionSummaryLines(kind),
+          `Review-Antworten eingeschlossen: ${this.filters.includeReview ? 'ja' : 'nein'}`,
+          `Manuell ausgeschlossene Antworten eingeschlossen: ${this.filters.includeExcluded ? 'ja' : 'nein'}`,
+          '',
+          '## Kurze Ergebnistabelle',
+          '',
+          this.markdownShortTable(rows),
+          '',
+          this.latexTableSvgBlock(tableSvgs.short, 'Kurze Ergebnistabelle'),
+          '',
+          this.markdownTableFields('short'),
+          '',
+          '## Ausführliche Statistiktabelle',
+          '',
+          this.markdownFullTable(rows),
+          '',
+          this.latexTableSvgBlock(tableSvgs.full, 'Ausfuehrliche Statistiktabelle'),
+          '',
+          this.markdownTableFields('full'),
+          '',
+          '## Tabelle zur Datengrundlage',
+          '',
+          this.markdownDataQualityTable(rows),
+          '',
+          this.latexTableSvgBlock(tableSvgs.quality, 'Tabelle zur Datengrundlage'),
+          '',
+          this.markdownTableFields('quality'),
+          '',
+          '## Diagramme',
+          '',
+          ...chartDescriptions.flatMap(([file, chartTitle, description]) => [
+            `### ${chartTitle}`,
+            '',
+            `| Feld | Wert |`,
+            `|---|---|`,
+            `| Datei | \`${file}\` |`,
+            `| Bedeutung | ${description} |`,
+            '',
+            `![${chartTitle}](${file})`,
+            '',
+            this.markdownChartFields(file),
+            '',
+          ]),
+        ].join('\n');
+      },
+
+      resultText(row) {
+        const test = row.test;
+        if (!test) return row.fallback ? 'keine Streuung' : 'zu wenig Daten';
+        if (!test.significant) return 'nicht signifikant';
+        return Number(row.meanDiff || 0) >= 0 ? 'signifikante Verbesserung' : 'signifikante Verschlechterung';
+      },
+
+      shortResultsLatex(rows, caption) {
+        const body = rows.map(row => [
+          this.latexEscape(row.criteriaName),
+          row.n ?? row.selectedPairs ?? 0,
+          this.num(row.singleMean, 1),
+          this.num(row.workflowMean, 1),
+          this.signedNum(row.meanDiff, 1),
+          row.test ? this.formatP(row.test.p) : 'k.A.',
+          this.latexEscape(this.resultText(row)),
+        ].join(' & ') + ' \\\\').join('\n');
+        return [
+          '\\begin{table}[htbp]',
+          '\\centering',
+          `\\caption{${this.latexEscape(caption)} -- Kurzergebnisse}`,
+          '\\begin{tabular}{lrrrrrl}',
+          '\\toprule',
+          'Kriterium & n & Mittel Direkter Aufruf & Mittel Workflow & Diff. & p-Wert & Ergebnis \\\\',
+          '\\midrule',
+          body,
+          '\\bottomrule',
+          '\\end{tabular}',
+          '\\\\[2mm]',
+          '\\footnotesize Gepaarter zweiseitiger t-Test, $\\alpha=0.05$. Diff. = Workflow $-$ Direkter Aufruf. Freiheitsgrade: $df=n-1$.',
+          '\\end{table}',
+          '',
+        ].join('\n');
+      },
+
+      fullResultsLatex(rows, caption) {
+        const body = rows.map(row => {
+          const test = row.test;
+          const ci = test ? `[${this.signedNum(test.ciLow, 2)}; ${this.signedNum(test.ciHigh, 2)}]` : 'k.A.';
+          return [
+            this.latexEscape(row.criteriaName),
+            row.n ?? row.selectedPairs ?? 0,
+            this.num(row.singleMean, 2),
+            this.num(row.workflowMean, 2),
+            this.signedNum(row.meanDiff, 2),
+            test ? this.num(test.sd, 2) : 'k.A.',
+            test ? this.num(test.t, 3) : 'k.A.',
+            test ? test.df : ((row.n || 0) > 1 ? (row.n - 1) : 'k.A.'),
+            test ? this.formatP(test.p) : 'k.A.',
+            ci,
+            test ? this.num(test.dz, 2) : 'k.A.',
+            this.latexEscape(this.resultText(row)),
+          ].join(' & ') + ' \\\\';
+        }).join('\n');
+        return [
+          '\\begin{sidewaystable}[htbp]',
+          '\\centering',
+          `\\caption{${this.latexEscape(caption)} -- ausführliche Statistik}`,
+          '\\begin{tabular}{lrrrrrrrrlll}',
+          '\\toprule',
+          'Kriterium & n & Mittel Direkter Aufruf & Mittel Workflow & Diff. & SD Diff. & t-Wert & df & p-Wert & 95\\% KI & Cohen dz & Ergebnis \\\\',
+          '\\midrule',
+          body,
+          '\\bottomrule',
+          '\\end{tabular}',
+          '\\\\[2mm]',
+          '\\footnotesize Nutzung mit \\texttt{\\textbackslash usepackage\\{rotating\\}}. Gepaarter zweiseitiger t-Test, $\\alpha=0.05$. Diff. = Workflow $-$ Direkter Aufruf.',
+          '\\end{sidewaystable}',
+          '',
+        ].join('\n');
+      },
+
+      dataQualityLatex(rows, caption) {
+        const body = rows.map(row => [
+          this.latexEscape(row.criteriaName),
+          row.totalPairs || 0,
+          row.validPairs || 0,
+          row.selectedPairs || 0,
+          row.ceilingSkippedPairs || 0,
+          row.errorPairs || 0,
+          row.reviewPairs || 0,
+          row.skippedPairs || 0,
+          row.uncompletePairs || 0,
+        ].join(' & ') + ' \\\\').join('\n');
+        return [
+          '\\begin{table}[htbp]',
+          '\\centering',
+          `\\caption{${this.latexEscape(caption)} -- Datengrundlage}`,
+          '\\begin{tabular}{lrrrrrrrr}',
+          '\\toprule',
+          'Kriterium & Gesamt & Gültig & Ausgewählt & Ausgelassen & Fehler & Review & Manuell ausgeschlossen & Unvollständig \\\\',
+          '\\midrule',
+          body,
+          '\\bottomrule',
+          '\\end{tabular}',
+          '\\end{table}',
+          '',
+        ].join('\n');
+      },
+
+      resultsMarkdown(rows, title, tableSvgs) {
+        return [
+          `# ${title}`,
+          '',
+          '## Kurztabelle',
+          '',
+          this.markdownShortTable(rows),
+          '',
+          this.latexTableSvgBlock(tableSvgs.short, 'Kurztabelle'),
+          '',
+          this.markdownTableFields('short'),
+          '',
+          '## Ausführliche Tabelle',
+          '',
+          this.markdownFullTable(rows),
+          '',
+          this.latexTableSvgBlock(tableSvgs.full, 'Ausfuehrliche Tabelle'),
+          '',
+          this.markdownTableFields('full'),
+          '',
+          '## Tabelle zur Datengrundlage',
+          '',
+          this.markdownDataQualityTable(rows),
+          '',
+          this.latexTableSvgBlock(tableSvgs.quality, 'Tabelle zur Datengrundlage'),
+          '',
+          this.markdownTableFields('quality'),
+          '',
+        ].join('\n');
+      },
+
+      latexTableSvgBlock(file, title) {
+        return [
+          'LaTeX-gerenderte Tabelle:',
+          '',
+          `![${title}](${file})`,
+        ].join('\n');
+      },
+
+      markdownShortTable(rows) {
+        return [
+          '| Kriterium | n | Mittel Direkter Aufruf | Mittel Workflow | Diff. | p-Wert | Ergebnis |',
+          '|---|---:|---:|---:|---:|---:|---|',
+          ...rows.map(row => `| ${row.criteriaName} | ${row.n || 0} | ${this.num(row.singleMean, 1)} | ${this.num(row.workflowMean, 1)} | ${this.signedNum(row.meanDiff, 1)} | ${row.test ? this.formatP(row.test.p) : 'k.A.'} | ${this.resultText(row)} |`),
+        ].join('\n');
+      },
+
+      markdownFullTable(rows) {
+        return [
+          '| Kriterium | n | Mittel Direkter Aufruf | Mittel Workflow | Diff. | SD Diff. | t-Wert | df | p-Wert | 95% KI | Cohen dz | Ergebnis |',
+          '|---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---|',
+          ...rows.map(row => {
+            const test = row.test;
+            const ci = test ? `[${this.signedNum(test.ciLow, 2)}; ${this.signedNum(test.ciHigh, 2)}]` : 'k.A.';
+            return `| ${row.criteriaName} | ${row.n || 0} | ${this.num(row.singleMean, 2)} | ${this.num(row.workflowMean, 2)} | ${this.signedNum(row.meanDiff, 2)} | ${test ? this.num(test.sd, 2) : 'k.A.'} | ${test ? this.num(test.t, 3) : 'k.A.'} | ${test ? test.df : 'k.A.'} | ${test ? this.formatP(test.p) : 'k.A.'} | ${ci} | ${test ? this.num(test.dz, 2) : 'k.A.'} | ${this.resultText(row)} |`;
+          }),
+        ].join('\n');
+      },
+
+      markdownDataQualityTable(rows) {
+        return [
+          '| Kriterium | Gesamt | Gültig | Ausgewählt | Ausgelassen | Fehler | Review | Manuell ausgeschlossen | Unvollständig |',
+          '|---|---:|---:|---:|---:|---:|---:|---:|---:|',
+          ...rows.map(row => `| ${row.criteriaName} | ${row.totalPairs || 0} | ${row.validPairs || 0} | ${row.selectedPairs || 0} | ${row.ceilingSkippedPairs || 0} | ${row.errorPairs || 0} | ${row.reviewPairs || 0} | ${row.skippedPairs || 0} | ${row.uncompletePairs || 0} |`),
+        ].join('\n');
+      },
+
+      markdownTableFields(kind) {
+        const common = {
+          'Kriterium': 'Bewerteter Qualitätsbereich, z.B. Richtigkeit oder Vollständigkeit.',
+          'n': 'Anzahl der vollständigen ausgewählten Paare, die in Statistik und Mittelwerte eingehen.',
+          'Mittel Direkter Aufruf': 'Durchschnittlicher Score der Antworten des direkten Aufrufs in Prozent.',
+          'Mittel Workflow': 'Durchschnittlicher Score der Workflow-Antworten in Prozent.',
+          'Diff.': 'Mittlere Differenz Workflow minus Direkter Aufruf in Prozentpunkten.',
+          'p-Wert': 'Wahrscheinlichkeit für einen mindestens so starken Effekt, falls in Wahrheit kein Unterschied besteht.',
+          'Ergebnis': 'Kurze Interpretation des Tests, z.B. signifikante Verbesserung oder nicht signifikant.',
+        };
+        const full = {
+          ...common,
+          'SD Diff.': 'Standardabweichung der paarweisen Differenzen; zeigt die Streuung des Effekts.',
+          't-Wert': 'Teststatistik des gepaarten t-Tests; wird mit dem kritischen Wert bzw. p-Wert beurteilt.',
+          'df': 'Freiheitsgrade des Tests, hier normalerweise n minus 1.',
+          '95% KI': '95-Prozent-Konfidenzintervall der mittleren Differenz; enthält es 0, ist der Effekt unsicherer.',
+          'Cohen dz': 'Effektstärke für gepaarte Daten; macht die Größe des Effekts vergleichbarer.',
+        };
+        const quality = {
+          'Kriterium': 'Bewerteter Qualitätsbereich.',
+          'Gesamt': 'Alle gefundenen Paare nach den gesetzten Filtern vor Bereinigung.',
+          'Gueltig': 'Paare nach Abzug von Unvollstaendig und Fehler. Review und manuell ausgeschlossen bleiben gueltig, werden aber je nach Filter nicht ausgewaehlt.',
+          'Ausgewählt': 'Paare, die tatsächlich in Analyse, Statistik und Charts verwendet werden.',
+          'Ausgelassen': 'Paare, die durch den optionalen Direkt-Score-Behalten-Bereich ausgeschlossen wurden, weil der direkte Aufruf außerhalb des eingestellten Bereichs lag.',
+          'Fehler': 'Vollständig paarbare Paare, bei denen mindestens eine Seite einen technischen Fehler hatte. Unvollständige oder unpaarbare Fälle werden vorher als Unvollständig gezählt.',
+          'Review': 'Gueltige Paare mit Review-Markierung; standardmaessig nicht in der Analyse enthalten, wenn Review nicht eingeschlossen ist.',
+          'Manuell ausgeschlossen': 'Gueltige Paare, die vom Nutzer manuell aus der Analyse ausgeschlossen wurden. Wird erst nach Unvollstaendig und Fehler gezaehlt.',
+          'Unvollstaendig': 'Paare oder unpaarbare Workflow-Laeufe mit fehlender Seite, laufendem Status, fehlendem Score oder fehlender gueltiger Paar-ID. Diese Kategorie hat Vorrang vor Fehler und manuell ausgeschlossen.',
+        };
+        const fields = kind === 'quality' ? quality : kind === 'full' ? full : common;
+        return [
+          'Felderklärung:',
+          '',
+          ...Object.entries(fields).map(([field, explanation]) => `- **${field}**: ${explanation}`),
+        ].join('\n');
+      },
+
+      markdownChartFields(file) {
+        const name = String(file || '').split('/').pop();
+        const fieldSets = {
+          'chart_mean_difference_by_criterion.svg': {
+            'X-Achse / Kriterium': 'Verglichenes Bewertungskriterium.',
+            'Y-Achse / mittlere Differenz': 'Workflow minus Direkter Aufruf in Prozentpunkten.',
+            'Y-Skala': 'Skala der mittleren Differenzwerte mit Hilfslinien.',
+            'Zahlen auf Balken': 'Konkrete mittlere Differenz pro Kriterium.',
+            '0-Linie': 'Kein Unterschied zwischen Workflow und Direkter Aufruf.',
+            'Positive Werte': 'Workflow wurde im Mittel höher bewertet.',
+            'Negative Werte': 'Direkter Aufruf wurde im Mittel höher bewertet.',
+          },
+          'chart_mean_direkter_aufruf_vs_workflow.svg': {
+            'Kriterium': 'Bewerteter Qualitätsbereich.',
+            'Direkter Aufruf': 'Mittlerer Score der Antworten des direkten Aufrufs.',
+            'Workflow': 'Mittlerer Score der Workflow-Antworten.',
+            'Y-Achse': 'Durchschnittlicher Score in Prozent.',
+            'Y-Skala': 'Skala von 0 bis 100 Prozent mit Hilfslinien.',
+            'Zahlen auf Balken': 'Konkreter Mittelwert pro Methode.',
+            'Zweck': 'Schneller Vergleich der beiden Methoden pro Kriterium.',
+          },
+          'chart_data_quality_by_criterion.svg': {
+            'Kriterium': 'Bewerteter Qualitätsbereich.',
+            'Ausgewählt': 'Paare, die in die Analyse eingehen.',
+            'Review': 'Paare, die manuell geprüft werden sollten.',
+            'Y-Achse': 'Anzahl der Paare.',
+            'Y-Skala': 'Skala der Paaranzahl mit Hilfslinien.',
+            'Zahlen auf Balken': 'Konkrete Anzahl der Paare.',
+            'Zweck': 'Zeigt, ob die Datengrundlage pro Kriterium stabil genug ist.',
+          },
+          'chart_ceiling_effect_by_criterion.svg': {
+            'Direkter Aufruf 100 / rot': 'Direkter Aufruf war bereits perfekt; kaum messbares Verbesserungspotenzial.',
+            'Direkter Aufruf 75-99 / orange': 'Direkter Aufruf war nahe an perfekt; wenig Verbesserungspotenzial.',
+            'Direkter Aufruf <75 / grün': 'Direkter Aufruf hatte klarere Fehler; Workflow konnte eher verbessern.',
+            'Y-Achse': 'Anzahl der Paare.',
+            'Y-Skala': 'Skala der Paaranzahl mit Hilfslinien.',
+            'Zweck': 'Macht den Deckeneffekt pro Kriterium sichtbar.',
+          },
+          'chart_paired_differences.svg': {
+            'X-Achse / Antwortpaar': 'Ein gepaarter Vergleich aus direktem Aufruf und Workflow.',
+            'Y-Achse / Differenz': 'Workflow minus Direkter Aufruf in Prozentpunkten.',
+            'Zahlen auf Balken': 'Konkrete Differenz des jeweiligen Antwortpaars in Prozentpunkten.',
+            'Y-Skala': 'Skala der Differenzwerte; positive und negative Bereiche werden getrennt sichtbar.',
+            '0-Linie': 'Beide Antworten wurden gleich bewertet.',
+            'Positive Balken': 'Workflow war besser.',
+            'Negative Balken': 'Direkter Aufruf war besser.',
+          },
+          'chart_difference_distribution.svg': {
+            'X-Achse': 'Bereich der paarweisen Differenz in Prozentpunkten.',
+            'Y-Achse': 'Anzahl der Paare in diesem Bereich.',
+            'Zahlen auf Balken': 'Anzahl der Paare in diesem Differenzbereich.',
+            'Grüne Balken': 'Differenzbereich liegt oberhalb von 0; Workflow war besser.',
+            'Rote Balken': 'Differenzbereich liegt unterhalb von 0; Direkter Aufruf war besser.',
+            'Mitte bei 0': 'Kein Unterschied zwischen Workflow und Direkter Aufruf.',
+            'Rechts von 0': 'Workflow-Vorteile.',
+            'Links von 0': 'Workflow-Nachteile.',
+          },
+          'chart_scoreverteilung_direkter_aufruf.svg': {
+            '<50 / grün': 'Direkter Aufruf war klar schwach; viel Verbesserungspotenzial.',
+            '50-74 / hellgrün': 'Direkter Aufruf war teilweise richtig; noch deutliches Verbesserungspotenzial.',
+            '75-99 / orange': 'Direkter Aufruf war nahe an vollständig; wenig Verbesserungspotenzial.',
+            '100 / rot': 'Direkter Aufruf war bereits perfekt; Workflow kann nicht weiter verbessern und nur gleich bleiben oder verschlechtern.',
+            'Zahlen auf Balken': 'Anzahl der Paare in dieser Score-Gruppe.',
+            'Y-Achse': 'Anzahl der Paare.',
+            'Zweck': 'Zeigt den Deckeneffekt in der Detailanalyse.',
+          },
+          'chart_direkter_aufruf_vs_workflow_scatter.svg': {
+            'X-Achse': 'Score des direkten Aufrufs in Prozent.',
+            'Y-Achse': 'Score des Workflows in Prozent.',
+            'X/Y-Skala': 'Skalen von 0 bis 100 Prozent mit Hilfslinien.',
+            'Diagonale': 'Gleicher Score bei direktem Aufruf und Workflow.',
+            'Punkte oberhalb': 'Workflow war besser.',
+            'Punkte unterhalb': 'Direkter Aufruf war besser.',
+            'Zahlen an Punkten': 'Mehrere Paare liegen auf derselben Score-Kombination.',
+          },
+        };
+        const fields = fieldSets[name] || {
+          'Datei': 'Exportiertes Diagramm.',
+          'Bedeutung': 'Visualisiert einen Teil der statistischen Auswertung.',
+        };
+        return [
+          'Felderklärung:',
+          '',
+          ...Object.entries(fields).map(([field, explanation]) => `- **${field}**: ${explanation}`),
+        ].join('\n');
+      },
+
+      svgBarChart(title, rows, options = {}) {
+        const showXLabels = options.showXLabels !== false;
+        const width = options.dynamicWidth && !showXLabels
+          ? Math.max(980, 145 + rows.length * 7)
+          : 980;
+        const height = 560, left = 115, right = 30, top = 65, bottom = showXLabels ? 170 : 95;
+        const values = rows.map(r => Number(r.value)).filter(Number.isFinite);
+        let minValue = options.diverging ? Math.min(-5, ...values) : (options.min ?? 0);
+        let maxValue = options.diverging ? Math.max(5, ...values) : (options.max ?? Math.max(1, ...values));
+        if (options.diverging && values.length) {
+          const span = Math.max(1, maxValue - minValue);
+          minValue -= span * 0.08;
+          maxValue += span * 0.08;
+        }
+        const plotW = width - left - right, plotH = height - top - bottom;
+        const scaleY = v => top + (maxValue - v) / (maxValue - minValue) * plotH;
+        const zeroY = scaleY(0);
+        const barW = options.dynamicWidth && !showXLabels
+          ? Math.max(3, Math.min(6, plotW / Math.max(1, rows.length) * 0.72))
+          : Math.max(4, plotW / Math.max(1, rows.length) * 0.72);
+        const step = plotW / Math.max(1, rows.length);
+        const bars = rows.map((r, i) => {
+          const x = left + i * step + (step - barW) / 2;
+          const y = Math.min(scaleY(Number(r.value)), zeroY);
+          const h = Math.abs(scaleY(Number(r.value)) - zeroY);
+          const fill = r.color || (Number(r.value) >= 0 ? '#15803d' : '#dc2626');
+          const rawValueY = Number(r.value) >= 0 ? y - 8 : y + h + 18;
+          const valueY = Math.max(top + 14, Math.min(top + plotH - 4, rawValueY));
+          return [
+            `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${Math.max(1, h).toFixed(1)}" fill="${fill}" opacity="0.78"/>`,
+            options.showValues ? `<text x="${(x + barW / 2).toFixed(1)}" y="${valueY.toFixed(1)}" text-anchor="middle" font-size="16" font-weight="700" fill="#0f172a">${this.xmlEscape(this.num(r.value, options.valueDigits ?? 0))}</text>` : '',
+          ].join('\n');
+        }).join('\n');
+        const tickCount = 4;
+        const ticks = options.gridLines ? Array.from({ length: tickCount + 1 }, (_, i) => {
+          const value = minValue + (maxValue - minValue) * i / tickCount;
+          const y = scaleY(value);
+          return [
+            `<line x1="${left}" y1="${y.toFixed(1)}" x2="${width - right}" y2="${y.toFixed(1)}" stroke="#e2e8f0"/>`,
+            `<text x="${left - 10}" y="${(y + 5).toFixed(1)}" text-anchor="end" font-size="16" fill="#64748b">${Number(value).toFixed(0)}</text>`,
+          ].join('\n');
+        }).join('\n') : '';
+        const labels = !showXLabels ? '' : rows.map((r, i) => {
+          const x = left + i * step + step / 2;
+          const y = top + plotH + 24;
+          return `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" transform="rotate(-45 ${x.toFixed(1)} ${y.toFixed(1)})" font-size="20" text-anchor="end" fill="#475569">${this.xmlEscape(this.shorten(r.label, 18))}</text>`;
+        }).join('\n');
+        return this.svgWrap(width, height, title, [
+          `<text x="${width / 2}" y="34" text-anchor="middle" font-size="26" font-weight="700" fill="#0f172a">${this.xmlEscape(title)}</text>`,
+          `<text x="28" y="${top + plotH / 2}" transform="rotate(-90 28 ${top + plotH / 2})" text-anchor="middle" font-size="24" fill="#475569">${this.xmlEscape(options.yLabel || '')}</text>`,
+          options.xLabel ? `<text x="${left + plotW / 2}" y="${height - 24}" text-anchor="middle" font-size="24" fill="#475569">${this.xmlEscape(options.xLabel)}</text>` : '',
+          `<line x1="${left}" y1="${zeroY.toFixed(1)}" x2="${width - right}" y2="${zeroY.toFixed(1)}" stroke="#94a3b8" stroke-dasharray="4 4"/>`,
+          `<line x1="${left}" y1="${top}" x2="${left}" y2="${top + plotH}" stroke="#cbd5e1"/>`,
+          `<line x1="${left}" y1="${top + plotH}" x2="${width - right}" y2="${top + plotH}" stroke="#cbd5e1"/>`,
+          ticks,
+          bars,
+          labels,
+        ].join('\n'));
+      },
+
+      svgGroupedBarChart(title, rows, options = {}) {
+        const width = 980, height = 585, left = 115, right = 30, top = 72, bottom = options.legendPosition === 'bottom' ? 205 : 170;
+        const maxValue = options.max ?? Math.max(1, ...rows.flatMap(r => [Number(r.a), Number(r.b)]));
+        const minValue = options.min ?? 0;
+        const plotW = width - left - right, plotH = height - top - bottom;
+        const scaleY = v => top + (maxValue - v) / (maxValue - minValue) * plotH;
+        const step = plotW / Math.max(1, rows.length);
+        const barW = Math.max(3, step * 0.28);
+        const bars = rows.map((r, i) => {
+          const cx = left + i * step + step / 2;
+          const ya = scaleY(Number(r.a)), yb = scaleY(Number(r.b));
+          return [
+            `<rect x="${(cx - barW - 1).toFixed(1)}" y="${ya.toFixed(1)}" width="${barW.toFixed(1)}" height="${(top + plotH - ya).toFixed(1)}" fill="#64748b" opacity="0.78"/>`,
+            `<rect x="${(cx + 1).toFixed(1)}" y="${yb.toFixed(1)}" width="${barW.toFixed(1)}" height="${(top + plotH - yb).toFixed(1)}" fill="#2563eb" opacity="0.78"/>`,
+            options.showValues ? `<text x="${(cx - barW / 2 - 1).toFixed(1)}" y="${(ya - 7).toFixed(1)}" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">${this.num(r.a, options.valueDigits ?? 0)}</text>` : '',
+            options.showValues ? `<text x="${(cx + barW / 2 + 1).toFixed(1)}" y="${(yb - 7).toFixed(1)}" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">${this.num(r.b, options.valueDigits ?? 0)}</text>` : '',
+          ].join('\n');
+        }).join('\n');
+        const tickCount = 4;
+        const ticks = options.gridLines ? Array.from({ length: tickCount + 1 }, (_, i) => {
+          const value = minValue + (maxValue - minValue) * i / tickCount;
+          const y = scaleY(value);
+          return [
+            `<line x1="${left}" y1="${y.toFixed(1)}" x2="${width - right}" y2="${y.toFixed(1)}" stroke="#e2e8f0"/>`,
+            `<text x="${left - 10}" y="${(y + 5).toFixed(1)}" text-anchor="end" font-size="16" fill="#64748b">${Number(value).toFixed(0)}</text>`,
+          ].join('\n');
+        }).join('\n') : '';
+        const labels = rows.map((r, i) => {
+          const x = left + i * step + step / 2;
+          const y = top + plotH + 24;
+          return `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" transform="rotate(-45 ${x.toFixed(1)} ${y.toFixed(1)})" font-size="20" text-anchor="end" fill="#475569">${this.xmlEscape(this.shorten(r.label, 18))}</text>`;
+        }).join('\n');
+        const legend = options.legendPosition === 'bottom'
+          ? [
+              `<rect x="${left + plotW / 2 - 95}" y="${height - 42}" width="18" height="18" fill="#64748b" opacity="0.78"/><text x="${left + plotW / 2 - 70}" y="${height - 27}" font-size="18" fill="#475569">${this.xmlEscape(options.aLabel || 'A')}</text>`,
+              `<rect x="${left + plotW / 2 + 20}" y="${height - 42}" width="18" height="18" fill="#2563eb" opacity="0.78"/><text x="${left + plotW / 2 + 45}" y="${height - 27}" font-size="18" fill="#475569">${this.xmlEscape(options.bLabel || 'B')}</text>`,
+            ].join('\n')
+          : [
+              `<rect x="${width - 315}" y="18" width="18" height="18" fill="#64748b" opacity="0.78"/><text x="${width - 290}" y="33" font-size="20" fill="#475569">${this.xmlEscape(options.aLabel || 'A')}</text>`,
+              `<rect x="${width - 190}" y="18" width="18" height="18" fill="#2563eb" opacity="0.78"/><text x="${width - 165}" y="33" font-size="20" fill="#475569">${this.xmlEscape(options.bLabel || 'B')}</text>`,
+            ].join('\n');
+        return this.svgWrap(width, height, title, [
+          `<text x="${width / 2}" y="34" text-anchor="middle" font-size="26" font-weight="700" fill="#0f172a">${this.xmlEscape(title)}</text>`,
+          legend,
+          `<text x="28" y="${top + plotH / 2}" transform="rotate(-90 28 ${top + plotH / 2})" text-anchor="middle" font-size="24" fill="#475569">${this.xmlEscape(options.yLabel || '')}</text>`,
+          `<line x1="${left}" y1="${top + plotH}" x2="${width - right}" y2="${top + plotH}" stroke="#cbd5e1"/>`,
+          `<line x1="${left}" y1="${top}" x2="${left}" y2="${top + plotH}" stroke="#cbd5e1"/>`,
+          ticks,
+          bars,
+          labels,
+        ].join('\n'));
+      },
+
+      svgStackedBarChart(title, rows, options = {}) {
+        const width = 980, height = 580, left = 115, right = 35, top = 88, bottom = 175;
+        const totals = rows.map(r => Number(r.a || 0) + Number(r.b || 0) + Number(r.c || 0));
+        const maxValue = Math.max(1, ...totals);
+        const plotW = width - left - right, plotH = height - top - bottom;
+        const scaleY = v => top + (maxValue - v) / maxValue * plotH;
+        const step = plotW / Math.max(1, rows.length);
+        const barW = Math.max(8, step * 0.54);
+        const colors = ['#dc2626', '#f59e0b', '#16a34a'];
+        const bars = rows.map((r, i) => {
+          const x = left + i * step + (step - barW) / 2;
+          let y = top + plotH;
+          const parts = [
+            { value: Number(r.a || 0), color: colors[0] },
+            { value: Number(r.b || 0), color: colors[1] },
+            { value: Number(r.c || 0), color: colors[2] },
+          ];
+          const rects = parts.map(part => {
+            const h = part.value / maxValue * plotH;
+            y -= h;
+            return h <= 0 ? '' : `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${Math.max(1, h).toFixed(1)}" fill="${part.color}" opacity="0.82"/>`;
+          }).join('\n');
+          const total = parts.reduce((sum, part) => sum + part.value, 0);
+          return [
+            rects,
+            `<text x="${(x + barW / 2).toFixed(1)}" y="${(scaleY(total) - 7).toFixed(1)}" text-anchor="middle" font-size="13" fill="#475569">${total}</text>`,
+          ].join('\n');
+        }).join('\n');
+        const tickCount = 4;
+        const ticks = Array.from({ length: tickCount + 1 }, (_, i) => {
+          const value = maxValue * i / tickCount;
+          const y = scaleY(value);
+          return [
+            `<line x1="${left}" y1="${y.toFixed(1)}" x2="${width - right}" y2="${y.toFixed(1)}" stroke="#e2e8f0"/>`,
+            `<text x="${left - 10}" y="${(y + 5).toFixed(1)}" text-anchor="end" font-size="16" fill="#64748b">${Number(value).toFixed(0)}</text>`,
+          ].join('\n');
+        }).join('\n');
+        const labels = rows.map((r, i) => {
+          const x = left + i * step + step / 2;
+          const y = top + plotH + 24;
+          return `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" transform="rotate(-45 ${x.toFixed(1)} ${y.toFixed(1)})" font-size="20" text-anchor="end" fill="#475569">${this.xmlEscape(this.shorten(r.label, 18))}</text>`;
+        }).join('\n');
+        const legendX = width - 560;
+        const legend = [
+          { label: options.aLabel || 'A', color: colors[0], x: legendX },
+          { label: options.bLabel || 'B', color: colors[1], x: legendX + 170 },
+          { label: options.cLabel || 'C', color: colors[2], x: legendX + 350 },
+        ].map(item =>
+          `<rect x="${item.x}" y="54" width="18" height="18" fill="${item.color}" opacity="0.82"/><text x="${item.x + 25}" y="69" font-size="18" fill="#475569">${this.xmlEscape(item.label)}</text>`
+        ).join('\n');
+        return this.svgWrap(width, height, title, [
+          `<text x="${width / 2}" y="34" text-anchor="middle" font-size="26" font-weight="700" fill="#0f172a">${this.xmlEscape(title)}</text>`,
+          legend,
+          `<text x="28" y="${top + plotH / 2}" transform="rotate(-90 28 ${top + plotH / 2})" text-anchor="middle" font-size="24" fill="#475569">${this.xmlEscape(options.yLabel || '')}</text>`,
+          `<line x1="${left}" y1="${top + plotH}" x2="${width - right}" y2="${top + plotH}" stroke="#cbd5e1"/>`,
+          `<line x1="${left}" y1="${top}" x2="${left}" y2="${top + plotH}" stroke="#cbd5e1"/>`,
+          ticks,
+          bars,
+          labels,
+        ].join('\n'));
+      },
+
+      svgDataQualityChart(title, rows) {
+        return this.svgMultiStackedBarChart(title, rows.map(r => ({
+          label: r.criteriaName,
+          parts: [
+            { label: 'Ausgewählt', value: Number(r.selectedPairs || 0), color: '#16a34a' },
+            { label: 'Ausgelassen', value: Number(r.ceilingSkippedPairs || 0), color: '#0f766e' },
+            { label: 'Review', value: Number(r.reviewPairs || 0), color: '#f59e0b' },
+            { label: 'Manuell ausgeschlossen', value: Number(r.skippedPairs || 0), color: '#64748b' },
+            { label: 'Fehler', value: Number(r.errorPairs || 0), color: '#dc2626' },
+            { label: 'Unvollständig', value: Number(r.uncompletePairs || 0), color: '#2563eb' },
+          ],
+        })), { yLabel: 'Paare' });
+      },
+
+      svgMultiStackedBarChart(title, rows, options = {}) {
+        const width = 1120, height = 620, left = 120, right = 40, top = 96, bottom = 190;
+        const totals = rows.map(row => row.parts.reduce((sum, part) => sum + Number(part.value || 0), 0));
+        const maxValue = Math.max(1, ...totals);
+        const plotW = width - left - right, plotH = height - top - bottom;
+        const scaleY = v => top + (maxValue - v) / maxValue * plotH;
+        const step = plotW / Math.max(1, rows.length);
+        const barW = Math.max(8, step * 0.58);
+        const bars = rows.map((row, i) => {
+          const x = left + i * step + (step - barW) / 2;
+          let y = top + plotH;
+          const rects = row.parts.map(part => {
+            const value = Number(part.value || 0);
+            const h = value / maxValue * plotH;
+            y -= h;
+            return h <= 0 ? '' : `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${Math.max(1, h).toFixed(1)}" fill="${part.color}" opacity="0.84"/>`;
+          }).join('\n');
+          const total = row.parts.reduce((sum, part) => sum + Number(part.value || 0), 0);
+          return [
+            rects,
+            `<text x="${(x + barW / 2).toFixed(1)}" y="${(scaleY(total) - 7).toFixed(1)}" text-anchor="middle" font-size="13" fill="#475569">${total}</text>`,
+          ].join('\n');
+        }).join('\n');
+        const tickCount = 4;
+        const ticks = Array.from({ length: tickCount + 1 }, (_, i) => {
+          const value = maxValue * i / tickCount;
+          const y = scaleY(value);
+          return [
+            `<line x1="${left}" y1="${y.toFixed(1)}" x2="${width - right}" y2="${y.toFixed(1)}" stroke="#e2e8f0"/>`,
+            `<text x="${left - 10}" y="${(y + 5).toFixed(1)}" text-anchor="end" font-size="16" fill="#64748b">${Number(value).toFixed(0)}</text>`,
+          ].join('\n');
+        }).join('\n');
+        const labels = rows.map((row, i) => {
+          const x = left + i * step + step / 2;
+          const y = top + plotH + 24;
+          return `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" transform="rotate(-45 ${x.toFixed(1)} ${y.toFixed(1)})" font-size="20" text-anchor="end" fill="#475569">${this.xmlEscape(this.shorten(row.label, 18))}</text>`;
+        }).join('\n');
+        const legendParts = rows[0]?.parts || [];
+        const legend = legendParts.map((part, index) => {
+          const x = 150 + (index % 3) * 300;
+          const y = 52 + Math.floor(index / 3) * 26;
+          return `<rect x="${x}" y="${y}" width="18" height="18" fill="${part.color}" opacity="0.84"/><text x="${x + 25}" y="${y + 15}" font-size="17" fill="#475569">${this.xmlEscape(part.label)}</text>`;
+        }).join('\n');
+        return this.svgWrap(width, height, title, [
+          `<text x="${width / 2}" y="34" text-anchor="middle" font-size="26" font-weight="700" fill="#0f172a">${this.xmlEscape(title)}</text>`,
+          legend,
+          `<text x="28" y="${top + plotH / 2}" transform="rotate(-90 28 ${top + plotH / 2})" text-anchor="middle" font-size="24" fill="#475569">${this.xmlEscape(options.yLabel || '')}</text>`,
+          `<line x1="${left}" y1="${top + plotH}" x2="${width - right}" y2="${top + plotH}" stroke="#cbd5e1"/>`,
+          `<line x1="${left}" y1="${top}" x2="${left}" y2="${top + plotH}" stroke="#cbd5e1"/>`,
+          ticks,
+          bars,
+          labels,
+        ].join('\n'));
+      },
+
+      svgHistogram(title, values, binCount, options = {}) {
+        const bins = options.separateZero
+          ? this.histogramBinsWithZero(values, binCount)
+          : this.histogramBins(values, binCount);
+        return this.svgBarChart(title, bins.map(b => ({
+          label: b.label,
+          value: b.count,
+          color: b.color || (b.center < 0 ? '#dc2626' : b.center > 0 ? '#15803d' : '#64748b'),
+        })), { yLabel: 'Anzahl Paare', min: 0, showValues: true, gridLines: true });
+      },
+
+      histogramBinsWithZero(values, binCount) {
+        const finite = values.map(Number).filter(Number.isFinite);
+        if (!finite.length) return [{ label: 'keine Daten', center: 0, count: 0, color: '#64748b' }];
+        const epsilon = 1e-9;
+        const negative = finite.filter(v => v < -epsilon);
+        const zero = finite.filter(v => Math.abs(v) <= epsilon);
+        const positive = finite.filter(v => v > epsilon);
+        const sideBins = Math.max(1, Math.floor((binCount - 1) / 2));
+        const buildSide = (sideValues, count, negativeSide) => {
+          if (!sideValues.length) return [];
+          const min = negativeSide ? Math.min(...sideValues) : 0;
+          const max = negativeSide ? 0 : Math.max(...sideValues);
+          if (min === max) {
+            return [{
+              label: min.toFixed(0),
+              center: min,
+              count: sideValues.length,
+              color: negativeSide ? '#dc2626' : '#15803d',
+            }];
+          }
+          const width = (max - min) / count;
+          return Array.from({ length: count }, (_, i) => {
+            const low = min + i * width;
+            const high = i === count - 1 ? max : low + width;
+            const bucketCount = sideValues.filter(v => i === count - 1 ? v >= low && v <= high : v >= low && v < high).length;
+            return {
+              label: `${low.toFixed(0)} bis ${high.toFixed(0)}`,
+              center: (low + high) / 2,
+              count: bucketCount,
+              color: negativeSide ? '#dc2626' : '#15803d',
+            };
+          });
+        };
+        return [
+          ...buildSide(negative, sideBins, true),
+          { label: '0', center: 0, count: zero.length, color: '#64748b' },
+          ...buildSide(positive, sideBins, false),
+        ];
+      },
+
+      svgScatter(title, points) {
+        const width = 760, height = 600, left = 100, right = 35, top = 65, bottom = 95;
+        const plotW = width - left - right, plotH = height - top - bottom;
+        const sx = v => left + Number(v) / 100 * plotW;
+        const sy = v => top + (100 - Number(v)) / 100 * plotH;
+        const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+        const validPoints = points.filter(p => Number.isFinite(p.x) && Number.isFinite(p.y));
+        const groups = new Map();
+        for (const p of validPoints) {
+          const key = `${Number(p.x).toFixed(2)}|${Number(p.y).toFixed(2)}`;
+          if (!groups.has(key)) groups.set(key, []);
+          groups.get(key).push(p);
+        }
+        const goldenAngle = Math.PI * (3 - Math.sqrt(5));
+        const circles = [...groups.values()].flatMap(group => {
+          const baseX = sx(group[0].x);
+          const baseY = sy(group[0].y);
+          return group.map((p, index) => {
+            const spread = group.length === 1 ? 0 : Math.min(22, 2.4 * Math.sqrt(index));
+            const angle = index * goldenAngle;
+            const x = clamp(baseX + Math.cos(angle) * spread, left + 4, width - right - 4);
+            const y = clamp(baseY + Math.sin(angle) * spread, top + 4, top + plotH - 4);
+            return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3" fill="#2563eb" opacity="0.48"/>`;
+          });
+        }).join('\n');
+        const labels = [...groups.values()].filter(group => group.length > 1).map(group => {
+          const x = clamp(sx(group[0].x), left + 14, width - right - 14);
+          const y = clamp(sy(group[0].y) - 10, top + 14, top + plotH - 14);
+          return `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">${group.length}</text>`;
+        }).join('\n');
+        const ticks = [0, 25, 50, 75, 100].map(value => [
+          `<line x1="${sx(value).toFixed(1)}" y1="${top}" x2="${sx(value).toFixed(1)}" y2="${(top + plotH).toFixed(1)}" stroke="#e2e8f0"/>`,
+          `<line x1="${left}" y1="${sy(value).toFixed(1)}" x2="${(width - right).toFixed(1)}" y2="${sy(value).toFixed(1)}" stroke="#e2e8f0"/>`,
+          `<text x="${sx(value).toFixed(1)}" y="${(top + plotH + 24).toFixed(1)}" text-anchor="middle" font-size="16" fill="#64748b">${value}</text>`,
+          `<text x="${(left - 10).toFixed(1)}" y="${(sy(value) + 5).toFixed(1)}" text-anchor="end" font-size="16" fill="#64748b">${value}</text>`,
+        ].join('\n')).join('\n');
+        return this.svgWrap(width, height, title, [
+          `<text x="${width / 2}" y="34" text-anchor="middle" font-size="26" font-weight="700" fill="#0f172a">${this.xmlEscape(title)}</text>`,
+          ticks,
+          `<line x1="${left}" y1="${top + plotH}" x2="${width - right}" y2="${top + plotH}" stroke="#cbd5e1"/>`,
+          `<line x1="${left}" y1="${top}" x2="${left}" y2="${top + plotH}" stroke="#cbd5e1"/>`,
+          `<line x1="${sx(0)}" y1="${sy(0)}" x2="${sx(100)}" y2="${sy(100)}" stroke="#94a3b8" stroke-dasharray="5 5"/>`,
+          circles,
+          labels,
+          `<text x="${width - right}" y="${top - 18}" text-anchor="end" font-size="15" fill="#64748b">n=${validPoints.length}; gleiche Scores leicht versetzt</text>`,
+          `<text x="${left + plotW / 2}" y="${height - 26}" text-anchor="middle" font-size="26" fill="#475569">Score des direkten Aufrufs (%)</text>`,
+          `<text x="28" y="${top + plotH / 2}" transform="rotate(-90 28 ${top + plotH / 2})" text-anchor="middle" font-size="26" fill="#475569">Score Workflow (%)</text>`,
+        ].join('\n'));
+      },
+
+      svgWrap(width, height, title, content) {
+        return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="${this.xmlEscape(title)}">
+<rect width="100%" height="100%" fill="white"/>
+${content}
+</svg>
+`;
+      },
+
+      slug(value) {
+        return String(value || 'item')
+          .toLowerCase()
+          .replace(/ä/g, 'ae')
+          .replace(/ö/g, 'oe')
+          .replace(/ü/g, 'ue')
+          .replace(/ß/g, 'ss')
+          .replace(/[^a-z0-9_-]+/g, '_')
+          .replace(/^_+|_+$/g, '')
+          .slice(0, 60) || 'item';
+      },
+
+      latexEscape(value) {
+        return String(value ?? '').replace(/[&%$#_{}~^\\]/g, ch => ({
+          '&': '\\&', '%': '\\%', '$': '\\$', '#': '\\#', '_': '\\_', '{': '\\{', '}': '\\}', '~': '\\textasciitilde{}', '^': '\\textasciicircum{}', '\\': '\\textbackslash{}',
+        }[ch]));
+      },
+
+      xmlEscape(value) {
+        return String(value ?? '').replace(/[<>&"]/g, ch => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[ch]));
+      },
+
+      num(value, digits = 2) {
+        return value === null || value === undefined || !Number.isFinite(Number(value)) ? 'k.A.' : Number(value).toFixed(digits);
+      },
+
+      signedNum(value, digits = 2) {
+        if (value === null || value === undefined || !Number.isFinite(Number(value))) return 'k.A.';
+        const n = Number(value);
+        return (n >= 0 ? '+' : '') + n.toFixed(digits);
+      },
+
+      mean(values) {
+        const clean = values.filter(v => Number.isFinite(v));
+        if (!clean.length) return null;
+        return clean.reduce((a, b) => a + b, 0) / clean.length;
+      },
+
+      median(values) {
+        const clean = values.filter(v => Number.isFinite(v)).sort((a, b) => a - b);
+        if (!clean.length) return null;
+        const mid = Math.floor(clean.length / 2);
+        return clean.length % 2 ? clean[mid] : (clean[mid - 1] + clean[mid]) / 2;
+      },
+
+      sampleSd(values) {
+        const clean = values.filter(v => Number.isFinite(v));
+        if (clean.length < 2) return null;
+        const avg = this.mean(clean);
+        return Math.sqrt(clean.reduce((sum, v) => sum + (v - avg) ** 2, 0) / (clean.length - 1));
+      },
+
+      tCritical95(df) {
+        const table = { 1: 12.706, 2: 4.303, 3: 3.182, 4: 2.776, 5: 2.571, 6: 2.447, 7: 2.365, 8: 2.306, 9: 2.262, 10: 2.228, 11: 2.201, 12: 2.179, 13: 2.160, 14: 2.145, 15: 2.131, 16: 2.120, 17: 2.110, 18: 2.101, 19: 2.093, 20: 2.086, 21: 2.080, 22: 2.074, 23: 2.069, 24: 2.064, 25: 2.060, 26: 2.056, 27: 2.052, 28: 2.048, 29: 2.045, 30: 2.042 };
+        if (df <= 30) return table[df] || 12.706;
+        if (df <= 60) return 2.000;
+        if (df <= 120) return 1.980;
+        return 1.960;
+      },
+
+      studentTCdf(t, df) {
+        const x = df / (df + t * t);
+        const ib = this.regularizedBeta(x, df / 2, 0.5);
+        return t >= 0 ? 1 - 0.5 * ib : 0.5 * ib;
+      },
+
+      regularizedBeta(x, a, b) {
+        if (x <= 0) return 0;
+        if (x >= 1) return 1;
+        const bt = Math.exp(this.logGamma(a + b) - this.logGamma(a) - this.logGamma(b) + a * Math.log(x) + b * Math.log(1 - x));
+        if (x < (a + 1) / (a + b + 2)) return bt * this.betaContinuedFraction(x, a, b) / a;
+        return 1 - bt * this.betaContinuedFraction(1 - x, b, a) / b;
+      },
+
+      betaContinuedFraction(x, a, b) {
+        const maxIter = 100;
+        const eps = 3e-7;
+        const fpmin = 1e-30;
+        let qab = a + b;
+        let qap = a + 1;
+        let qam = a - 1;
+        let c = 1;
+        let d = 1 - qab * x / qap;
+        if (Math.abs(d) < fpmin) d = fpmin;
+        d = 1 / d;
+        let h = d;
+        for (let m = 1; m <= maxIter; m++) {
+          const m2 = 2 * m;
+          let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+          d = 1 + aa * d;
+          if (Math.abs(d) < fpmin) d = fpmin;
+          c = 1 + aa / c;
+          if (Math.abs(c) < fpmin) c = fpmin;
+          d = 1 / d;
+          h *= d * c;
+          aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+          d = 1 + aa * d;
+          if (Math.abs(d) < fpmin) d = fpmin;
+          c = 1 + aa / c;
+          if (Math.abs(c) < fpmin) c = fpmin;
+          d = 1 / d;
+          const del = d * c;
+          h *= del;
+          if (Math.abs(del - 1) < eps) break;
+        }
+        return h;
+      },
+
+      logGamma(z) {
+        const p = [676.5203681218851, -1259.1392167224028, 771.3234287776531, -176.6150291621406, 12.507343278686905, -0.13857109526572012, 9.984369578019572e-6, 1.5056327351493116e-7];
+        if (z < 0.5) return Math.log(Math.PI) - Math.log(Math.sin(Math.PI * z)) - this.logGamma(1 - z);
+        z -= 1;
+        let x = 0.9999999999998099;
+        for (let i = 0; i < p.length; i++) x += p[i] / (z + i + 1);
+        const t = z + p.length - 0.5;
+        return 0.5 * Math.log(2 * Math.PI) + (z + 0.5) * Math.log(t) - t + Math.log(x);
+      },
+
+      formatPercent(value) {
+        return value === null || value === undefined || !Number.isFinite(Number(value)) ? '-' : Number(value).toFixed(1) + '%';
+      },
+
+      formatSignedPercent(value) {
+        if (value === null || value === undefined || !Number.isFinite(Number(value))) return '-';
+        const n = Number(value);
+        return (n >= 0 ? '+' : '') + n.toFixed(1) + '%';
+      },
+
+      formatNumber(value) {
+        return value === null || value === undefined || !Number.isFinite(Number(value)) ? '-' : Number(value).toFixed(2);
+      },
+
+      formatOneDecimal(value) {
+        return value === null || value === undefined || !Number.isFinite(Number(value)) ? '-' : Number(value).toFixed(1);
+      },
+
+      formatP(value) {
+        if (value === null || value === undefined || !Number.isFinite(Number(value))) return '-';
+        return value < 0.0001 ? '<0.0001' : value.toFixed(4);
+      },
+
+      shorten(text, length) {
+        if (!text) return '';
+        return text.length > length ? text.slice(0, length) + '...' : text;
+      },
+    };
+  }
+</script>
+
+<%- include('partials/footer') %>
+

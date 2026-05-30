@@ -1,0 +1,648 @@
+<%- include('partials/header', {title, activePage}) %>
+
+<div x-data="configPage()" x-init="init()">
+  <h1 class="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">Configuration</h1>
+
+  <!-- Tabs -->
+  <div class="border-b border-slate-200 dark:border-slate-700 mb-6">
+    <nav class="flex gap-1 -mb-px">
+      <button @click="activeTab = 'setups'"
+              :class="activeTab === 'setups' ? 'border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'"
+              class="px-4 py-2 text-sm font-medium border-b-2 transition-colors">Setups</button>
+      <button @click="activeTab = 'questions'"
+              :class="activeTab === 'questions' ? 'border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'"
+              class="px-4 py-2 text-sm font-medium border-b-2 transition-colors">Questions</button>
+      <button @click="activeTab = 'prompts'"
+              :class="activeTab === 'prompts' ? 'border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'"
+              class="px-4 py-2 text-sm font-medium border-b-2 transition-colors">System Prompts</button>
+      <button @click="activeTab = 'engine'"
+              :class="activeTab === 'engine' ? 'border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'"
+              class="px-4 py-2 text-sm font-medium border-b-2 transition-colors">Engine Instructions</button>
+      <button @click="activeTab = 'models'"
+              :class="activeTab === 'models' ? 'border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'"
+              class="px-4 py-2 text-sm font-medium border-b-2 transition-colors">Models</button>
+      <button @click="activeTab = 'scoring'"
+              :class="activeTab === 'scoring' ? 'border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'"
+              class="px-4 py-2 text-sm font-medium border-b-2 transition-colors">Scoring</button>
+    </nav>
+  </div>
+
+  <!-- SETUPS TAB -->
+  <div x-show="activeTab === 'setups'">
+    <div class="mb-4 flex flex-wrap gap-2">
+      <% setups.forEach(function(setup) { %>
+        <button @click="selectedWorkflowSetupId = '<%= setup.id %>'"
+                :class="selectedWorkflowSetupId === '<%= setup.id %>' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'"
+                class="px-3 py-1.5 text-xs rounded border transition-colors">
+          <%= setup.name %>
+        </button>
+      <% }) %>
+    </div>
+    <div class="space-y-4">
+      <% setups.forEach(function(setup) { %>
+        <div x-show="selectedWorkflowSetupId === '<%= setup.id %>'" x-cloak class="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
+          <div class="bg-slate-50 dark:bg-slate-800 px-4 py-3 flex items-center justify-between">
+            <div>
+              <span class="font-medium text-slate-800 dark:text-slate-200"><%= setup.name %></span>
+              <span class="ml-2 text-xs text-slate-400 dark:text-slate-500"><%= setup.id %></span>
+            </div>
+            <div class="text-xs text-slate-500 dark:text-slate-400">max <%= setup.max_steps %> step(s)</div>
+          </div>
+          <div class="p-4">
+            <p class="text-sm text-slate-600 dark:text-slate-400 mb-3"><%= setup.description %></p>
+            <div class="space-y-2">
+              <% const stepsForSetup = setupSteps.filter(function(st) { return st.setup_id === setup.id; }); %>
+              <% stepsForSetup.forEach(function(step) { %>
+                <% const promptForStep = systemPrompts.find(function(p) { return p.setup_id === setup.id && p.step === step.step; }); %>
+                <% if (promptForStep) {
+                     const previewKey = promptForStep.setup_id + '__' + promptForStep.step;
+                     const fullPreview = promptPreviews[previewKey] || promptForStep.prompt;
+                     const engineAdditions = String(fullPreview).startsWith(String(promptForStep.prompt))
+                       ? String(fullPreview).slice(String(promptForStep.prompt).length).trim()
+                       : fullPreview;
+                %>
+                  <div class="border border-slate-200 dark:border-slate-700 rounded overflow-hidden">
+                    <div class="bg-white dark:bg-slate-900 px-3 py-2 flex items-center justify-between gap-3">
+                      <div>
+                        <div class="text-sm font-medium text-slate-800 dark:text-slate-200">Step <%= step.step %></div>
+                        <div class="text-xs text-slate-400">system_prompts.step = <%= promptForStep.step %></div>
+                      </div>
+                      <span class="<%= step.internet_allowed ? 'text-green-700 bg-green-50 border-green-200 dark:text-green-300 dark:bg-green-950 dark:border-green-800' : 'text-slate-500 bg-slate-50 border-slate-200 dark:text-slate-400 dark:bg-slate-900 dark:border-slate-700' %> text-xs px-2 py-1 rounded border whitespace-nowrap">
+                        <%= step.internet_allowed ? 'Internet allowed' : 'No internet' %>
+                      </span>
+                    </div>
+                    <div class="p-3 space-y-3">
+                      <div>
+                        <div class="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">1. Workflow step prompt from DB</div>
+                        <pre class="text-xs bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded p-3 whitespace-pre-wrap text-slate-700 dark:text-slate-300 font-mono overflow-auto max-h-72"><%= promptForStep.prompt %></pre>
+                      </div>
+                      <div>
+                        <div class="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">2. Engine response/search instructions added by app</div>
+                        <pre class="text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded p-3 whitespace-pre-wrap text-slate-700 dark:text-slate-300 font-mono overflow-auto max-h-72"><%= engineAdditions || 'No additional engine instructions for this step.' %></pre>
+                      </div>
+                      <details>
+                        <summary class="cursor-pointer text-xs text-blue-600 dark:text-blue-400">3. Full prompt sent to AI</summary>
+                        <pre class="mt-2 text-xs bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded p-3 whitespace-pre-wrap text-slate-700 dark:text-slate-300 font-mono overflow-auto max-h-96"><%= fullPreview %></pre>
+                      </details>
+                    </div>
+                  </div>
+                <% } else { %>
+                  <div class="border border-red-200 dark:border-red-900 rounded px-3 py-2 text-xs text-red-600 dark:text-red-400">Step <%= step.step %>: No system prompt stored for this step.</div>
+                <% } %>
+              <% }) %>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+
+  <!-- QUESTIONS TAB -->
+  <div x-show="activeTab === 'questions'" x-cloak>
+    <!-- Filters + Add -->
+    <div class="flex flex-wrap gap-3 mb-4 items-end">
+      <div>
+        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Filter Criteria</label>
+        <select x-model="qFilter.criteria" class="text-sm border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+          <option value="">All</option>
+          <% criteria.forEach(function(c) { %>
+            <option value="<%= c.id %>"><%= c.name_de %></option>
+          <% }) %>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Filter Setup</label>
+        <select x-model="qFilter.setupId" class="text-sm border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+          <option value="">All</option>
+          <option value="__general">General / all setups</option>
+          <% setups.filter(function(s) { return s.id !== 'setup_direct' && s.id !== 'setup_ce_direct'; }).forEach(function(s) { %>
+            <option value="<%= s.id %>"><%= s.name %></option>
+          <% }) %>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Filter Testset</label>
+        <select x-model="qFilter.testset" class="text-sm border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+          <option value="">All</option>
+          <template x-for="ts in allTestsets" :key="ts.id">
+            <option :value="ts.id" x-text="ts.name || ts.id"></option>
+          </template>
+        </select>
+      </div>
+      <button @click="createTestset()"
+              class="py-1.5 px-3 bg-slate-700 hover:bg-slate-800 dark:bg-slate-600 dark:hover:bg-slate-500 text-white text-sm rounded transition-colors">
+        + New Testset
+      </button>
+      <button @click="showAddQuestion = !showAddQuestion"
+              class="py-1.5 px-3 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded transition-colors">
+        + Add Question
+      </button>
+    </div>
+
+    <!-- Add Question Form -->
+    <div x-show="showAddQuestion" x-cloak class="border border-blue-200 dark:border-blue-700 bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 mb-4 space-y-3">
+      <h3 class="text-sm font-semibold text-slate-700 dark:text-slate-300">New Question</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Setup</label>
+          <select x-model="newQuestion.setupId" class="w-full text-sm border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+            <option value="">General / all setups</option>
+            <% setups.filter(function(s) { return s.id !== 'setup_direct' && s.id !== 'setup_ce_direct'; }).forEach(function(s) { %>
+              <option value="<%= s.id %>"><%= s.name %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Criteria *</label>
+          <select x-model="newQuestion.criteriaId" class="w-full text-sm border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+            <option value="">Select…</option>
+            <% criteria.forEach(function(c) { %>
+              <option value="<%= c.id %>"><%= c.name_de %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Testset</label>
+          <input type="text" x-model="newQuestion.testset" placeholder="basic_general_questions"
+                 class="w-full text-sm border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+        </div>
+        <label class="flex items-start gap-2 text-sm text-slate-700 dark:text-slate-200 cursor-pointer">
+          <input type="checkbox" x-model="newQuestion.autoanswer" class="mt-1 rounded border-slate-300">
+          <span>
+            Autoanswer unexpected clarification
+            <span class="block text-xs text-slate-400 dark:text-slate-500">Default: enabled. Disable to mark unexpected clarifications for review.</span>
+          </span>
+        </label>
+        <div class="md:col-span-2">
+          <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Question Text *</label>
+          <textarea x-model="newQuestion.questionText" rows="3" placeholder="Enter the question…"
+                    class="w-full text-sm border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200"></textarea>
+        </div>
+        <div class="md:col-span-2">
+          <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Notes (optional)</label>
+          <input type="text" x-model="newQuestion.notes" class="w-full text-sm border border-slate-300 dark:border-slate-600 rounded px-2 py-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+        </div>
+      </div>
+      <div class="flex gap-2">
+        <button @click="addQuestion()" class="py-1.5 px-4 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded transition-colors">Save</button>
+        <button @click="showAddQuestion = false" class="py-1.5 px-4 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 text-sm rounded transition-colors">Cancel</button>
+      </div>
+      <p x-show="addQuestionError" x-text="addQuestionError" class="text-xs text-red-600 dark:text-red-400"></p>
+    </div>
+
+    <!-- Questions table -->
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
+        <thead class="bg-slate-50 dark:bg-slate-800">
+          <tr>
+            <th class="text-left px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Question</th>
+            <th class="text-left px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Setup</th>
+            <th class="text-left px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Criteria</th>
+            <th class="text-left px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Testset</th>
+            <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Autoanswer</th>
+            <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Checkpoints</th>
+            <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template x-for="q in filteredQuestions()" :key="q.id">
+            <tbody>
+              <tr class="border-t border-slate-100 dark:border-slate-800">
+                <td class="px-3 py-2 text-slate-700 dark:text-slate-300 max-w-sm">
+                  <div x-text="q.question_text.length > 80 ? q.question_text.slice(0,80)+'…' : q.question_text" class="cursor-pointer" @click="toggleCheckpoints(q.id)"></div>
+                </td>
+                <td class="px-3 py-2 text-slate-500 dark:text-slate-400 text-xs whitespace-nowrap" x-text="q.setup_name || 'General'"></td>
+                <td class="px-3 py-2 text-slate-500 dark:text-slate-400 text-xs whitespace-nowrap" x-text="q.criteria_name"></td>
+                <td class="px-3 py-2 text-slate-500 dark:text-slate-400 text-xs" x-text="q.testset"></td>
+                <td class="px-3 py-2 text-center">
+                  <input type="checkbox"
+                         :checked="Number(q.autoanswer ?? 1) === 1"
+                         @change="q.autoanswer = $event.target.checked ? 1 : 0; updateQuestionAutoanswer(q)"
+                         class="rounded border-slate-300">
+                </td>
+                <td class="px-3 py-2 text-center text-slate-600 dark:text-slate-400" x-text="q.checkpoint_count"></td>
+                <td class="px-3 py-2 text-center">
+                  <button @click="toggleCheckpoints(q.id)" class="text-xs text-blue-600 dark:text-blue-400 hover:underline mr-2">Checkpoints</button>
+                  <button @click="deleteQuestion(q.id)" class="text-xs text-red-500 hover:underline">Delete</button>
+                </td>
+              </tr>
+              <tr x-show="expandedQuestion === q.id" class="bg-slate-50 dark:bg-slate-800/50">
+                <td colspan="7" class="px-4 py-3">
+                  <div class="space-y-2">
+                    <p class="text-xs font-medium text-slate-600 dark:text-slate-400 mb-2">Checkpoints for: <span class="italic" x-text="q.question_text"></span></p>
+                    <template x-for="cp in checkpointsMap[q.id] || []" :key="cp.id">
+                      <div class="flex items-center gap-2">
+                        <input type="text" :value="cp.item_text"
+                               @change="updateCheckpoint(cp.id, $event.target.value)"
+                               class="flex-1 text-sm border border-slate-300 dark:border-slate-600 rounded px-2 py-1 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+                        <button @click="deleteCheckpoint(cp.id, q.id)" class="text-red-500 hover:text-red-700 text-xs px-2">✕</button>
+                      </div>
+                    </template>
+                    <div class="flex items-center gap-2 mt-2">
+                      <input type="text" x-model="newCheckpointText[q.id]" placeholder="New checkpoint…"
+                             @keydown.enter="addCheckpoint(q.id)"
+                             class="flex-1 text-sm border border-slate-300 dark:border-slate-600 rounded px-2 py-1 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+                      <button @click="addCheckpoint(q.id)" class="text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded">Add</button>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </template>
+          <template x-if="filteredQuestions().length === 0">
+            <tr>
+              <td colspan="7" class="px-3 py-6 text-center text-slate-400 dark:text-slate-500 text-xs">No questions match the filter</td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SYSTEM PROMPTS TAB -->
+  <div x-show="activeTab === 'prompts'" x-cloak>
+    <div class="space-y-6">
+      <% setups.forEach(function(setup) { %>
+        <div class="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
+          <div class="bg-slate-50 dark:bg-slate-800 px-4 py-3">
+            <span class="font-medium text-slate-800 dark:text-slate-200"><%= setup.name %></span>
+            <span class="ml-2 text-xs text-slate-400"><%= setup.description %></span>
+          </div>
+          <div class="p-4 space-y-4">
+            <% const promptsForSetup = systemPrompts.filter(function(p) { return p.setup_id === setup.id; }); %>
+            <% promptsForSetup.forEach(function(prompt) {
+                 const previewKey = prompt.setup_id + '__' + prompt.step;
+                 const fullPreview = promptPreviews[previewKey] || prompt.prompt;
+                 const step = setupSteps.find(function(s) { return s.setup_id === prompt.setup_id && s.step === prompt.step; });
+                 const internet = step && step.internet_allowed ? true : false;
+            %>
+              <div x-data="{ showPreview: false }" class="space-y-2">
+                <div class="flex items-center justify-between">
+                  <label class="block text-xs font-medium text-slate-600 dark:text-slate-400">
+                    Step <%= prompt.step %> — System Prompt
+                    <span class="ml-2 text-xs <%= internet ? 'text-green-600 dark:text-green-400' : 'text-slate-400' %>">
+                      <%= internet ? '✓ internet' : '✗ no internet' %>
+                    </span>
+                  </label>
+                  <button @click="showPreview = !showPreview"
+                          class="text-xs text-blue-600 dark:text-blue-400 hover:underline">
+                    <span x-text="showPreview ? 'Hide full prompt' : 'Show full prompt sent to AI'"></span>
+                  </button>
+                </div>
+                <textarea
+                  id="prompt-<%= prompt.id %>"
+                  rows="4"
+                  class="w-full text-sm border border-slate-300 dark:border-slate-600 rounded px-3 py-2 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-blue-500"><%= prompt.prompt %></textarea>
+                <div class="flex items-center gap-2">
+                  <button @click="savePrompt(<%= prompt.id %>)"
+                          class="py-1 px-3 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded transition-colors">
+                    Save
+                  </button>
+                  <span id="prompt-status-<%= prompt.id %>" class="text-xs text-green-600 dark:text-green-400 hidden">Saved!</span>
+                </div>
+                <!-- Full prompt preview (DB prompt + injected technical parts) -->
+                <div x-show="showPreview" x-cloak class="mt-2">
+                  <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Full prompt sent to LLM (your text + engine additions):</p>
+                  <pre class="text-xs bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded p-3 whitespace-pre-wrap text-slate-700 dark:text-slate-300 font-mono overflow-auto max-h-96"><%= fullPreview %></pre>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+
+  <!-- ENGINE INSTRUCTIONS TAB -->
+  <div x-show="activeTab === 'engine'" x-cloak>
+    <div class="space-y-4">
+      <% const instructionCategories = Array.from(new Set(engineInstructions.map(function(item) { return item.category; }))); %>
+      <% instructionCategories.forEach(function(category) { %>
+        <section class="space-y-2">
+          <h2 class="text-sm font-semibold text-slate-800 dark:text-slate-200"><%= category %></h2>
+          <div class="space-y-3">
+            <% engineInstructions.filter(function(item) { return item.category === category; }).forEach(function(item) { %>
+              <details open class="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
+                <summary class="cursor-pointer bg-slate-50 dark:bg-slate-800 px-4 py-3">
+                  <span class="font-medium text-slate-800 dark:text-slate-200"><%= item.title %></span>
+                  <span class="ml-2 text-xs text-slate-400"><%= item.source %></span>
+                </summary>
+                <div class="p-4">
+                  <pre class="text-xs bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded p-3 whitespace-pre-wrap text-slate-700 dark:text-slate-300 font-mono overflow-auto max-h-[34rem]"><%= item.text %></pre>
+                </div>
+              </details>
+            <% }) %>
+          </div>
+        </section>
+      <% }) %>
+    </div>
+  </div>
+
+  <!-- MODELS TAB -->
+  <div x-show="activeTab === 'models'" x-cloak>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
+        <thead class="bg-slate-50 dark:bg-slate-800">
+          <tr>
+            <th class="text-left px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Label</th>
+            <th class="text-left px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Provider</th>
+            <th class="text-left px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Model ID</th>
+            <th class="text-left px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">API Key Env</th>
+            <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Active</th>
+            <th class="text-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400">Default scorer</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% llmConfigs.forEach(function(m) { %>
+            <tr class="border-t border-slate-100 dark:border-slate-800">
+              <td class="px-3 py-2 text-slate-700 dark:text-slate-300"><%= m.label %></td>
+              <td class="px-3 py-2 text-slate-500 dark:text-slate-400 text-xs"><%= m.provider %></td>
+              <td class="px-3 py-2 text-slate-600 dark:text-slate-400 font-mono text-xs"><%= m.model_id %></td>
+              <td class="px-3 py-2 text-slate-500 dark:text-slate-400 text-xs"><%= m.api_key_env %></td>
+              <td class="px-3 py-2 text-center">
+                <input type="checkbox" <%= m.active ? 'checked' : '' %>
+                       @change="toggleModel(<%= m.id %>, $event.target.checked)"
+                       class="rounded">
+              </td>
+              <td class="px-3 py-2 text-center">
+                <input type="radio"
+                       name="default-scoring-model"
+                       value="<%= m.id %>"
+                       <%= Number(defaultScoringModelId) === Number(m.id) ? 'checked' : '' %>
+                       <%= m.active ? '' : 'disabled' %>
+                       @change="setDefaultScoringModel(<%= m.id %>)"
+                       class="rounded-full">
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+      <p class="text-xs text-slate-500 dark:text-slate-400 mt-3">
+        This model is used automatically for scoring new runs and as the default for Score/Revalidate.
+      </p>
+      <p x-show="modelStatus" x-text="modelStatus" class="text-xs text-green-600 dark:text-green-400 mt-2"></p>
+    </div>
+  </div>
+
+  <!-- SCORING TAB -->
+  <div x-show="activeTab === 'scoring'" x-cloak>
+    <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4 max-w-2xl">
+      <h2 class="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-2">Default reviewer</h2>
+      <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+        This model is used automatically for scoring new runs and as the default for Score/Revalidate.
+      </p>
+
+      <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Reviewer model</label>
+      <select x-model="defaultScoringModelId"
+              @change="setDefaultScoringModel(Number(defaultScoringModelId))"
+              class="w-full text-sm border border-slate-300 dark:border-slate-600 rounded px-3 py-2 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+        <option value="">Use answer model fallback</option>
+        <% llmConfigs.filter(function(m) { return m.active; }).forEach(function(m) { %>
+          <option value="<%= m.id %>"><%= m.label %> (<%= m.model_id %>)</option>
+        <% }) %>
+      </select>
+
+      <p class="text-xs text-slate-500 dark:text-slate-400 mt-3">
+        Recommendation: use a stronger model for final scoring when cost is acceptable; use a cheaper model while debugging.
+      </p>
+      <label class="mt-5 flex items-start gap-3 text-sm text-slate-700 dark:text-slate-200 cursor-pointer">
+        <input type="checkbox"
+               x-model="usePairedCheckpointScoring"
+               @change="setPairedCheckpointScoring()"
+               class="mt-1 rounded border-slate-300">
+        <span>
+          Pairweise Checkpoint-Validierung verwenden
+          <span class="block text-xs text-slate-500 dark:text-slate-400">
+            Default: an. Direct und Workflow werden gemeinsam in einem Bewertungsaufruf bewertet. Danach läuft weiterhin der Plausibilitätscheck.
+          </span>
+        </span>
+      </label>
+      <p x-show="modelStatus" x-text="modelStatus" class="text-xs text-green-600 dark:text-green-400 mt-2"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+  const allQuestionsConfig = <%- JSON.stringify(questions) %>;
+  const allCheckpoints = <%- JSON.stringify(checkpoints) %>;
+  const savedTestsets = <%- JSON.stringify(testsets) %>;
+  const allSetupsConfig = <%- JSON.stringify(setups) %>;
+  const initialWorkflowSetupId = <%- JSON.stringify(setups[0]?.id || '') %>;
+  const initialDefaultScoringModelId = <%- JSON.stringify(defaultScoringModelId) %>;
+  const initialUsePairedCheckpointScoring = <%- JSON.stringify(usePairedCheckpointScoring) %>;
+
+  function configPage() {
+    return {
+      activeTab: 'setups',
+      selectedWorkflowSetupId: initialWorkflowSetupId,
+      qFilter: { criteria: '', setupId: '', testset: '' },
+      showAddQuestion: false,
+      newQuestion: { setupId: 'setup_wf_prompt_optimise', criteriaId: '', testset: 'basic_general_questions', questionText: '', notes: '', autoanswer: true },
+      addQuestionError: '',
+      expandedQuestion: null,
+      checkpointsMap: {},
+      newCheckpointText: {},
+      allTestsets: [...new Map(savedTestsets
+        .concat(allQuestionsConfig.map(q => ({ id: q.testset, name: q.testset })))
+        .filter(ts => ts && ts.id)
+        .map(ts => [ts.id, { id: ts.id, name: ts.name || ts.id }])
+      ).values()].sort((a, b) => (a.name || a.id).localeCompare(b.name || b.id)),
+      allSetups: [...allSetupsConfig],
+      questionsData: [...allQuestionsConfig],
+      defaultScoringModelId: initialDefaultScoringModelId,
+      usePairedCheckpointScoring: initialUsePairedCheckpointScoring,
+      modelStatus: '',
+
+      init() {
+        // Build checkpoints map
+        this.checkpointsMap = {};
+        allCheckpoints.forEach(cp => {
+          if (!this.checkpointsMap[cp.question_id]) this.checkpointsMap[cp.question_id] = [];
+          this.checkpointsMap[cp.question_id].push(cp);
+        });
+      },
+
+      filteredQuestions() {
+        return this.questionsData.filter(q => {
+          if (this.qFilter.criteria && q.criteria_id !== this.qFilter.criteria) return false;
+          if (this.qFilter.setupId === '__general' && q.setup_id) return false;
+          const allowedSetupIds = ['setup_flowreview2', 'setup_flowreview_same'].includes(this.qFilter.setupId)
+            ? [this.qFilter.setupId, 'setup_flowreview']
+            : [this.qFilter.setupId];
+          if (this.qFilter.setupId && this.qFilter.setupId !== '__general' && !allowedSetupIds.includes(q.setup_id)) return false;
+          if (this.qFilter.testset && q.testset !== this.qFilter.testset) return false;
+          return true;
+        });
+      },
+
+      async createTestset() {
+        this.addQuestionError = '';
+        const name = prompt('Name for the new testset, e.g. set2');
+        if (!name) return;
+        const clean = name.trim();
+        if (!clean) return;
+        const res = await fetch('/api/testsets', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: clean }),
+        });
+        const data = await res.json();
+        if (data.error) {
+          this.addQuestionError = data.error;
+          return;
+        }
+        if (!this.allTestsets.some(ts => ts.id === clean)) {
+          this.allTestsets.push({ id: clean, name: clean });
+          this.allTestsets.sort((a, b) => (a.name || a.id).localeCompare(b.name || b.id));
+        }
+        this.qFilter.testset = clean;
+        this.newQuestion.testset = clean;
+        this.showAddQuestion = true;
+      },
+
+      async addQuestion() {
+        this.addQuestionError = '';
+        if (!this.newQuestion.criteriaId || !this.newQuestion.questionText.trim()) {
+          this.addQuestionError = 'Criteria and question text are required';
+          return;
+        }
+        const res = await fetch('/api/questions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            criteriaId: this.newQuestion.criteriaId,
+            setupId: this.newQuestion.setupId || null,
+            questionText: this.newQuestion.questionText,
+            testset: this.newQuestion.testset || 'basic_general_questions',
+            notes: this.newQuestion.notes,
+            autoanswer: this.newQuestion.autoanswer,
+          }),
+        });
+        const data = await res.json();
+        if (data.error) { this.addQuestionError = data.error; return; }
+        // Reload to refresh data
+        window.location.reload();
+      },
+
+      async deleteQuestion(id) {
+        if (!confirm('Delete this question and all its checkpoints?')) return;
+        await fetch(`/api/questions/${id}`, { method: 'DELETE' });
+        this.questionsData = this.questionsData.filter(q => q.id !== id);
+        delete this.checkpointsMap[id];
+      },
+
+      async updateQuestionAutoanswer(question) {
+        await fetch(`/api/questions/${question.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ autoanswer: Number(question.autoanswer) === 1 }),
+        });
+      },
+
+      async toggleCheckpoints(qId) {
+        if (this.expandedQuestion === qId) {
+          this.expandedQuestion = null;
+          return;
+        }
+        this.expandedQuestion = qId;
+        if (!this.checkpointsMap[qId]) {
+          const res = await fetch(`/api/questions/${qId}/checkpoints`);
+          this.checkpointsMap[qId] = await res.json();
+        }
+      },
+
+      async addCheckpoint(qId) {
+        const text = (this.newCheckpointText[qId] || '').trim();
+        if (!text) return;
+        const res = await fetch(`/api/questions/${qId}/checkpoints`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ itemText: text }),
+        });
+        const data = await res.json();
+        if (!this.checkpointsMap[qId]) this.checkpointsMap[qId] = [];
+        this.checkpointsMap[qId].push({ id: data.id, question_id: qId, item_text: text, sort_order: this.checkpointsMap[qId].length });
+        this.newCheckpointText[qId] = '';
+        // Update checkpoint count
+        const q = this.questionsData.find(q => q.id === qId);
+        if (q) q.checkpoint_count = (q.checkpoint_count || 0) + 1;
+      },
+
+      async updateCheckpoint(cpId, newText) {
+        await fetch(`/api/checkpoints/${cpId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ itemText: newText }),
+        });
+      },
+
+      async deleteCheckpoint(cpId, qId) {
+        await fetch(`/api/checkpoints/${cpId}`, { method: 'DELETE' });
+        if (this.checkpointsMap[qId]) {
+          this.checkpointsMap[qId] = this.checkpointsMap[qId].filter(cp => cp.id !== cpId);
+        }
+        const q = this.questionsData.find(q => q.id === qId);
+        if (q) q.checkpoint_count = Math.max(0, (q.checkpoint_count || 1) - 1);
+      },
+
+      async savePrompt(promptId) {
+        const textarea = document.getElementById('prompt-' + promptId);
+        if (!textarea) return;
+        await fetch(`/api/system-prompts/${promptId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt: textarea.value }),
+        });
+        const status = document.getElementById('prompt-status-' + promptId);
+        if (status) {
+          status.classList.remove('hidden');
+          setTimeout(() => status.classList.add('hidden'), 2000);
+        }
+      },
+
+      async toggleModel(modelId, active) {
+        await fetch(`/api/models/${modelId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ active: active ? 1 : 0 }),
+        });
+        if (!active && Number(this.defaultScoringModelId) === Number(modelId)) {
+          this.modelStatus = 'Default scorer was deactivated. Choose another active scorer.';
+        }
+      },
+
+      async setDefaultScoringModel(modelId) {
+        const res = await fetch('/api/settings/default-scoring-model', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ modelId }),
+        });
+        const data = await res.json();
+        if (data.error) {
+          this.modelStatus = data.error;
+          return;
+        }
+        this.defaultScoringModelId = modelId;
+        this.modelStatus = 'Default scoring model saved.';
+      },
+
+      async setPairedCheckpointScoring() {
+        const res = await fetch('/api/settings/paired-checkpoint-scoring', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ enabled: Boolean(this.usePairedCheckpointScoring) }),
+        });
+        const data = await res.json();
+        if (data.error) {
+          this.modelStatus = data.error;
+          return;
+        }
+        this.modelStatus = this.usePairedCheckpointScoring
+          ? 'Paired checkpoint scoring enabled.'
+          : 'Separate per-run checkpoint scoring enabled.';
+      },
+    };
+  }
+</script>
+
+<%- include('partials/footer') %>
