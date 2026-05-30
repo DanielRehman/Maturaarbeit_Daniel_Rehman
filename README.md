@@ -2,6 +2,11 @@
 
 Dateien zu meiner Maturaarbeit 2026.
 
+## Downloads
+
+- [Applikation Workflow und Statistik Programm](Workflow_Messung.zip)
+- [Statistik Daten](optional_runs_und_statistik.7z)
+
 ## Datenauswertung
 
 - [Markdown-Index der Datenauswertung](https://github.com/DanielRehman/Maturaarbeit_Daniel_Rehman/blob/main/reports/sites/MD_INDEX.md)
