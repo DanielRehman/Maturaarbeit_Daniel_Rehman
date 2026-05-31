@@ -4,7 +4,7 @@
 
 | Kriterium | n | Mittel Direkter Aufruf | Mittel Workflow | Diff. | p-Wert | Ergebnis |
 |---|---:|---:|---:|---:|---:|---|
-| Internet- / Quellenqualität | 423 | 41.4 | 49.9 | +8.5 | <0.0001 | signifikante Verbesserung |
+| Internet- / Quellenqualität | 581 | 50.5 | 56.1 | +5.6 | <0.0001 | signifikante Verbesserung |
 
 LaTeX-gerenderte Tabelle:
 
@@ -24,7 +24,7 @@ Felderklärung:
 
 | Kriterium | n | Mittel Direkter Aufruf | Mittel Workflow | Diff. | SD Diff. | t-Wert | df | p-Wert | 95% KI | Cohen dz | Ergebnis |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---|
-| Internet- / Quellenqualität | 423 | 41.40 | 49.95 | +8.55 | 23.30 | 7.544 | 422 | <0.0001 | [+6.33; +10.77] | 0.37 | signifikante Verbesserung |
+| Internet- / Quellenqualität | 581 | 50.54 | 56.12 | +5.58 | 23.17 | 5.803 | 580 | <0.0001 | [+3.69; +7.46] | 0.24 | signifikante Verbesserung |
 
 LaTeX-gerenderte Tabelle:
 
@@ -49,7 +49,7 @@ Felderklärung:
 
 | Kriterium | Gesamt | Gültig | Ausgewählt | Ausgelassen | Fehler | Review | Manuell ausgeschlossen | Unvollständig |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| Internet- / Quellenqualität | 732 | 731 | 423 | 285 | 0 | 23 | 0 | 1 |
+| Internet- / Quellenqualität | 734 | 731 | 581 | 127 | 0 | 23 | 0 | 3 |
 
 LaTeX-gerenderte Tabelle:
 
@@ -59,10 +59,10 @@ Felderklärung:
 
 - **Kriterium**: Bewerteter Qualitätsbereich.
 - **Gesamt**: Alle gefundenen Paare nach den gesetzten Filtern vor Bereinigung.
-- **Gültig**: Paare ohne Fehler und ohne unvollständige oder unbewertete Seite.
+- **Gueltig**: Paare nach Abzug von Unvollstaendig und Fehler. Review und manuell ausgeschlossen bleiben gueltig, werden aber je nach Filter nicht ausgewaehlt.
 - **Ausgewählt**: Paare, die tatsächlich in Analyse, Statistik und Charts verwendet werden.
 - **Ausgelassen**: Paare, die durch den optionalen Direkt-Score-Behalten-Bereich ausgeschlossen wurden, weil der direkte Aufruf außerhalb des eingestellten Bereichs lag.
-- **Fehler**: Paare, bei denen mindestens eine Seite einen technischen Fehler hatte.
-- **Review**: Paare mit Review-Markierung; standardmäßig nicht in der Analyse enthalten.
-- **Manuell ausgeschlossen**: Paare, die vom Nutzer manuell aus der Analyse ausgeschlossen wurden.
-- **Unvollständig**: Paare mit fehlender Seite, laufendem Run oder fehlendem Score.
+- **Fehler**: Vollständig paarbare Paare, bei denen mindestens eine Seite einen technischen Fehler hatte. Unvollständige oder unpaarbare Fälle werden vorher als Unvollständig gezählt.
+- **Review**: Gueltige Paare mit Review-Markierung; standardmaessig nicht in der Analyse enthalten, wenn Review nicht eingeschlossen ist.
+- **Manuell ausgeschlossen**: Gueltige Paare, die vom Nutzer manuell aus der Analyse ausgeschlossen wurden. Wird erst nach Unvollstaendig und Fehler gezaehlt.
+- **Unvollstaendig**: Paare oder unpaarbare Workflow-Laeufe mit fehlender Seite, laufendem Status, fehlendem Score oder fehlender gueltiger Paar-ID. Diese Kategorie hat Vorrang vor Fehler und manuell ausgeschlossen.

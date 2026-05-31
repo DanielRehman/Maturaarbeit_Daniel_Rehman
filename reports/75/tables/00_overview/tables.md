@@ -4,15 +4,15 @@
 
 | Kriterium | n | Mittel Direkter Aufruf | Mittel Workflow | Diff. | p-Wert | Ergebnis |
 |---|---:|---:|---:|---:|---:|---|
-| Richtigkeit | 67 | 44.8 | 62.1 | +17.3 | <0.0001 | signifikante Verbesserung |
-| Rückfragefähigkeit | 496 | 27.4 | 48.8 | +21.4 | <0.0001 | signifikante Verbesserung |
-| Internet- / Quellenqualität | 423 | 41.4 | 49.9 | +8.5 | <0.0001 | signifikante Verbesserung |
-| Prüfung / Verifikation | 258 | 38.9 | 58.9 | +19.9 | <0.0001 | signifikante Verbesserung |
-| Unsicherheit offenlegen | 85 | 36.7 | 70.0 | +33.3 | <0.0001 | signifikante Verbesserung |
-| Vollständigkeit gemäß Möglichkeit | 186 | 47.2 | 62.1 | +14.9 | <0.0001 | signifikante Verbesserung |
-| Vollständigkeit gemäß Frage | 66 | 43.1 | 52.8 | +9.6 | 0.0147 | signifikante Verbesserung |
-| Klarheit / Verständlichkeit | 109 | 50.0 | 60.8 | +10.8 | <0.0001 | signifikante Verbesserung |
-| Relevanz | 27 | 46.5 | 68.4 | +21.9 | 0.0016 | signifikante Verbesserung |
+| Richtigkeit | 343 | 69.1 | 76.9 | +7.8 | <0.0001 | signifikante Verbesserung |
+| Rückfragefähigkeit | 527 | 30.2 | 49.9 | +19.7 | <0.0001 | signifikante Verbesserung |
+| Internet- / Quellenqualität | 581 | 50.5 | 56.1 | +5.6 | <0.0001 | signifikante Verbesserung |
+| Prüfung / Verifikation | 514 | 56.9 | 66.0 | +9.1 | <0.0001 | signifikante Verbesserung |
+| Unsicherheit offenlegen | 251 | 62.0 | 77.4 | +15.4 | <0.0001 | signifikante Verbesserung |
+| Vollständigkeit gemäß Möglichkeit | 397 | 62.0 | 71.1 | +9.1 | <0.0001 | signifikante Verbesserung |
+| Vollständigkeit gemäß Frage | 109 | 55.7 | 60.6 | +4.9 | 0.0752 | nicht signifikant |
+| Klarheit / Verständlichkeit | 382 | 67.9 | 72.5 | +4.6 | <0.0001 | signifikante Verbesserung |
+| Relevanz | 145 | 69.7 | 80.8 | +11.1 | <0.0001 | signifikante Verbesserung |
 
 LaTeX-gerenderte Tabelle:
 
@@ -32,15 +32,15 @@ Felderklärung:
 
 | Kriterium | n | Mittel Direkter Aufruf | Mittel Workflow | Diff. | SD Diff. | t-Wert | df | p-Wert | 95% KI | Cohen dz | Ergebnis |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---|
-| Richtigkeit | 67 | 44.83 | 62.13 | +17.30 | 32.89 | 4.304 | 66 | <0.0001 | [+9.34; +25.25] | 0.53 | signifikante Verbesserung |
-| Rückfragefähigkeit | 496 | 27.40 | 48.75 | +21.36 | 31.17 | 15.262 | 495 | <0.0001 | [+18.61; +24.10] | 0.69 | signifikante Verbesserung |
-| Internet- / Quellenqualität | 423 | 41.40 | 49.95 | +8.55 | 23.30 | 7.544 | 422 | <0.0001 | [+6.33; +10.77] | 0.37 | signifikante Verbesserung |
-| Prüfung / Verifikation | 258 | 38.94 | 58.88 | +19.95 | 33.40 | 9.592 | 257 | <0.0001 | [+15.87; +24.02] | 0.60 | signifikante Verbesserung |
-| Unsicherheit offenlegen | 85 | 36.67 | 69.97 | +33.29 | 34.04 | 9.018 | 84 | <0.0001 | [+25.98; +40.60] | 0.98 | signifikante Verbesserung |
-| Vollständigkeit gemäß Möglichkeit | 186 | 47.17 | 62.09 | +14.92 | 30.05 | 6.769 | 185 | <0.0001 | [+10.60; +19.23] | 0.50 | signifikante Verbesserung |
-| Vollständigkeit gemäß Frage | 66 | 43.14 | 52.78 | +9.64 | 31.25 | 2.506 | 65 | 0.0147 | [+2.02; +17.25] | 0.31 | signifikante Verbesserung |
-| Klarheit / Verständlichkeit | 109 | 50.04 | 60.82 | +10.78 | 25.51 | 4.411 | 108 | <0.0001 | [+5.94; +15.62] | 0.42 | signifikante Verbesserung |
-| Relevanz | 27 | 46.52 | 68.40 | +21.87 | 32.17 | 3.533 | 26 | 0.0016 | [+9.14; +34.60] | 0.68 | signifikante Verbesserung |
+| Richtigkeit | 343 | 69.11 | 76.93 | +7.82 | 21.19 | 6.838 | 342 | <0.0001 | [+5.58; +10.07] | 0.37 | signifikante Verbesserung |
+| Rückfragefähigkeit | 527 | 30.20 | 49.87 | +19.67 | 31.67 | 14.263 | 526 | <0.0001 | [+16.97; +22.38] | 0.62 | signifikante Verbesserung |
+| Internet- / Quellenqualität | 581 | 50.54 | 56.12 | +5.58 | 23.17 | 5.803 | 580 | <0.0001 | [+3.69; +7.46] | 0.24 | signifikante Verbesserung |
+| Prüfung / Verifikation | 514 | 56.90 | 66.03 | +9.14 | 27.89 | 7.428 | 513 | <0.0001 | [+6.73; +11.55] | 0.33 | signifikante Verbesserung |
+| Unsicherheit offenlegen | 251 | 62.02 | 77.38 | +15.36 | 29.01 | 8.386 | 250 | <0.0001 | [+11.77; +18.95] | 0.53 | signifikante Verbesserung |
+| Vollständigkeit gemäß Möglichkeit | 397 | 61.96 | 71.09 | +9.13 | 25.70 | 7.077 | 396 | <0.0001 | [+6.60; +11.66] | 0.36 | signifikante Verbesserung |
+| Vollständigkeit gemäß Frage | 109 | 55.71 | 60.63 | +4.92 | 28.58 | 1.797 | 108 | 0.0752 | [-0.50; +10.34] | 0.17 | nicht signifikant |
+| Klarheit / Verständlichkeit | 382 | 67.88 | 72.46 | +4.58 | 20.61 | 4.345 | 381 | <0.0001 | [+2.51; +6.65] | 0.22 | signifikante Verbesserung |
+| Relevanz | 145 | 69.70 | 80.84 | +11.14 | 19.31 | 6.947 | 144 | <0.0001 | [+8.00; +14.29] | 0.58 | signifikante Verbesserung |
 
 LaTeX-gerenderte Tabelle:
 
@@ -65,15 +65,15 @@ Felderklärung:
 
 | Kriterium | Gesamt | Gültig | Ausgewählt | Ausgelassen | Fehler | Review | Manuell ausgeschlossen | Unvollständig |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| Richtigkeit | 908 | 908 | 67 | 828 | 0 | 13 | 0 | 0 |
-| Rückfragefähigkeit | 738 | 738 | 496 | 140 | 0 | 102 | 0 | 0 |
-| Internet- / Quellenqualität | 732 | 731 | 423 | 285 | 0 | 23 | 0 | 1 |
-| Prüfung / Verifikation | 738 | 738 | 258 | 474 | 0 | 6 | 0 | 0 |
-| Unsicherheit offenlegen | 738 | 738 | 85 | 608 | 0 | 45 | 0 | 0 |
-| Vollständigkeit gemäß Möglichkeit | 817 | 814 | 186 | 594 | 3 | 34 | 0 | 0 |
-| Vollständigkeit gemäß Frage | 866 | 857 | 66 | 783 | 8 | 8 | 0 | 1 |
-| Klarheit / Verständlichkeit | 738 | 738 | 109 | 599 | 0 | 30 | 0 | 0 |
-| Relevanz | 733 | 733 | 27 | 686 | 0 | 20 | 0 | 0 |
+| Richtigkeit | 913 | 908 | 343 | 552 | 0 | 13 | 0 | 5 |
+| Rückfragefähigkeit | 738 | 738 | 527 | 109 | 0 | 102 | 0 | 0 |
+| Internet- / Quellenqualität | 734 | 731 | 581 | 127 | 0 | 23 | 0 | 3 |
+| Prüfung / Verifikation | 738 | 738 | 514 | 218 | 0 | 6 | 0 | 0 |
+| Unsicherheit offenlegen | 741 | 738 | 251 | 442 | 0 | 45 | 0 | 3 |
+| Vollständigkeit gemäß Möglichkeit | 851 | 814 | 397 | 383 | 0 | 34 | 0 | 37 |
+| Vollständigkeit gemäß Frage | 872 | 857 | 109 | 740 | 0 | 8 | 0 | 15 |
+| Klarheit / Verständlichkeit | 741 | 738 | 382 | 326 | 0 | 30 | 0 | 3 |
+| Relevanz | 736 | 733 | 145 | 568 | 0 | 20 | 0 | 3 |
 
 LaTeX-gerenderte Tabelle:
 
@@ -83,10 +83,10 @@ Felderklärung:
 
 - **Kriterium**: Bewerteter Qualitätsbereich.
 - **Gesamt**: Alle gefundenen Paare nach den gesetzten Filtern vor Bereinigung.
-- **Gültig**: Paare ohne Fehler und ohne unvollständige oder unbewertete Seite.
+- **Gueltig**: Paare nach Abzug von Unvollstaendig und Fehler. Review und manuell ausgeschlossen bleiben gueltig, werden aber je nach Filter nicht ausgewaehlt.
 - **Ausgewählt**: Paare, die tatsächlich in Analyse, Statistik und Charts verwendet werden.
 - **Ausgelassen**: Paare, die durch den optionalen Direkt-Score-Behalten-Bereich ausgeschlossen wurden, weil der direkte Aufruf außerhalb des eingestellten Bereichs lag.
-- **Fehler**: Paare, bei denen mindestens eine Seite einen technischen Fehler hatte.
-- **Review**: Paare mit Review-Markierung; standardmäßig nicht in der Analyse enthalten.
-- **Manuell ausgeschlossen**: Paare, die vom Nutzer manuell aus der Analyse ausgeschlossen wurden.
-- **Unvollständig**: Paare mit fehlender Seite, laufendem Run oder fehlendem Score.
+- **Fehler**: Vollständig paarbare Paare, bei denen mindestens eine Seite einen technischen Fehler hatte. Unvollständige oder unpaarbare Fälle werden vorher als Unvollständig gezählt.
+- **Review**: Gueltige Paare mit Review-Markierung; standardmaessig nicht in der Analyse enthalten, wenn Review nicht eingeschlossen ist.
+- **Manuell ausgeschlossen**: Gueltige Paare, die vom Nutzer manuell aus der Analyse ausgeschlossen wurden. Wird erst nach Unvollstaendig und Fehler gezaehlt.
+- **Unvollstaendig**: Paare oder unpaarbare Workflow-Laeufe mit fehlender Seite, laufendem Status, fehlendem Score oder fehlender gueltiger Paar-ID. Diese Kategorie hat Vorrang vor Fehler und manuell ausgeschlossen.

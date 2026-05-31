@@ -4,13 +4,13 @@ Exporttyp: Detailanalyse
 ## Auswahl
 
 - Kriterien: Relevanz
-- Fragensets: default, example, flowmap_set7, flowreview_set7, impossibleforai, lausyprompt, promptoptimierung_schwierig, set1, set2, set3, set4, set5
-- Run-Sets: Existing runs, run10, gpt3_prompt_schwer, lazy_gpt3, flowmap7, review7, set2_review, set2_more, set2_5, set3_flowmap, set4_flowreview, set3_more, set3_3, imposs_2_single, imposs_3_single
-- Workflow-Setups: Flowmap, Flowreview, C – Prompt-Optimierung
+- Fragensets: Basis-Fragenset, Beispiel-Fragenset, Flowmap | Fragenset 7, Flowreview | Fragenset 7, Grenzfaelle | fuer KI schwer loesbar, Prompt-Optimierung | absichtlich schwache Prompts, Prompt-Optimierung | schwierige Fragen, Fragenset 1 | Basis, Fragenset 2 | Prompt-Optimierung, Fragenset 3 | Flowmap, Fragenset 4 | Flowreview, Fragenset 5 | Prompt-Optimierung erweitert
+- Run-Sets: Bestandsdaten | vor Strukturierung importiert, Direkt/Prompt | Fragenset 2 | 2026-05-16 | 10 Laeufe, Direkt/Prompt | schwierige Fragen | GPT-3.5 | 2026-05-16, Direkt/Prompt | schwache Prompts | GPT-3.5 | 2026-05-16, Flowmap | Fragenset 7 | 2026-05-16, Flowreview | Fragenset 7 | 2026-05-17, Flowreview | Fragenset 2 | 2026-05-17, Direkt/Prompt | Fragenset 2 | 2026-05-17 | Erweiterung, Direkt/Prompt | Fragenset 2 | 2026-05-17 | Lauf 5, Flowmap | Fragenset 3 | 2026-05-17, Flowreview | Fragenset 4 | 2026-05-17, Direkt/Prompt | Fragenset 3 | 2026-05-17 | Erweiterung, Direkt/Prompt | Fragenset 3 | 2026-05-17 | Lauf 3, Direkt/Prompt | Grenzfaelle | Set 2 | 2026-05-17, Direkt/Prompt | Grenzfaelle | Set 3 | 2026-05-17
+- Workflow-Setups: C – Prompt-Optimierung, Flowmap, Flowreview
 - Modelle: GPT-4o Mini, Claude Haiku 3.5, DeepSeek Chat, GPT-4o, GPT-4.1, GPT-3.5 Turbo (legacy)
 - Max Paare pro Kriterium: kein Limit
 - Skip Paare pro Kriterium: 0
-- Direkt-Score behalten: behalte Direkt < 75%
+- Direkt-Score behalten: behalte Direkt < 76%
 - Stabiler Exportordner / Asset-Prefix: 75
 
 Review-Antworten eingeschlossen: nein
@@ -135,7 +135,7 @@ Felderklärung:
 
 | Kriterium | n | Mittel Direkter Aufruf | Mittel Workflow | Diff. | p-Wert | Ergebnis |
 |---|---:|---:|---:|---:|---:|---|
-| Relevanz | 27 | 46.5 | 68.4 | +21.9 | 0.0016 | signifikante Verbesserung |
+| Relevanz | 145 | 69.7 | 80.8 | +11.1 | <0.0001 | signifikante Verbesserung |
 
 LaTeX-gerenderte Tabelle:
 

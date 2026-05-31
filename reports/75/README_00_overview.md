@@ -4,13 +4,13 @@ Exporttyp: Übersicht
 ## Auswahl
 
 - Kriterien: Alle Kriterien
-- Fragensets: default, example, flowmap_set7, flowreview_set7, impossibleforai, lausyprompt, promptoptimierung_schwierig, set1, set2, set3, set4, set5
-- Run-Sets: Existing runs, run10, gpt3_prompt_schwer, lazy_gpt3, flowmap7, review7, set2_review, set2_more, set2_5, set3_flowmap, set4_flowreview, set3_more, set3_3, imposs_2_single, imposs_3_single
-- Workflow-Setups: Flowmap, Flowreview, C – Prompt-Optimierung
+- Fragensets: Basis-Fragenset, Beispiel-Fragenset, Flowmap | Fragenset 7, Flowreview | Fragenset 7, Grenzfaelle | fuer KI schwer loesbar, Prompt-Optimierung | absichtlich schwache Prompts, Prompt-Optimierung | schwierige Fragen, Fragenset 1 | Basis, Fragenset 2 | Prompt-Optimierung, Fragenset 3 | Flowmap, Fragenset 4 | Flowreview, Fragenset 5 | Prompt-Optimierung erweitert
+- Run-Sets: Bestandsdaten | vor Strukturierung importiert, Direkt/Prompt | Fragenset 2 | 2026-05-16 | 10 Laeufe, Direkt/Prompt | schwierige Fragen | GPT-3.5 | 2026-05-16, Direkt/Prompt | schwache Prompts | GPT-3.5 | 2026-05-16, Flowmap | Fragenset 7 | 2026-05-16, Flowreview | Fragenset 7 | 2026-05-17, Flowreview | Fragenset 2 | 2026-05-17, Direkt/Prompt | Fragenset 2 | 2026-05-17 | Erweiterung, Direkt/Prompt | Fragenset 2 | 2026-05-17 | Lauf 5, Flowmap | Fragenset 3 | 2026-05-17, Flowreview | Fragenset 4 | 2026-05-17, Direkt/Prompt | Fragenset 3 | 2026-05-17 | Erweiterung, Direkt/Prompt | Fragenset 3 | 2026-05-17 | Lauf 3, Direkt/Prompt | Grenzfaelle | Set 2 | 2026-05-17, Direkt/Prompt | Grenzfaelle | Set 3 | 2026-05-17
+- Workflow-Setups: C – Prompt-Optimierung, Flowmap, Flowreview
 - Modelle: GPT-4o Mini, Claude Haiku 3.5, DeepSeek Chat, GPT-4o, GPT-4.1, GPT-3.5 Turbo (legacy)
 - Max Paare pro Kriterium: kein Limit
 - Skip Paare pro Kriterium: 0
-- Direkt-Score behalten: behalte Direkt < 75%
+- Direkt-Score behalten: behalte Direkt < 76%
 - Stabiler Exportordner / Asset-Prefix: 75
 
 Review-Antworten eingeschlossen: nein
@@ -31,7 +31,7 @@ Manuell ausgeschlossene Antworten eingeschlossen: nein
 
 - `75/images/00_overview/chart_mean_difference_by_criterion.svg`: Mittlere Differenz nach Kriterium. Einheit: Prozentpunkte. Bedeutung: Workflow minus Direkter Aufruf. Positive Werte bedeuten Verbesserung durch den Workflow, negative Werte Verschlechterung.
 - `75/images/00_overview/chart_mean_direkter_aufruf_vs_workflow.svg`: Mittelwert Direkter Aufruf vs Workflow. Zeigt die durchschnittlichen Scores pro Kriterium und macht mögliche Deckeneffekte sichtbar.
-- `75/images/00_overview/chart_data_quality_by_criterion.svg`: Datenqualität nach Kriterium. Zeigt ausgewählte Paare und Review-Paare pro Kriterium zur Transparenz der Datengrundlage.
+- `75/images/00_overview/chart_data_quality_by_criterion.svg`: Datenqualitaet nach Kriterium. Zeigt die exklusiven Zaehlkategorien pro Kriterium: ausgewaehlt, ausgelassen, Review, manuell ausgeschlossen, Fehler und unvollstaendig. Gezaehlt wird ohne Doppelzaehlung nach Prioritaet: unvollstaendig vor Fehler vor manuell ausgeschlossen vor Review.
 - `75/images/00_overview/chart_ceiling_effect_by_criterion.svg`: Verbesserungspotenzial des direkten Aufrufs. Zeigt pro Kriterium, wie viele Antworten des direkten Aufrufs bereits 100%, nahe 100% oder deutlich darunter lagen. Viele 100%-Werte bedeuten Deckeneffekt: Der Workflow kann kaum noch verbessern, aber verschlechtern.
 
 ## Übersicht zu den Charts
@@ -70,12 +70,12 @@ Felderklärung:
 - **Zahlen auf Balken**: Konkreter Mittelwert pro Methode.
 - **Zweck**: Schneller Vergleich der beiden Methoden pro Kriterium.
 
-### Datenqualität nach Kriterium
+### Datenqualitaet nach Kriterium
 
 | Feld | Wert |
 |---|---|
 | Datei | `75/images/00_overview/chart_data_quality_by_criterion.svg` |
-| Bedeutung | Zeigt ausgewählte Paare und Review-Paare pro Kriterium zur Transparenz der Datengrundlage. |
+| Bedeutung | Zeigt die exklusiven Zaehlkategorien pro Kriterium: ausgewaehlt, ausgelassen, Review, manuell ausgeschlossen, Fehler und unvollstaendig. Gezaehlt wird ohne Doppelzaehlung nach Prioritaet: unvollstaendig vor Fehler vor manuell ausgeschlossen vor Review. |
 
 Felderklärung:
 
@@ -107,15 +107,15 @@ Felderklärung:
 
 | Kriterium | n | Mittel Direkter Aufruf | Mittel Workflow | Diff. | p-Wert | Ergebnis |
 |---|---:|---:|---:|---:|---:|---|
-| Richtigkeit | 67 | 44.8 | 62.1 | +17.3 | <0.0001 | signifikante Verbesserung |
-| Rückfragefähigkeit | 496 | 27.4 | 48.8 | +21.4 | <0.0001 | signifikante Verbesserung |
-| Internet- / Quellenqualität | 423 | 41.4 | 49.9 | +8.5 | <0.0001 | signifikante Verbesserung |
-| Prüfung / Verifikation | 258 | 38.9 | 58.9 | +19.9 | <0.0001 | signifikante Verbesserung |
-| Unsicherheit offenlegen | 85 | 36.7 | 70.0 | +33.3 | <0.0001 | signifikante Verbesserung |
-| Vollständigkeit gemäß Möglichkeit | 186 | 47.2 | 62.1 | +14.9 | <0.0001 | signifikante Verbesserung |
-| Vollständigkeit gemäß Frage | 66 | 43.1 | 52.8 | +9.6 | 0.0147 | signifikante Verbesserung |
-| Klarheit / Verständlichkeit | 109 | 50.0 | 60.8 | +10.8 | <0.0001 | signifikante Verbesserung |
-| Relevanz | 27 | 46.5 | 68.4 | +21.9 | 0.0016 | signifikante Verbesserung |
+| Richtigkeit | 343 | 69.1 | 76.9 | +7.8 | <0.0001 | signifikante Verbesserung |
+| Rückfragefähigkeit | 527 | 30.2 | 49.9 | +19.7 | <0.0001 | signifikante Verbesserung |
+| Internet- / Quellenqualität | 581 | 50.5 | 56.1 | +5.6 | <0.0001 | signifikante Verbesserung |
+| Prüfung / Verifikation | 514 | 56.9 | 66.0 | +9.1 | <0.0001 | signifikante Verbesserung |
+| Unsicherheit offenlegen | 251 | 62.0 | 77.4 | +15.4 | <0.0001 | signifikante Verbesserung |
+| Vollständigkeit gemäß Möglichkeit | 397 | 62.0 | 71.1 | +9.1 | <0.0001 | signifikante Verbesserung |
+| Vollständigkeit gemäß Frage | 109 | 55.7 | 60.6 | +4.9 | 0.0752 | nicht signifikant |
+| Klarheit / Verständlichkeit | 382 | 67.9 | 72.5 | +4.6 | <0.0001 | signifikante Verbesserung |
+| Relevanz | 145 | 69.7 | 80.8 | +11.1 | <0.0001 | signifikante Verbesserung |
 
 LaTeX-gerenderte Tabelle:
 

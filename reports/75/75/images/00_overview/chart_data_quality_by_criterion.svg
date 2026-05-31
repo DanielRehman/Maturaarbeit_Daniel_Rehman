@@ -1,64 +1,95 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="980" height="585" viewBox="0 0 980 585" role="img" aria-label="Datenqualität nach Kriterium">
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="620" viewBox="0 0 1120 620" role="img" aria-label="Datenqualitaet nach Kriterium">
 <rect width="100%" height="100%" fill="white"/>
-<text x="490" y="34" text-anchor="middle" font-size="26" font-weight="700" fill="#0f172a">Datenqualität nach Kriterium</text>
-<rect x="665" y="18" width="18" height="18" fill="#64748b" opacity="0.78"/><text x="690" y="33" font-size="20" fill="#475569">Ausgewählt</text>
-<rect x="790" y="18" width="18" height="18" fill="#2563eb" opacity="0.78"/><text x="815" y="33" font-size="20" fill="#475569">Review</text>
-<text x="28" y="243.5" transform="rotate(-90 28 243.5)" text-anchor="middle" font-size="24" fill="#475569">Paare</text>
-<line x1="115" y1="415" x2="950" y2="415" stroke="#cbd5e1"/>
-<line x1="115" y1="72" x2="115" y2="415" stroke="#cbd5e1"/>
-<line x1="115" y1="415.0" x2="950" y2="415.0" stroke="#e2e8f0"/>
-<text x="105" y="420.0" text-anchor="end" font-size="16" fill="#64748b">0</text>
-<line x1="115" y1="329.3" x2="950" y2="329.3" stroke="#e2e8f0"/>
-<text x="105" y="334.3" text-anchor="end" font-size="16" fill="#64748b">124</text>
-<line x1="115" y1="243.5" x2="950" y2="243.5" stroke="#e2e8f0"/>
-<text x="105" y="248.5" text-anchor="end" font-size="16" fill="#64748b">248</text>
-<line x1="115" y1="157.8" x2="950" y2="157.8" stroke="#e2e8f0"/>
-<text x="105" y="162.8" text-anchor="end" font-size="16" fill="#64748b">372</text>
-<line x1="115" y1="72.0" x2="950" y2="72.0" stroke="#e2e8f0"/>
-<text x="105" y="77.0" text-anchor="end" font-size="16" fill="#64748b">496</text>
-<rect x="134.4" y="368.7" width="26.0" height="46.3" fill="#64748b" opacity="0.78"/>
-<rect x="162.4" y="406.0" width="26.0" height="9.0" fill="#2563eb" opacity="0.78"/>
-<text x="147.4" y="361.7" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">67</text>
-<text x="175.4" y="399.0" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">13</text>
-<rect x="227.2" y="72.0" width="26.0" height="343.0" fill="#64748b" opacity="0.78"/>
-<rect x="255.2" y="344.5" width="26.0" height="70.5" fill="#2563eb" opacity="0.78"/>
-<text x="240.2" y="65.0" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">496</text>
-<text x="268.2" y="337.5" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">102</text>
-<rect x="320.0" y="122.5" width="26.0" height="292.5" fill="#64748b" opacity="0.78"/>
-<rect x="347.9" y="399.1" width="26.0" height="15.9" fill="#2563eb" opacity="0.78"/>
-<text x="333.0" y="115.5" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">423</text>
-<text x="360.9" y="392.1" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">23</text>
-<rect x="412.7" y="236.6" width="26.0" height="178.4" fill="#64748b" opacity="0.78"/>
-<rect x="440.7" y="410.9" width="26.0" height="4.1" fill="#2563eb" opacity="0.78"/>
-<text x="425.7" y="229.6" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">258</text>
-<text x="453.7" y="403.9" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">6</text>
-<rect x="505.5" y="356.2" width="26.0" height="58.8" fill="#64748b" opacity="0.78"/>
-<rect x="533.5" y="383.9" width="26.0" height="31.1" fill="#2563eb" opacity="0.78"/>
-<text x="518.5" y="349.2" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">85</text>
-<text x="546.5" y="376.9" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">45</text>
-<rect x="598.3" y="286.4" width="26.0" height="128.6" fill="#64748b" opacity="0.78"/>
-<rect x="626.3" y="391.5" width="26.0" height="23.5" fill="#2563eb" opacity="0.78"/>
-<text x="611.3" y="279.4" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">186</text>
-<text x="639.3" y="384.5" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">34</text>
-<rect x="691.1" y="369.4" width="26.0" height="45.6" fill="#64748b" opacity="0.78"/>
-<rect x="719.1" y="409.5" width="26.0" height="5.5" fill="#2563eb" opacity="0.78"/>
-<text x="704.1" y="362.4" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">66</text>
-<text x="732.0" y="402.5" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">8</text>
-<rect x="783.9" y="339.6" width="26.0" height="75.4" fill="#64748b" opacity="0.78"/>
-<rect x="811.8" y="394.3" width="26.0" height="20.7" fill="#2563eb" opacity="0.78"/>
-<text x="796.8" y="332.6" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">109</text>
-<text x="824.8" y="387.3" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">30</text>
-<rect x="876.6" y="396.3" width="26.0" height="18.7" fill="#64748b" opacity="0.78"/>
-<rect x="904.6" y="401.2" width="26.0" height="13.8" fill="#2563eb" opacity="0.78"/>
-<text x="889.6" y="389.3" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">27</text>
-<text x="917.6" y="394.2" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">20</text>
-<text x="161.4" y="439.0" transform="rotate(-45 161.4 439.0)" font-size="20" text-anchor="end" fill="#475569">Richtigkeit</text>
-<text x="254.2" y="439.0" transform="rotate(-45 254.2 439.0)" font-size="20" text-anchor="end" fill="#475569">Rückfragefähigkeit</text>
-<text x="346.9" y="439.0" transform="rotate(-45 346.9 439.0)" font-size="20" text-anchor="end" fill="#475569">Internet- / Quelle...</text>
-<text x="439.7" y="439.0" transform="rotate(-45 439.7 439.0)" font-size="20" text-anchor="end" fill="#475569">Prüfung / Verifika...</text>
-<text x="532.5" y="439.0" transform="rotate(-45 532.5 439.0)" font-size="20" text-anchor="end" fill="#475569">Unsicherheit offen...</text>
-<text x="625.3" y="439.0" transform="rotate(-45 625.3 439.0)" font-size="20" text-anchor="end" fill="#475569">Vollständigkeit ge...</text>
-<text x="718.1" y="439.0" transform="rotate(-45 718.1 439.0)" font-size="20" text-anchor="end" fill="#475569">Vollständigkeit ge...</text>
-<text x="810.8" y="439.0" transform="rotate(-45 810.8 439.0)" font-size="20" text-anchor="end" fill="#475569">Klarheit / Verstän...</text>
-<text x="903.6" y="439.0" transform="rotate(-45 903.6 439.0)" font-size="20" text-anchor="end" fill="#475569">Relevanz</text>
+<text x="560" y="34" text-anchor="middle" font-size="26" font-weight="700" fill="#0f172a">Datenqualitaet nach Kriterium</text>
+<rect x="150" y="52" width="18" height="18" fill="#16a34a" opacity="0.84"/><text x="175" y="67" font-size="17" fill="#475569">Ausgewählt</text>
+<rect x="450" y="52" width="18" height="18" fill="#0f766e" opacity="0.84"/><text x="475" y="67" font-size="17" fill="#475569">Ausgelassen</text>
+<rect x="750" y="52" width="18" height="18" fill="#f59e0b" opacity="0.84"/><text x="775" y="67" font-size="17" fill="#475569">Review</text>
+<rect x="150" y="78" width="18" height="18" fill="#64748b" opacity="0.84"/><text x="175" y="93" font-size="17" fill="#475569">Manuell ausgeschlossen</text>
+<rect x="450" y="78" width="18" height="18" fill="#dc2626" opacity="0.84"/><text x="475" y="93" font-size="17" fill="#475569">Fehler</text>
+<rect x="750" y="78" width="18" height="18" fill="#2563eb" opacity="0.84"/><text x="775" y="93" font-size="17" fill="#475569">Unvollständig</text>
+<text x="28" y="263" transform="rotate(-90 28 263)" text-anchor="middle" font-size="24" fill="#475569">Paare</text>
+<line x1="120" y1="430" x2="1080" y2="430" stroke="#cbd5e1"/>
+<line x1="120" y1="96" x2="120" y2="430" stroke="#cbd5e1"/>
+<line x1="120" y1="430.0" x2="1080" y2="430.0" stroke="#e2e8f0"/>
+<text x="110" y="435.0" text-anchor="end" font-size="16" fill="#64748b">0</text>
+<line x1="120" y1="346.5" x2="1080" y2="346.5" stroke="#e2e8f0"/>
+<text x="110" y="351.5" text-anchor="end" font-size="16" fill="#64748b">228</text>
+<line x1="120" y1="263.0" x2="1080" y2="263.0" stroke="#e2e8f0"/>
+<text x="110" y="268.0" text-anchor="end" font-size="16" fill="#64748b">457</text>
+<line x1="120" y1="179.5" x2="1080" y2="179.5" stroke="#e2e8f0"/>
+<text x="110" y="184.5" text-anchor="end" font-size="16" fill="#64748b">685</text>
+<line x1="120" y1="96.0" x2="1080" y2="96.0" stroke="#e2e8f0"/>
+<text x="110" y="101.0" text-anchor="end" font-size="16" fill="#64748b">913</text>
+<rect x="142.4" y="304.5" width="61.9" height="125.5" fill="#16a34a" opacity="0.84"/>
+<rect x="142.4" y="102.6" width="61.9" height="201.9" fill="#0f766e" opacity="0.84"/>
+<rect x="142.4" y="97.8" width="61.9" height="4.8" fill="#f59e0b" opacity="0.84"/>
+
+
+<rect x="142.4" y="96.0" width="61.9" height="1.8" fill="#2563eb" opacity="0.84"/>
+<text x="173.3" y="89.0" text-anchor="middle" font-size="13" fill="#475569">913</text>
+<rect x="249.1" y="237.2" width="61.9" height="192.8" fill="#16a34a" opacity="0.84"/>
+<rect x="249.1" y="197.3" width="61.9" height="39.9" fill="#0f766e" opacity="0.84"/>
+<rect x="249.1" y="160.0" width="61.9" height="37.3" fill="#f59e0b" opacity="0.84"/>
+
+
+
+<text x="280.0" y="153.0" text-anchor="middle" font-size="13" fill="#475569">738</text>
+<rect x="355.7" y="217.5" width="61.9" height="212.5" fill="#16a34a" opacity="0.84"/>
+<rect x="355.7" y="171.0" width="61.9" height="46.5" fill="#0f766e" opacity="0.84"/>
+<rect x="355.7" y="162.6" width="61.9" height="8.4" fill="#f59e0b" opacity="0.84"/>
+
+
+<rect x="355.7" y="161.5" width="61.9" height="1.1" fill="#2563eb" opacity="0.84"/>
+<text x="386.7" y="154.5" text-anchor="middle" font-size="13" fill="#475569">734</text>
+<rect x="462.4" y="242.0" width="61.9" height="188.0" fill="#16a34a" opacity="0.84"/>
+<rect x="462.4" y="162.2" width="61.9" height="79.8" fill="#0f766e" opacity="0.84"/>
+<rect x="462.4" y="160.0" width="61.9" height="2.2" fill="#f59e0b" opacity="0.84"/>
+
+
+
+<text x="493.3" y="153.0" text-anchor="middle" font-size="13" fill="#475569">738</text>
+<rect x="569.1" y="338.2" width="61.9" height="91.8" fill="#16a34a" opacity="0.84"/>
+<rect x="569.1" y="176.5" width="61.9" height="161.7" fill="#0f766e" opacity="0.84"/>
+<rect x="569.1" y="160.0" width="61.9" height="16.5" fill="#f59e0b" opacity="0.84"/>
+
+
+<rect x="569.1" y="158.9" width="61.9" height="1.1" fill="#2563eb" opacity="0.84"/>
+<text x="600.0" y="151.9" text-anchor="middle" font-size="13" fill="#475569">741</text>
+<rect x="675.7" y="284.8" width="61.9" height="145.2" fill="#16a34a" opacity="0.84"/>
+<rect x="675.7" y="144.7" width="61.9" height="140.1" fill="#0f766e" opacity="0.84"/>
+<rect x="675.7" y="132.2" width="61.9" height="12.4" fill="#f59e0b" opacity="0.84"/>
+
+
+<rect x="675.7" y="118.7" width="61.9" height="13.5" fill="#2563eb" opacity="0.84"/>
+<text x="706.7" y="111.7" text-anchor="middle" font-size="13" fill="#475569">851</text>
+<rect x="782.4" y="390.1" width="61.9" height="39.9" fill="#16a34a" opacity="0.84"/>
+<rect x="782.4" y="119.4" width="61.9" height="270.7" fill="#0f766e" opacity="0.84"/>
+<rect x="782.4" y="116.5" width="61.9" height="2.9" fill="#f59e0b" opacity="0.84"/>
+
+
+<rect x="782.4" y="111.0" width="61.9" height="5.5" fill="#2563eb" opacity="0.84"/>
+<text x="813.3" y="104.0" text-anchor="middle" font-size="13" fill="#475569">872</text>
+<rect x="889.1" y="290.3" width="61.9" height="139.7" fill="#16a34a" opacity="0.84"/>
+<rect x="889.1" y="171.0" width="61.9" height="119.3" fill="#0f766e" opacity="0.84"/>
+<rect x="889.1" y="160.0" width="61.9" height="11.0" fill="#f59e0b" opacity="0.84"/>
+
+
+<rect x="889.1" y="158.9" width="61.9" height="1.1" fill="#2563eb" opacity="0.84"/>
+<text x="920.0" y="151.9" text-anchor="middle" font-size="13" fill="#475569">741</text>
+<rect x="995.7" y="377.0" width="61.9" height="53.0" fill="#16a34a" opacity="0.84"/>
+<rect x="995.7" y="169.2" width="61.9" height="207.8" fill="#0f766e" opacity="0.84"/>
+<rect x="995.7" y="161.8" width="61.9" height="7.3" fill="#f59e0b" opacity="0.84"/>
+
+
+<rect x="995.7" y="160.8" width="61.9" height="1.1" fill="#2563eb" opacity="0.84"/>
+<text x="1026.7" y="153.8" text-anchor="middle" font-size="13" fill="#475569">736</text>
+<text x="173.3" y="454.0" transform="rotate(-45 173.3 454.0)" font-size="20" text-anchor="end" fill="#475569">Richtigkeit</text>
+<text x="280.0" y="454.0" transform="rotate(-45 280.0 454.0)" font-size="20" text-anchor="end" fill="#475569">Rückfragefähigkeit</text>
+<text x="386.7" y="454.0" transform="rotate(-45 386.7 454.0)" font-size="20" text-anchor="end" fill="#475569">Internet- / Quelle...</text>
+<text x="493.3" y="454.0" transform="rotate(-45 493.3 454.0)" font-size="20" text-anchor="end" fill="#475569">Prüfung / Verifika...</text>
+<text x="600.0" y="454.0" transform="rotate(-45 600.0 454.0)" font-size="20" text-anchor="end" fill="#475569">Unsicherheit offen...</text>
+<text x="706.7" y="454.0" transform="rotate(-45 706.7 454.0)" font-size="20" text-anchor="end" fill="#475569">Vollständigkeit ge...</text>
+<text x="813.3" y="454.0" transform="rotate(-45 813.3 454.0)" font-size="20" text-anchor="end" fill="#475569">Vollständigkeit ge...</text>
+<text x="920.0" y="454.0" transform="rotate(-45 920.0 454.0)" font-size="20" text-anchor="end" fill="#475569">Klarheit / Verstän...</text>
+<text x="1026.7" y="454.0" transform="rotate(-45 1026.7 454.0)" font-size="20" text-anchor="end" fill="#475569">Relevanz</text>
 </svg>

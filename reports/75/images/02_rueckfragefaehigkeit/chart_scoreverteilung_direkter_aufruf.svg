@@ -20,8 +20,8 @@
 <text x="219.4" y="79.0" text-anchor="middle" font-size="16" font-weight="700" fill="#0f172a">377</text>
 <rect x="353.0" y="287.4" width="150.3" height="102.6" fill="#84cc16" opacity="0.78"/>
 <text x="428.1" y="279.4" text-anchor="middle" font-size="16" font-weight="700" fill="#0f172a">119</text>
-<rect x="561.7" y="390.0" width="150.3" height="1.0" fill="#f59e0b" opacity="0.78"/>
-<text x="636.9" y="382.0" text-anchor="middle" font-size="16" font-weight="700" fill="#0f172a">0</text>
+<rect x="561.7" y="363.3" width="150.3" height="26.7" fill="#f59e0b" opacity="0.78"/>
+<text x="636.9" y="355.3" text-anchor="middle" font-size="16" font-weight="700" fill="#0f172a">31</text>
 <rect x="770.5" y="390.0" width="150.3" height="1.0" fill="#dc2626" opacity="0.78"/>
 <text x="845.6" y="382.0" text-anchor="middle" font-size="16" font-weight="700" fill="#0f172a">0</text>
 <text x="219.4" y="414.0" transform="rotate(-45 219.4 414.0)" font-size="20" text-anchor="end" fill="#475569">&lt;50</text>

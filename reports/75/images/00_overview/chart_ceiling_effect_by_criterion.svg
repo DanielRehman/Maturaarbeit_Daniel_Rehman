@@ -10,49 +10,49 @@
 <line x1="115" y1="405.0" x2="945" y2="405.0" stroke="#e2e8f0"/>
 <text x="105" y="410.0" text-anchor="end" font-size="16" fill="#64748b">0</text>
 <line x1="115" y1="325.8" x2="945" y2="325.8" stroke="#e2e8f0"/>
-<text x="105" y="330.8" text-anchor="end" font-size="16" fill="#64748b">124</text>
+<text x="105" y="330.8" text-anchor="end" font-size="16" fill="#64748b">145</text>
 <line x1="115" y1="246.5" x2="945" y2="246.5" stroke="#e2e8f0"/>
-<text x="105" y="251.5" text-anchor="end" font-size="16" fill="#64748b">248</text>
+<text x="105" y="251.5" text-anchor="end" font-size="16" fill="#64748b">291</text>
 <line x1="115" y1="167.3" x2="945" y2="167.3" stroke="#e2e8f0"/>
-<text x="105" y="172.3" text-anchor="end" font-size="16" fill="#64748b">372</text>
+<text x="105" y="172.3" text-anchor="end" font-size="16" fill="#64748b">436</text>
 <line x1="115" y1="88.0" x2="945" y2="88.0" stroke="#e2e8f0"/>
-<text x="105" y="93.0" text-anchor="end" font-size="16" fill="#64748b">496</text>
+<text x="105" y="93.0" text-anchor="end" font-size="16" fill="#64748b">581</text>
 
+<rect x="136.2" y="254.4" width="49.8" height="150.6" fill="#f59e0b" opacity="0.82"/>
+<rect x="136.2" y="217.9" width="49.8" height="36.6" fill="#16a34a" opacity="0.82"/>
+<text x="161.1" y="210.9" text-anchor="middle" font-size="13" fill="#475569">343</text>
 
-<rect x="136.2" y="362.2" width="49.8" height="42.8" fill="#16a34a" opacity="0.82"/>
-<text x="161.1" y="355.2" text-anchor="middle" font-size="13" fill="#475569">67</text>
+<rect x="228.4" y="388.1" width="49.8" height="16.9" fill="#f59e0b" opacity="0.82"/>
+<rect x="228.4" y="117.5" width="49.8" height="270.6" fill="#16a34a" opacity="0.82"/>
+<text x="253.3" y="110.5" text-anchor="middle" font-size="13" fill="#475569">527</text>
 
+<rect x="320.7" y="318.8" width="49.8" height="86.2" fill="#f59e0b" opacity="0.82"/>
+<rect x="320.7" y="88.0" width="49.8" height="230.8" fill="#16a34a" opacity="0.82"/>
+<text x="345.6" y="81.0" text-anchor="middle" font-size="13" fill="#475569">581</text>
 
-<rect x="228.4" y="88.0" width="49.8" height="317.0" fill="#16a34a" opacity="0.82"/>
-<text x="253.3" y="81.0" text-anchor="middle" font-size="13" fill="#475569">496</text>
+<rect x="412.9" y="265.3" width="49.8" height="139.7" fill="#f59e0b" opacity="0.82"/>
+<rect x="412.9" y="124.6" width="49.8" height="140.8" fill="#16a34a" opacity="0.82"/>
+<text x="437.8" y="117.6" text-anchor="middle" font-size="13" fill="#475569">514</text>
 
+<rect x="505.1" y="314.4" width="49.8" height="90.6" fill="#f59e0b" opacity="0.82"/>
+<rect x="505.1" y="268.1" width="49.8" height="46.4" fill="#16a34a" opacity="0.82"/>
+<text x="530.0" y="261.1" text-anchor="middle" font-size="13" fill="#475569">251</text>
 
-<rect x="320.7" y="134.7" width="49.8" height="270.3" fill="#16a34a" opacity="0.82"/>
-<text x="345.6" y="127.7" text-anchor="middle" font-size="13" fill="#475569">423</text>
+<rect x="597.3" y="289.9" width="49.8" height="115.1" fill="#f59e0b" opacity="0.82"/>
+<rect x="597.3" y="188.4" width="49.8" height="101.5" fill="#16a34a" opacity="0.82"/>
+<text x="622.2" y="181.4" text-anchor="middle" font-size="13" fill="#475569">397</text>
 
+<rect x="689.5" y="381.5" width="49.8" height="23.5" fill="#f59e0b" opacity="0.82"/>
+<rect x="689.5" y="345.5" width="49.8" height="36.0" fill="#16a34a" opacity="0.82"/>
+<text x="714.4" y="338.5" text-anchor="middle" font-size="13" fill="#475569">109</text>
 
-<rect x="412.9" y="240.1" width="49.8" height="164.9" fill="#16a34a" opacity="0.82"/>
-<text x="437.8" y="233.1" text-anchor="middle" font-size="13" fill="#475569">258</text>
+<rect x="781.8" y="256.0" width="49.8" height="149.0" fill="#f59e0b" opacity="0.82"/>
+<rect x="781.8" y="196.6" width="49.8" height="59.5" fill="#16a34a" opacity="0.82"/>
+<text x="806.7" y="189.6" text-anchor="middle" font-size="13" fill="#475569">382</text>
 
-
-<rect x="505.1" y="350.7" width="49.8" height="54.3" fill="#16a34a" opacity="0.82"/>
-<text x="530.0" y="343.7" text-anchor="middle" font-size="13" fill="#475569">85</text>
-
-
-<rect x="597.3" y="286.1" width="49.8" height="118.9" fill="#16a34a" opacity="0.82"/>
-<text x="622.2" y="279.1" text-anchor="middle" font-size="13" fill="#475569">186</text>
-
-
-<rect x="689.5" y="362.8" width="49.8" height="42.2" fill="#16a34a" opacity="0.82"/>
-<text x="714.4" y="355.8" text-anchor="middle" font-size="13" fill="#475569">66</text>
-
-
-<rect x="781.8" y="335.3" width="49.8" height="69.7" fill="#16a34a" opacity="0.82"/>
-<text x="806.7" y="328.3" text-anchor="middle" font-size="13" fill="#475569">109</text>
-
-
-<rect x="874.0" y="387.7" width="49.8" height="17.3" fill="#16a34a" opacity="0.82"/>
-<text x="898.9" y="380.7" text-anchor="middle" font-size="13" fill="#475569">27</text>
+<rect x="874.0" y="340.6" width="49.8" height="64.4" fill="#f59e0b" opacity="0.82"/>
+<rect x="874.0" y="325.9" width="49.8" height="14.7" fill="#16a34a" opacity="0.82"/>
+<text x="898.9" y="318.9" text-anchor="middle" font-size="13" fill="#475569">145</text>
 <text x="161.1" y="429.0" transform="rotate(-45 161.1 429.0)" font-size="20" text-anchor="end" fill="#475569">Richtigkeit</text>
 <text x="253.3" y="429.0" transform="rotate(-45 253.3 429.0)" font-size="20" text-anchor="end" fill="#475569">Rückfragefähigkeit</text>
 <text x="345.6" y="429.0" transform="rotate(-45 345.6 429.0)" font-size="20" text-anchor="end" fill="#475569">Internet- / Quelle...</text>
