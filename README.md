@@ -4,7 +4,8 @@ Dateien zu meiner Maturaarbeit 2026.
 
 ## Wichtigster Link
 
-- [Maturaarbeit öffnen](Maturaarbeit_Daniel_Rehman.md)
+- [Maturaarbeit als Markdown öffnen](reports/Maturaarbeit.md)
+- [Maturaarbeit als PDF öffnen](https://DanielRehman.github.io/Maturaarbeit_Daniel_Rehman/reports/Maturaarbeit_Daniel_Rehman.pdf)
 
 ## Downloads
 
